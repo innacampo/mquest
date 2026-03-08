@@ -1,7 +1,8 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
 import { biomes, BiomeId } from '@/lib/gameData';
-import { Lock, CheckCircle } from 'lucide-react';
+import { Lock, CheckCircle, HelpCircle, X } from 'lucide-react';
 
 import worldMapBg from '@/assets/world-map-bg.jpg';
 import biomeFeverPeaks from '@/assets/biome-fever-peaks.png';
