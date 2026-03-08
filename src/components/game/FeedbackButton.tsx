@@ -23,9 +23,9 @@ const FeedbackButton: React.FC = () => {
     setSending(false);
 
     if (error) {
-      toast({ title: 'Oops', description: 'Could not send feedback.', variant: 'destructive', position: 'bottom-left' });
+      toast.error('Could not send feedback.', { position: 'bottom-left' });
     } else {
-      toast({ title: '💜 Thank you!', description: 'Your feedback has been saved.', position: 'bottom-left' });
+      toast.success('💜 Thank you! Your feedback has been saved.', { position: 'bottom-left' });
       setMessage('');
       setOpen(false);
     }
