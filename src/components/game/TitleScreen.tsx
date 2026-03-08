@@ -154,9 +154,7 @@ const TitleScreen = ({ onStart }: TitleScreenProps) => {
             filter: 'drop-shadow(0 0 20px hsla(35 90% 55% / 0.3))',
           }}
         >
-          The Menopause
-          <br />
-          Quest
+          The M-QUEST
         </h1>
       </motion.div>
 
