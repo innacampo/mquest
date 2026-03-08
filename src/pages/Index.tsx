@@ -13,7 +13,7 @@ import { useAudio } from '@/hooks/useAudio';
 import { Map, RotateCcw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-type GameView = 'title' | 'map' | 'biome' | 'village';
+type GameView = 'title' | 'character' | 'map' | 'biome' | 'village';
 
 const GameScreen = () => {
   const { state, resetGame, enterBiome, leaveBiome } = useGame();
