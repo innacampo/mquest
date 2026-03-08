@@ -184,6 +184,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         inventory: {
           ...prev.inventory,
           hormoneCrystals: prev.inventory.hormoneCrystals + 3,
+          knowledgeScrolls: prev.inventory.knowledgeScrolls + 1,
         },
       };
       save(next);
