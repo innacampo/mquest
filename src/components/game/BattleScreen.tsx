@@ -258,6 +258,13 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     }
   };
 
+  const handleContinue = () => {
+    if (pendingContinue) {
+      pendingContinue();
+      setPendingContinue(null);
+    }
+  };
+
   // ---- COMBO BAR ----
   const startComboBar = () => {
     setComboBarActive(true);
