@@ -230,7 +230,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       setTimeout(() => {
         setPhase('combo');
         startComboBar();
-      }, 3000);
+      }, 6000);
     } else {
       setStreak(0);
       setMonsterSurge(prev => prev + 1);
