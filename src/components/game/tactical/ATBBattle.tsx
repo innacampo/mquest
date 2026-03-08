@@ -16,7 +16,7 @@ type MonsterMechanic = {
   description: string;
   icon: React.ReactNode;
   // Which part of battle it affects
-  effect: 'hide_monster_hp' | 'hide_player_hp' | 'scramble_answers' | 'blur_question' |
+  effect: 'fake_damage' | 'potion_drain' | 'scramble_answers' | 'blur_question' |
           'shorter_timer' | 'shrink_text' | 'fade_answers' | 'freeze_answer' |
           'screen_fog' | 'combo_decay' | 'multi';
 };
