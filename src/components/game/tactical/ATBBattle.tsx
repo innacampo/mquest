@@ -72,7 +72,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
   const [playerAnim, setPlayerAnim] = useState<'idle' | 'attack' | 'hit' | 'defend' | 'victory' | 'defeated'>('idle');
   const [monsterAnim, setMonsterAnim] = useState<'idle' | 'attack' | 'hit' | 'defeated'>('idle');
 
-  const biomeQuestions = useMemo(() => questions.filter(q => q.biome === monster.biome), [monster.biome]);
+  const biomeQuestions = useMemo(() => questions.filter(q => q.monster === monster.id), [monster.id]);
   const atbRunning = useRef(false);
 
   const addDmgNumber = (value: number, type: 'dealt' | 'taken' | 'heal', x = '50%') => {
