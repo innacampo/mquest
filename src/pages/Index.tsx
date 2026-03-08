@@ -44,7 +44,19 @@ const GameScreen = () => {
   };
 
   if (view === 'title') {
-    return <TitleScreen onStart={() => { setView('map'); audio.playChime(); }} />;
+    return <TitleScreen onStart={() => { setView(state.character ? 'map' : 'character'); audio.playChime(); }} />;
+  }
+
+  if (view === 'character') {
+    return (
+      <CharacterCreation
+        onComplete={(background, specialty, name) => {
+          setCharacter({ background, specialty, name: name || 'Lyra' });
+          setView('map');
+          audio.playVictory();
+        }}
+      />
+    );
   }
 
   return (
