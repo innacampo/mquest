@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
-import { Monster, Question, questions, BiomeId } from '@/lib/gameData';
+import { Monster, Question, questions, BiomeId, getSpecialtyDamageMultiplier, getXpMultiplier } from '@/lib/gameData';
 import { Swords, Timer, Zap, Heart, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -12,7 +12,9 @@ interface BattleScreenProps {
 }
 
 const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetreat }) => {
-  const { addXp, defeatMonster, unlockCompendiumEntry, updateEstraBond } = useGame();
+  const { state, addXp, defeatMonster, unlockCompendiumEntry, updateEstraBond } = useGame();
+  const damageMultiplier = getSpecialtyDamageMultiplier(state.character, monster.biome);
+  const xpMultiplier = getXpMultiplier(state.character);
 
   const [monsterHp, setMonsterHp] = useState(monster.hp);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
