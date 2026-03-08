@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      feedback: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          page: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          page?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          page?: string | null
+        }
+        Relationships: []
+      }
       game_saves: {
         Row: {
           created_at: string
