@@ -288,7 +288,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const meetNpc = useCallback((npcName: string) => {
     setState(prev => {
-      if (prev.npcsMet.includes(npcName)) return prev;
+      if ((prev.npcsMet || []).includes(npcName)) return prev;
       const updatedCompendium = prev.compendium.map(e =>
         (e.npcName === npcName && e.type === 'bio') ? { ...e, unlocked: true } : e
       );
