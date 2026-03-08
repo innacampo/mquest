@@ -16,6 +16,8 @@ interface GameContextType {
   enterBiome: (biomeId: BiomeId) => void;
   leaveBiome: () => void;
   setCharacter: (profile: CharacterProfile) => void;
+  meetNpc: (npcName: string) => void;
+  claimMilestone: (milestoneId: string) => void;
   isLoading: boolean;
 }
 
@@ -32,6 +34,8 @@ const defaultContext: GameContextType = {
   enterBiome: () => {},
   leaveBiome: () => {},
   setCharacter: () => {},
+  meetNpc: () => {},
+  claimMilestone: () => {},
   isLoading: true,
 };
 
