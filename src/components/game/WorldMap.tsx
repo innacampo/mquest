@@ -249,15 +249,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
             );
           })}
         </svg>
-                        begin={`${1.5 + i * 0.25}s`}
-                      />
-                    </circle>
-                  </>
-                )}
-              </g>
-            );
-          })}
-        </svg>
+
+
 
         {/* Biome Nodes */}
         {biomes.map((biome, i) => {
