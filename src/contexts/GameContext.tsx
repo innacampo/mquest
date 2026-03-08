@@ -294,7 +294,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
       const next = {
         ...prev,
-        npcsMet: [...prev.npcsMet, npcName],
+        npcsMet: [...(prev.npcsMet || []), npcName],
         compendium: updatedCompendium,
       };
       save(next);
