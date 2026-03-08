@@ -38,7 +38,7 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   const handleVisitShrine = () => {
     if (!shrineVisited) {
       setShrineVisited(true);
-      addXp(50);
+      addXp(Math.round(50 * xpMult));
       // Unlock fact card for this biome
       const factEntry = state.compendium.find(e => e.type === 'fact' && e.biome === biomeId && !e.unlocked);
       if (factEntry) unlockCompendiumEntry(factEntry.id);
