@@ -1,29 +1,58 @@
 import { motion } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
 import { biomes, BiomeId } from '@/lib/gameData';
-import { Lock, CheckCircle, ChevronRight } from 'lucide-react';
+import { Lock, CheckCircle } from 'lucide-react';
+
+import worldMapBg from '@/assets/world-map-bg.jpg';
+import biomeFeverPeaks from '@/assets/biome-fever-peaks.png';
+import biomeFogMarshes from '@/assets/biome-fog-marshes.png';
+import biomeMoodTides from '@/assets/biome-mood-tides.png';
+import biomeCrystalCaverns from '@/assets/biome-crystal-caverns.png';
+import biomeHeartland from '@/assets/biome-heartland.png';
+import biomeBloomGarden from '@/assets/biome-bloom-garden.png';
 
 interface WorldMapProps {
   onSelectBiome: (biomeId: BiomeId) => void;
 }
 
-const biomeGradients: Record<BiomeId, string> = {
-  'fever-peaks': 'from-orange-600/30 to-red-900/30',
-  'fog-marshes': 'from-teal-700/30 to-slate-800/30',
-  'mood-tides': 'from-violet-700/30 to-indigo-900/30',
-  'crystal-caverns': 'from-cyan-600/30 to-blue-900/30',
-  'heartland': 'from-rose-600/30 to-red-900/30',
-  'bloom-garden': 'from-emerald-500/30 to-green-900/30',
+const biomeImages: Record<BiomeId, string> = {
+  'fever-peaks': biomeFeverPeaks,
+  'fog-marshes': biomeFogMarshes,
+  'mood-tides': biomeMoodTides,
+  'crystal-caverns': biomeCrystalCaverns,
+  'heartland': biomeHeartland,
+  'bloom-garden': biomeBloomGarden,
 };
 
-const biomeBorderColors: Record<BiomeId, string> = {
-  'fever-peaks': 'border-glow-amber/40 hover:border-glow-amber',
-  'fog-marshes': 'border-glow-teal/40 hover:border-glow-teal',
-  'mood-tides': 'border-glow-violet/40 hover:border-glow-violet',
-  'crystal-caverns': 'border-glow-teal/40 hover:border-glow-teal',
-  'heartland': 'border-glow-rose/40 hover:border-glow-rose',
-  'bloom-garden': 'border-glow-green/40 hover:border-glow-green',
+// Positions as percentages on the map (x, y)
+const biomePositions: Record<BiomeId, { x: number; y: number }> = {
+  'fever-peaks':     { x: 15, y: 18 },
+  'fog-marshes':     { x: 42, y: 55 },
+  'mood-tides':      { x: 12, y: 72 },
+  'crystal-caverns': { x: 72, y: 15 },
+  'heartland':       { x: 50, y: 30 },
+  'bloom-garden':    { x: 75, y: 65 },
 };
+
+const biomeGlowColors: Record<BiomeId, string> = {
+  'fever-peaks': '35, 90%, 55%',
+  'fog-marshes': '180, 60%, 50%',
+  'mood-tides': '270, 50%, 55%',
+  'crystal-caverns': '190, 70%, 55%',
+  'heartland': '340, 60%, 55%',
+  'bloom-garden': '145, 55%, 45%',
+};
+
+// Path connections between biomes (sequential)
+const pathConnections: [BiomeId, BiomeId][] = [
+  ['fever-peaks', 'fog-marshes'],
+  ['fog-marshes', 'mood-tides'],
+  ['fever-peaks', 'heartland'],
+  ['heartland', 'crystal-caverns'],
+  ['mood-tides', 'bloom-garden'],
+  ['crystal-caverns', 'bloom-garden'],
+  ['fog-marshes', 'heartland'],
+];
 
 const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
   const { state } = useGame();
@@ -37,14 +66,17 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
 
   const isCleared = (biomeId: BiomeId) => state.biomesCleared.includes(biomeId);
 
+  const isPathLit = (from: BiomeId, to: BiomeId) => {
+    return isCleared(from) || isCleared(to) || (isBiomeUnlocked(from) && isBiomeUnlocked(to));
+  };
+
   return (
     <div className="space-y-4">
       <div className="text-center space-y-2">
         <h2 className="font-display text-2xl text-primary text-glow-amber">The Inner Realm</h2>
         <p className="text-sm text-muted-foreground">
-          Explore the mystical world within. Each region maps to a real biological system.
+          Explore the mystical world within — each region maps to a biological system
         </p>
-        {/* Estra Glow Bar */}
         <div className="mx-auto max-w-xs space-y-1">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>World Restoration</span>
@@ -61,54 +93,149 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Map Canvas */}
+      <div className="relative w-full rounded-xl overflow-hidden border-2 border-border" style={{ aspectRatio: '16/9' }}>
+        {/* Background */}
+        <img
+          src={worldMapBg}
+          alt="The Inner Realm Map"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{
+            filter: `saturate(${0.3 + state.estraGlow * 0.7}) brightness(${0.5 + state.estraGlow * 0.3})`,
+            transition: 'filter 1s ease',
+          }}
+        />
+
+        {/* Dark overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/40" />
+
+        {/* SVG Path connections */}
+        <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 1 }}>
+          {pathConnections.map(([from, to], i) => {
+            const fromPos = biomePositions[from];
+            const toPos = biomePositions[to];
+            const lit = isPathLit(from, to);
+            return (
+              <line
+                key={i}
+                x1={`${fromPos.x + 4}%`}
+                y1={`${fromPos.y + 4}%`}
+                x2={`${toPos.x + 4}%`}
+                y2={`${toPos.y + 4}%`}
+                stroke={lit ? `hsl(45, 100%, 70%)` : `hsl(230, 15%, 25%)`}
+                strokeWidth={lit ? 2 : 1}
+                strokeDasharray={lit ? 'none' : '6 4'}
+                opacity={lit ? 0.6 : 0.3}
+                style={{ transition: 'all 1s ease' }}
+              />
+            );
+          })}
+        </svg>
+
+        {/* Biome Nodes */}
         {biomes.map((biome, i) => {
           const unlocked = isBiomeUnlocked(biome.id);
           const cleared = isCleared(biome.id);
+          const pos = biomePositions[biome.id];
+          const glowColor = biomeGlowColors[biome.id];
 
           return (
             <motion.button
               key={biome.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 + i * 0.1, type: 'spring', damping: 12 }}
               onClick={() => unlocked && !cleared && onSelectBiome(biome.id)}
               disabled={!unlocked || cleared}
-              className={`relative group text-left rounded-lg border-2 p-5 transition-all duration-300
-                bg-gradient-to-br ${biomeGradients[biome.id]}
-                ${biomeBorderColors[biome.id]}
-                ${!unlocked ? 'opacity-40 cursor-not-allowed' : cleared ? 'opacity-70 cursor-default' : 'cursor-pointer'}
-              `}
+              className="absolute group"
+              style={{
+                left: `${pos.x}%`,
+                top: `${pos.y}%`,
+                zIndex: 2,
+              }}
+              title={`${biome.name} — ${biome.bodySystem}`}
             >
-              {/* Status badge */}
-              <div className="absolute top-3 right-3">
-                {cleared ? (
-                  <CheckCircle className="h-5 w-5 text-glow-green" />
-                ) : !unlocked ? (
-                  <Lock className="h-5 w-5 text-muted-foreground" />
-                ) : (
-                  <ChevronRight className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+              {/* Glow ring */}
+              {(unlocked && !cleared) && (
+                <motion.div
+                  className="absolute -inset-2 rounded-full"
+                  style={{
+                    background: `radial-gradient(circle, hsl(${glowColor} / 0.4), transparent 70%)`,
+                  }}
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+              )}
+
+              {/* Biome image node */}
+              <div
+                className={`relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 transition-all duration-300 ${
+                  cleared
+                    ? 'border-glow-green/70'
+                    : unlocked
+                    ? 'border-primary/60 group-hover:border-primary cursor-pointer group-hover:scale-110'
+                    : 'border-muted-foreground/30 grayscale opacity-50'
+                }`}
+                style={{
+                  boxShadow: unlocked
+                    ? `0 0 20px hsl(${glowColor} / ${cleared ? 0.3 : 0.5})`
+                    : 'none',
+                }}
+              >
+                <img
+                  src={biomeImages[biome.id]}
+                  alt={biome.name}
+                  className="w-full h-full object-cover"
+                />
+                {/* Overlay for locked/cleared */}
+                {!unlocked && (
+                  <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
+                    <Lock className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                )}
+                {cleared && (
+                  <div className="absolute inset-0 bg-glow-green/20 flex items-center justify-center">
+                    <CheckCircle className="h-6 w-6 text-glow-green drop-shadow-lg" />
+                  </div>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">{biome.emoji}</span>
-                  <h3 className="font-display text-lg text-foreground">{biome.name}</h3>
-                </div>
-                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{biome.bodySystem}</p>
-                <p className="text-sm text-foreground/70 line-clamp-2">{biome.description}</p>
-                
-                {cleared && (
-                  <p className="text-xs text-glow-green font-medium">✓ Biome Cleared</p>
-                )}
+              {/* Label */}
+              <div className={`absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-center transition-all ${
+                unlocked ? 'opacity-100' : 'opacity-40'
+              }`}>
+                <p className="font-display text-[10px] md:text-xs text-foreground drop-shadow-lg leading-tight">
+                  {biome.name}
+                </p>
                 {unlocked && !cleared && (
-                  <p className="text-xs text-primary font-medium">Ready to explore →</p>
+                  <p className="text-[8px] md:text-[10px] text-primary font-medium">Explore →</p>
                 )}
               </div>
             </motion.button>
           );
         })}
+
+        {/* Floating particles on the map */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`particle-${i}`}
+            className="absolute w-1 h-1 rounded-full bg-estra"
+            style={{
+              left: `${10 + Math.random() * 80}%`,
+              top: `${10 + Math.random() * 80}%`,
+              zIndex: 3,
+            }}
+            animate={{
+              y: [0, -20, 0],
+              opacity: [0, 0.6 * state.estraGlow, 0],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 3,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
       </div>
     </div>
   );
