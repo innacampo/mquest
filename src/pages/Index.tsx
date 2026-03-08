@@ -7,7 +7,7 @@ import WorldMap from '@/components/game/WorldMap';
 import BiomeExplore from '@/components/game/BiomeExplore';
 import CompendiumView from '@/components/game/CompendiumView';
 import CraftingStation from '@/components/game/CraftingStation';
-import { BookOpen, Map, RotateCcw } from 'lucide-react';
+import { BookOpen, Map, RotateCcw, FlaskConical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type GameView = 'map' | 'biome' | 'compendium';
