@@ -282,8 +282,16 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
       setCombo(prev => Math.max(0, prev - 1));
     }
 
+    // Potion drain mechanic — 40% chance to auto-consume a potion
+    if (shouldDrainPotions && Math.random() < 0.4) {
+      if (state.inventory.remedyPotionBasic > 0) {
+        addInventory('remedyPotionBasic', -1);
+        setTimeout(() => addDmgNumber(1, 'taken', '15%'), 200);
+      }
+    }
+
     setPhase('quiz');
-  }, [biomeQuestions, usedQuestionIds, shouldScramble, shouldBlur, shouldShortenTimer, shouldFreezeAnswer, shouldDecayCombo]);
+  }, [biomeQuestions, usedQuestionIds, shouldScramble, shouldBlur, shouldShortenTimer, shouldFreezeAnswer, shouldDecayCombo, shouldDrainPotions, state.inventory.remedyPotionBasic]);
 
   // Mechanic effects during quiz (blur fades, text shrinks, fog grows, answers fade)
   useEffect(() => {
