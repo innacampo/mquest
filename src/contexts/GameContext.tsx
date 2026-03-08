@@ -114,7 +114,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data?.game_state && mounted) {
         const defaults = createInitialGameState();
-        setState({ ...defaults, ...(data.game_state as unknown as GameState) });
+        const saved = data.game_state as unknown as GameState;
+        // Deep-merge inventory so new keys aren't lost from older saves
+        setState({
+          ...defaults,
+          ...saved,
+          inventory: { ...defaults.inventory, ...(saved.inventory || {}) },
+        });
       } else {
         // No save in DB — check localStorage for migration, else fresh state
         const localSave = localStorage.getItem('menopause-quest-save');
