@@ -49,7 +49,8 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   const handleTalkToNpc = () => {
     if (!npcTalkedTo && biomeNpc) {
       setNpcTalkedTo(true);
-      addInventory('wellnessHerbs', 2);
+      const herbCount = state.character?.background === 'caregiver' ? 3 : 2;
+      addInventory('wellnessHerbs', herbCount);
     }
     setCurrentView('npc');
   };
