@@ -22,7 +22,7 @@ const recipes: Recipe[] = [
     name: 'Remedy Potion (Basic)',
     emoji: '🧪',
     description: 'A simple healing remedy crafted from herbs.',
-    effect: 'Unlocks NPC side quest. Awards 75 XP.',
+    effect: 'Restores 30 HP in battle. Awards 75 XP.',
     ingredients: [{ item: 'wellnessHerbs', label: 'Wellness Herbs', amount: 2 }],
     output: 'remedyPotionBasic',
     xpReward: 75,
