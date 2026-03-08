@@ -18,8 +18,8 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   const shrineMult = getShrineDiscoveryMultiplier(state.character);
   const [currentView, setCurrentView] = useState<'explore' | 'battle' | 'npc' | 'shrine'>('explore');
   const [selectedMonster, setSelectedMonster] = useState<string | null>(null);
-  const [shrineVisited, setShrineVisited] = useState(false);
-  const [npcTalkedTo, setNpcTalkedTo] = useState(false);
+  const [justVisitedShrine, setJustVisitedShrine] = useState(false);
+  const [justTalkedNpc, setJustTalkedNpc] = useState(false);
 
   const biome = biomes.find(b => b.id === biomeId)!;
   const biomeMonsters = monsters.filter(m => m.biome === biomeId);
