@@ -40,8 +40,12 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
     if (!shrineVisited) {
       setShrineVisited(true);
       addXp(Math.round(50 * xpMult));
-      const scrollCount = Math.round(1 * shrineMult);
-      addInventory('knowledgeScrolls', scrollCount);
+      // Explorer gets 2 scrolls + bonus bloom essence; others get 1 scroll
+      const isExplorer = state.character?.background === 'explorer';
+      addInventory('knowledgeScrolls', isExplorer ? 2 : 1);
+      if (isExplorer) {
+        addInventory('bloomEssence', 1);
+      }
       const factEntry = state.compendium.find(e => e.type === 'fact' && e.biome === biomeId && !e.unlocked);
       if (factEntry) unlockCompendiumEntry(factEntry.id);
     }
@@ -51,8 +55,15 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   const handleTalkToNpc = () => {
     if (!npcTalkedTo && biomeNpc) {
       setNpcTalkedTo(true);
-      const herbCount = state.character?.background === 'caregiver' ? 3 : 2;
+      // Caregiver gets extra herbs; Advocate gets bonus XP and wellness from NPCs
+      const isAdvocate = state.character?.background === 'advocate';
+      const isCaregiver = state.character?.background === 'caregiver';
+      const herbCount = isCaregiver ? 3 : 2;
       addInventory('wellnessHerbs', herbCount);
+      if (isAdvocate) {
+        addXp(Math.round(30 * xpMult));
+        addInventory('wellnessHerbs', 1); // extra herb from deeper conversation
+      }
       meetNpc(biomeNpc.name);
     }
     setCurrentView('npc');
