@@ -8,6 +8,9 @@ import bgCrystalCaverns from '@/assets/battle-bg-crystal-caverns.jpg';
 import bgHeartland from '@/assets/battle-bg-heartland.jpg';
 import bgBloomGarden from '@/assets/battle-bg-bloom-garden.jpg';
 
+// Title screen
+import titleScreenBg from '@/assets/title-screen-bg.jpg';
+
 // Player
 import charPlayer from '@/assets/char-player.png';
 
@@ -23,6 +26,14 @@ import monsterColdCertainty from '@/assets/monster-cold-certainty.png';
 import monsterFogOfShame from '@/assets/monster-fog-of-shame.png';
 import monsterHeartbreakMyth from '@/assets/monster-heartbreak-myth.png';
 import monsterGrandSilencer from '@/assets/monster-grand-silencer.png';
+
+// NPC portraits
+import npcElena from '@/assets/npc-elena.png';
+import npcDrMira from '@/assets/npc-dr-mira.png';
+import npcYuki from '@/assets/npc-yuki.png';
+import npcPriya from '@/assets/npc-priya.png';
+import npcSaoirse from '@/assets/npc-saoirse.png';
+import npcRosa from '@/assets/npc-rosa.png';
 
 export const battleBackgrounds: Record<BiomeId, string> = {
   'fever-peaks': bgFeverPeaks,
@@ -47,4 +58,14 @@ export const monsterSprites: Record<string, string> = {
   'grand-silencer': monsterGrandSilencer,
 };
 
+export const npcPortraits: Record<string, string> = {
+  'Elena': npcElena,
+  'Dr. Mira': npcDrMira,
+  'Yuki': npcYuki,
+  'Priya': npcPriya,
+  'Saoirse': npcSaoirse,
+  'Rosa': npcRosa,
+};
+
 export const playerSprite = charPlayer;
+export const titleBackground = titleScreenBg;

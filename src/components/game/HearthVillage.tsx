@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
 import { npcs, getWorldState } from '@/lib/gameData';
+import { npcPortraits } from '@/lib/battleAssets';
 import CraftingStation from './CraftingStation';
 import CompendiumView from './CompendiumView';
 import { FlaskConical, BookOpen, Flower2, Scroll, Home, MessageCircle, Heart, Sparkles } from 'lucide-react';
@@ -22,7 +23,7 @@ const HearthVillage: React.FC<HearthVillageProps> = ({ onGoToMap }) => {
 
   const drMira = npcs.find(n => n.name === 'Dr. Mira')!;
   const biomesCleared = state.biomesCleared.length;
-  const gardenUnlocked = state.estraGlow >= 0.5; // State 3: Healing
+  const gardenUnlocked = state.estraGlow >= 0.5;
   const npcReflections = npcs.filter(n => state.biomesCleared.includes(n.biome as any));
 
   const hubZones = [
@@ -89,10 +90,19 @@ const HearthVillage: React.FC<HearthVillageProps> = ({ onGoToMap }) => {
             </Button>
           </div>
 
-          {/* Dr. Mira NPC */}
+          {/* Dr. Mira NPC with portrait */}
           <div className="rounded-xl bg-card/60 border border-glow-teal/20 p-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-glow-teal/20 flex items-center justify-center text-2xl">👩‍⚕️</div>
+            <div className="flex items-center gap-4">
+              {npcPortraits['Dr. Mira'] ? (
+                <img
+                  src={npcPortraits['Dr. Mira']}
+                  alt="Dr. Mira"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-glow-teal/40"
+                  style={{ boxShadow: '0 0 15px hsla(180 60% 50% / 0.2)' }}
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-glow-teal/20 flex items-center justify-center text-2xl">👩‍⚕️</div>
+              )}
               <div>
                 <h3 className="font-display text-lg">Dr. Mira</h3>
                 <p className="text-xs text-muted-foreground">Village Healer • Evidence-Based Medicine</p>
@@ -160,8 +170,16 @@ const HearthVillage: React.FC<HearthVillageProps> = ({ onGoToMap }) => {
                   transition={{ delay: i * 0.15 }}
                   className="rounded-xl bg-glow-green/5 border border-glow-green/20 p-5 space-y-3"
                 >
-                  <div className="flex items-center gap-2">
-                    <Heart className="h-4 w-4 text-glow-rose" />
+                  <div className="flex items-center gap-3">
+                    {npcPortraits[npc.name] ? (
+                      <img
+                        src={npcPortraits[npc.name]}
+                        alt={npc.name}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-glow-green/30"
+                      />
+                    ) : (
+                      <Heart className="h-4 w-4 text-glow-rose" />
+                    )}
                     <h3 className="font-display text-sm">{npc.name}{npc.age ? `, ${npc.age}` : ''}</h3>
                   </div>
                   <div className="space-y-2">
@@ -267,7 +285,7 @@ const HearthVillage: React.FC<HearthVillageProps> = ({ onGoToMap }) => {
             ))}
           </div>
 
-          {/* Letters from Mum placeholder */}
+          {/* Letters from Mum */}
           {biomesCleared > 0 && (
             <motion.div
               initial={{ opacity: 0 }}

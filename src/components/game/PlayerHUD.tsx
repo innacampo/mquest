@@ -1,7 +1,8 @@
 import { useGame } from '@/contexts/GameContext';
 import { xpForLevel } from '@/lib/gameData';
+import { playerSprite } from '@/lib/battleAssets';
 import EstraCompanion from './EstraCompanion';
-import { Flame, BookOpen, Heart, Shield } from 'lucide-react';
+import { BookOpen, Shield } from 'lucide-react';
 
 const PlayerHUD = () => {
   const { state } = useGame();
@@ -13,6 +14,13 @@ const PlayerHUD = () => {
   return (
     <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card/80 backdrop-blur-sm px-4 py-3">
       <div className="flex items-center gap-4">
+        {/* Player avatar */}
+        <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-primary/40 flex-shrink-0"
+          style={{ boxShadow: '0 0 10px hsla(35 90% 55% / 0.2)' }}
+        >
+          <img src={playerSprite} alt="Player" className="w-full h-full object-cover" />
+        </div>
+
         <EstraCompanion />
         
         <div className="h-8 w-px bg-border" />
@@ -38,7 +46,7 @@ const PlayerHUD = () => {
       {/* Stats */}
       <div className="flex items-center gap-3 text-xs">
         <div className="flex items-center gap-1" title="Estra Bond">
-          <Heart className="h-3.5 w-3.5 text-glow-rose" />
+          <span>❤️</span>
           <span>{state.estraBond}/5</span>
         </div>
         <div className="flex items-center gap-1" title="Hormone Crystals">
