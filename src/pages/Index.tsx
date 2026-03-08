@@ -74,6 +74,10 @@ const GameScreen = () => {
     return <TitleScreen onStart={() => { setView(state.character ? 'map' : 'character'); audio.playChime(); }} />;
   }
 
+  if (view === 'ending') {
+    return <EndingScreen onRestart={() => setView('map')} />;
+  }
+
   if (view === 'character') {
     return (
       <CharacterCreation
