@@ -42,6 +42,10 @@ const GameScreen = () => {
     audio.playVictory();
   };
 
+  if (view === 'title') {
+    return <TitleScreen onStart={() => { setView('map'); audio.playChime(); }} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-mystical">
       {/* Ambient particles */}
