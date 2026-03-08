@@ -116,6 +116,11 @@ const GameScreen = () => {
               <CompendiumView onClose={() => setView('map')} />
             </motion.div>
           )}
+          {view === 'crafting' && (
+            <motion.div key="crafting" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <CraftingStation onClose={() => setView('map')} />
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
     </div>
