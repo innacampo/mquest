@@ -251,10 +251,9 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       }
 
       if (newPlayerHp <= 0) {
-        setTimeout(() => setPhase('knockout'), 6000);
+        setPendingContinue(() => () => setPhase('knockout'));
       } else {
-        // Show monster attack phase briefly
-        setTimeout(() => setPhase('monster_attack'), 6000);
+        setPendingContinue(() => () => setPhase('monster_attack'));
       }
     }
   };
