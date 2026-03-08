@@ -55,8 +55,15 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   const handleTalkToNpc = () => {
     if (!npcTalkedTo && biomeNpc) {
       setNpcTalkedTo(true);
-      const herbCount = state.character?.background === 'caregiver' ? 3 : 2;
+      // Caregiver gets extra herbs; Advocate gets bonus XP and wellness from NPCs
+      const isAdvocate = state.character?.background === 'advocate';
+      const isCaregiver = state.character?.background === 'caregiver';
+      const herbCount = isCaregiver ? 3 : 2;
       addInventory('wellnessHerbs', herbCount);
+      if (isAdvocate) {
+        addXp(Math.round(30 * xpMult));
+        addInventory('wellnessHerbs', 1); // extra herb from deeper conversation
+      }
       meetNpc(biomeNpc.name);
     }
     setCurrentView('npc');
