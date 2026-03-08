@@ -460,6 +460,7 @@ export const createInitialGameState = (): GameState => ({
     compendiumSeal: 0,
   },
   estraGlow: 0.05,
+  character: null,
 });
 
 // ============ XP / LEVEL HELPERS ============
