@@ -310,7 +310,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
           const available = scrambledOptions
             .map((_, i) => i)
             .filter(i => !prev.has(i));
-          if (available.length > 0 && Math.random() < 0.15) {
+          if (available.length > 0 && Math.random() < 0.06) {
             const next = new Set(prev);
             next.add(available[Math.floor(Math.random() * available.length)]);
             return next;
