@@ -9,11 +9,12 @@ import HearthVillage from '@/components/game/HearthVillage';
 import AudioControls from '@/components/game/AudioControls';
 import TitleScreen from '@/components/game/TitleScreen';
 import CharacterCreation from '@/components/game/CharacterCreation';
+import EndingScreen from '@/components/game/EndingScreen';
 import { useAudio } from '@/hooks/useAudio';
 import { Map, RotateCcw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-type GameView = 'title' | 'character' | 'map' | 'biome' | 'village';
+type GameView = 'title' | 'character' | 'map' | 'biome' | 'village' | 'ending';
 
 const GameScreen = () => {
   const { state, resetGame, enterBiome, leaveBiome, setCharacter, isLoading } = useGame();
