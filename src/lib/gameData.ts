@@ -54,6 +54,7 @@ export interface CompendiumEntry {
   biome?: BiomeId;
   monsterId?: string;  // links bestiary entries to monsters
   npcName?: string;    // links bio entries to NPCs
+  sealOnly?: boolean;  // only unlockable via Compendium Seal
   unlocked: boolean;
 }
 
