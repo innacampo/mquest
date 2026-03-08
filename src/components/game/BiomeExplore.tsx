@@ -40,6 +40,8 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
     if (!shrineVisited) {
       setShrineVisited(true);
       addXp(Math.round(50 * xpMult));
+      const scrollCount = Math.round(1 * shrineMult);
+      addInventory('knowledgeScrolls', scrollCount);
       const factEntry = state.compendium.find(e => e.type === 'fact' && e.biome === biomeId && !e.unlocked);
       if (factEntry) unlockCompendiumEntry(factEntry.id);
     }
