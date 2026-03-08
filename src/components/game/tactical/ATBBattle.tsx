@@ -53,10 +53,10 @@ const MONSTER_MECHANICS: Record<string, MonsterMechanic> = {
     effect: 'shrink_text',
   },
   'shame-tide': {
-    id: 'shame-tide', name: 'Tidal Shame',
-    description: 'Your HP bar is hidden — trust your instincts!',
-    icon: <EyeOff className="h-3.5 w-3.5" />,
-    effect: 'hide_player_hp',
+    id: 'shame-tide', name: 'Tidal Drain',
+    description: 'Each turn may consume a potion automatically!',
+    icon: <FlaskConical className="h-3.5 w-3.5" />,
+    effect: 'potion_drain',
   },
   'brittle-giant': {
     id: 'brittle-giant', name: 'Crumbling Choices',
