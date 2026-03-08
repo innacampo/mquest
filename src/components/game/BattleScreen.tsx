@@ -962,13 +962,10 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
           <motion.div key="knockout" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center min-h-[400px] space-y-6 relative">
             <KnockoutShatter />
-            <motion.div
-              animate={{ opacity: [1, 0.3] }}
-              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
-              className="text-6xl"
-            >
-              💔
-            </motion.div>
+            <div className="flex items-center gap-8">
+              <BattlePortrait emoji={monster.emoji} name={monster.name} state="charge" variant="monster" size="md" surgeLevel={monsterSurge} />
+              <PlayerBattlePortrait name={state.character?.name || 'Lyra'} background={state.character?.background} state="defeated" size="md" />
+            </div>
             <h2 className="font-display text-2xl text-destructive">Knocked Out!</h2>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
               {monster.name} was too powerful this time. Retreat, heal up, and return stronger.
