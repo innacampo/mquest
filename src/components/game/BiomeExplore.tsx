@@ -129,7 +129,7 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
               </>
             )}
           </div>
-          {shrineVisited && <p className="text-xs text-glow-teal">✨ +50 XP • Compendium entry unlocked</p>}
+          {shrineVisited && <p className="text-xs text-glow-teal">✨ +50 XP • 📜 +1 Scroll • Compendium entry unlocked</p>}
           <Button variant="outline" onClick={() => setCurrentView('explore')}>
             <ArrowLeft className="h-4 w-4 mr-2" /> Return
           </Button>
