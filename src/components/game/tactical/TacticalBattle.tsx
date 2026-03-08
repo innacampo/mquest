@@ -286,8 +286,8 @@ const TacticalBattle: React.FC<TacticalBattleProps> = ({ monster, onVictory, onR
 
     if (correct) {
       setTotalCorrect(prev => prev + 1);
-      // Unlock attack
-      setTimeout(() => showAttackRange(), 1200);
+      // Correct answer = attack lands directly
+      setTimeout(() => executePlayerAttack(), 1200);
     } else {
       // Skip turn
       setTimeout(() => startMonsterTurn(), 1500);
