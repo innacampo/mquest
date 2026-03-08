@@ -7,21 +7,23 @@ import WorldMap from '@/components/game/WorldMap';
 import BiomeExplore from '@/components/game/BiomeExplore';
 import HearthVillage from '@/components/game/HearthVillage';
 import AudioControls from '@/components/game/AudioControls';
+import TitleScreen from '@/components/game/TitleScreen';
 import { useAudio } from '@/hooks/useAudio';
 import { Map, RotateCcw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-type GameView = 'map' | 'biome' | 'village';
+type GameView = 'title' | 'map' | 'biome' | 'village';
 
 const GameScreen = () => {
   const { state, resetGame, enterBiome, leaveBiome } = useGame();
-  const [view, setView] = useState<GameView>('map');
+  const [view, setView] = useState<GameView>('title');
   const [activeBiome, setActiveBiome] = useState<BiomeId | null>(null);
   const audio = useAudio();
 
   // Switch ambient audio based on view
   useEffect(() => {
-    if (view === 'map') audio.setScene('map');
+    if (view === 'title') audio.setScene('none');
+    else if (view === 'map') audio.setScene('map');
     else if (view === 'village') audio.setScene('village');
     else if (view === 'biome') audio.setScene('battle');
   }, [view]);
@@ -39,6 +41,10 @@ const GameScreen = () => {
     setView('village');
     audio.playVictory();
   };
+
+  if (view === 'title') {
+    return <TitleScreen onStart={() => { setView('map'); audio.playChime(); }} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-mystical">
