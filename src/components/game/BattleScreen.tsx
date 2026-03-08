@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
 import { Monster, Question, questions, BiomeId, getSpecialtyDamageMultiplier, getXpMultiplier } from '@/lib/gameData';
-import { Swords, Timer, Zap, Heart, ArrowLeft } from 'lucide-react';
+import { Swords, Timer, Zap, Heart, ArrowLeft, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface BattleScreenProps {
