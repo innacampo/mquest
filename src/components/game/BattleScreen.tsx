@@ -558,7 +558,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
             <div className="flex items-center justify-between gap-4">
               {/* Monster */}
               <div className="flex items-center gap-3 flex-1">
-                <span className="text-2xl">{monster.emoji}</span>
+                <BattlePortrait emoji={monster.emoji} name="" state={monsterPortraitState} variant="monster" size="sm" surgeLevel={monsterSurge} />
                 <div className="flex-1">
                   <p className="font-display text-xs">{monster.name}</p>
                   <div className="h-2 w-full max-w-[140px] rounded-full bg-muted overflow-hidden">
