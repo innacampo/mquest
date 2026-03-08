@@ -223,6 +223,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       setStreak(prev => prev + 1);
       setTotalCorrect(prev => prev + 1);
       setFlashGold(prev => prev + 1);
+      setPlayerPortraitState('charge');
       // Go to combo phase
       setTimeout(() => {
         setPhase('combo');
