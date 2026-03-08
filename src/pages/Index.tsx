@@ -16,7 +16,7 @@ type GameView = 'title' | 'map' | 'biome' | 'village';
 
 const GameScreen = () => {
   const { state, resetGame, enterBiome, leaveBiome } = useGame();
-  const [view, setView] = useState<GameView>('map');
+  const [view, setView] = useState<GameView>('title');
   const [activeBiome, setActiveBiome] = useState<BiomeId | null>(null);
   const audio = useAudio();
 
