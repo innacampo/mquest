@@ -406,9 +406,13 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     switch (item) {
       case 'remedyPotionBasic':
         setPlayerHp(prev => Math.min(PLAYER_MAX_HP, prev + 30));
+        setFlashGreen(prev => prev + 1);
+        addDamageNumber(30, 'heal');
         break;
       case 'remedyPotionEnhanced':
         setPlayerHp(prev => Math.min(PLAYER_MAX_HP, prev + 60));
+        setFlashGreen(prev => prev + 1);
+        addDamageNumber(60, 'heal');
         break;
       case 'clarityElixir':
         setActiveEffect('none');
