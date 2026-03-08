@@ -278,7 +278,7 @@ export const monsters: Monster[] = [
 
 // ============ QUESTIONS ============
 export const questions: Question[] = [
-  // FEVER PEAKS
+  // ========== FEVER PEAKS ==========
   {
     id: 'fp-1', biome: 'fever-peaks', format: 'mc', difficulty: 'easy',
     text: 'Which organ produces most of the body\'s estrogen?',
@@ -314,7 +314,43 @@ export const questions: Question[] = [
     correctAnswer: 2,
     explanation: 'While multiple hormones change, declining estrogen is the primary driver of most menopausal symptoms.',
   },
-  // FOG MARSHES
+  {
+    id: 'fp-6', biome: 'fever-peaks', format: 'mc', difficulty: 'easy',
+    text: 'How long can a single hot flash typically last?',
+    options: ['1–2 seconds', '30 seconds to 5 minutes', 'About an hour', 'All day'],
+    correctAnswer: 1,
+    explanation: 'Most hot flashes last between 30 seconds and 5 minutes, though the aftereffects (sweating, chills) may linger longer.',
+  },
+  {
+    id: 'fp-7', biome: 'fever-peaks', format: 'mc', difficulty: 'medium',
+    text: 'Night sweats are:',
+    options: ['Unrelated to menopause', 'Hot flashes that occur during sleep', 'Caused by too many blankets', 'Only a psychological symptom'],
+    correctAnswer: 1,
+    explanation: 'Night sweats are hot flashes that happen during sleep. They can disrupt sleep quality and contribute to fatigue.',
+  },
+  {
+    id: 'fp-8', biome: 'fever-peaks', format: 'mc', difficulty: 'hard',
+    text: 'Which part of the brain acts as the body\'s thermostat?',
+    options: ['Cerebellum', 'Amygdala', 'Hypothalamus', 'Hippocampus'],
+    correctAnswer: 2,
+    explanation: 'The hypothalamus regulates body temperature. Estrogen decline makes it more sensitive, triggering hot flashes from small temperature changes.',
+  },
+  {
+    id: 'fp-9', biome: 'fever-peaks', format: 'mc', difficulty: 'easy',
+    text: 'Menopause is officially confirmed after how many months without a period?',
+    options: ['3 months', '6 months', '12 months', '24 months'],
+    correctAnswer: 2,
+    explanation: 'Menopause is confirmed after 12 consecutive months without a menstrual period.',
+  },
+  {
+    id: 'fp-10', biome: 'fever-peaks', format: 'mc', difficulty: 'medium',
+    text: 'Which lifestyle change can help reduce hot flash frequency?',
+    options: ['Eating spicy food', 'Avoiding triggers like caffeine and alcohol', 'Wearing heavy layers', 'Taking very hot baths'],
+    correctAnswer: 1,
+    explanation: 'Common triggers include caffeine, alcohol, spicy foods, and hot environments. Avoiding these can reduce hot flash frequency.',
+  },
+
+  // ========== FOG MARSHES ==========
   {
     id: 'fm-1', biome: 'fog-marshes', format: 'mc', difficulty: 'easy',
     text: '"Brain fog" during perimenopause is caused by:',
@@ -343,7 +379,43 @@ export const questions: Question[] = [
     correctAnswer: 1,
     explanation: 'Exercise improves blood flow to the brain, and quality sleep supports cognitive function during hormonal changes.',
   },
-  // MOOD TIDES
+  {
+    id: 'fm-5', biome: 'fog-marshes', format: 'mc', difficulty: 'easy',
+    text: 'Which best describes "brain fog"?',
+    options: ['A medical diagnosis', 'Difficulty concentrating, forgetfulness, and mental cloudiness', 'A type of headache', 'Loss of consciousness'],
+    correctAnswer: 1,
+    explanation: 'Brain fog refers to cognitive symptoms like poor concentration, forgetfulness, and difficulty thinking clearly.',
+  },
+  {
+    id: 'fm-6', biome: 'fog-marshes', format: 'mc', difficulty: 'medium',
+    text: 'Estrogen receptors in the brain are concentrated in areas responsible for:',
+    options: ['Vision and hearing', 'Memory and executive function', 'Taste and smell', 'Reflexes only'],
+    correctAnswer: 1,
+    explanation: 'The hippocampus and prefrontal cortex, key areas for memory and decision-making, are rich in estrogen receptors.',
+  },
+  {
+    id: 'fm-7', biome: 'fog-marshes', format: 'mc', difficulty: 'hard',
+    text: 'Research suggests perimenopausal brain fog is most similar to:',
+    options: ['Permanent brain damage', 'The cognitive effects of sleep deprivation', 'Schizophrenia', 'Concussion'],
+    correctAnswer: 1,
+    explanation: 'Studies show perimenopausal cognitive symptoms resemble those of sleep deprivation — temporary and reversible.',
+  },
+  {
+    id: 'fm-8', biome: 'fog-marshes', format: 'mc', difficulty: 'easy',
+    text: 'Word-finding difficulty during perimenopause is:',
+    options: ['A sign of serious decline', 'Very common and usually temporary', 'Extremely rare', 'Only reported by women over 60'],
+    correctAnswer: 1,
+    explanation: 'Many perimenopausal women report tip-of-the-tongue moments. This is a well-documented, usually temporary symptom.',
+  },
+  {
+    id: 'fm-9', biome: 'fog-marshes', format: 'mc', difficulty: 'medium',
+    text: 'Which activity has been shown to improve cognitive function during perimenopause?',
+    options: ['Watching more TV', 'Aerobic exercise', 'Reducing all mental stimulation', 'Eating more sugar'],
+    correctAnswer: 1,
+    explanation: 'Aerobic exercise increases blood flow to the brain and promotes neuroplasticity, helping counteract brain fog.',
+  },
+
+  // ========== MOOD TIDES ==========
   {
     id: 'mt-1', biome: 'mood-tides', format: 'mc', difficulty: 'easy',
     text: 'Mood changes during perimenopause are primarily caused by:',
@@ -365,7 +437,43 @@ export const questions: Question[] = [
     correctAnswer: 1,
     explanation: 'Estrogen plays a role in regulating serotonin and norepinephrine, key neurotransmitters involved in mood regulation.',
   },
-  // CRYSTAL CAVERNS
+  {
+    id: 'mt-4', biome: 'mood-tides', format: 'mc', difficulty: 'easy',
+    text: 'Irritability during perimenopause is:',
+    options: ['A character flaw', 'A well-documented symptom with biological causes', 'Only experienced by some personality types', 'Not a real symptom'],
+    correctAnswer: 1,
+    explanation: 'Irritability is one of the most commonly reported perimenopausal symptoms, driven by hormonal fluctuations.',
+  },
+  {
+    id: 'mt-5', biome: 'mood-tides', format: 'mc', difficulty: 'medium',
+    text: 'Anxiety during perimenopause can be caused by:',
+    options: ['Only life stress', 'Fluctuating progesterone and its effect on GABA', 'Overthinking', 'Lack of willpower'],
+    correctAnswer: 1,
+    explanation: 'Progesterone has a calming effect through GABA receptors. When progesterone fluctuates, anxiety can increase.',
+  },
+  {
+    id: 'mt-6', biome: 'mood-tides', format: 'mc', difficulty: 'easy',
+    text: 'Women with a history of depression have:',
+    options: ['No increased risk during perimenopause', 'A higher risk of mood symptoms during the transition', 'Guaranteed severe depression', 'Nothing to worry about'],
+    correctAnswer: 1,
+    explanation: 'Previous depression is a risk factor for perimenopausal mood symptoms, though outcomes vary widely.',
+  },
+  {
+    id: 'mt-7', biome: 'mood-tides', format: 'mc', difficulty: 'hard',
+    text: 'Which is NOT typically associated with perimenopausal mood changes?',
+    options: ['Anxiety', 'Irritability', 'Persistent hallucinations', 'Tearfulness'],
+    correctAnswer: 2,
+    explanation: 'Anxiety, irritability, and tearfulness are common perimenopausal symptoms. Persistent hallucinations are not and should be evaluated separately.',
+  },
+  {
+    id: 'mt-8', biome: 'mood-tides', format: 'mc', difficulty: 'medium',
+    text: 'Social support during perimenopause:',
+    options: ['Has no proven benefit', 'Is a sign of weakness', 'Is strongly linked to better mental health outcomes', 'Should be avoided'],
+    correctAnswer: 2,
+    explanation: 'Research consistently shows social connection and support improve mental health during the menopausal transition.',
+  },
+
+  // ========== CRYSTAL CAVERNS ==========
   {
     id: 'cc-1', biome: 'crystal-caverns', format: 'mc', difficulty: 'easy',
     text: 'What type of exercise is best for bone health?',
@@ -387,7 +495,43 @@ export const questions: Question[] = [
     correctAnswer: 1,
     explanation: 'Calcium is the building block of bone, and Vitamin D is essential for calcium absorption.',
   },
-  // HEARTLAND
+  {
+    id: 'cc-4', biome: 'crystal-caverns', format: 'mc', difficulty: 'easy',
+    text: 'Osteoporosis means:',
+    options: ['Strong bones', 'Porous, weakened bones', 'Inflamed joints', 'Muscle deterioration'],
+    correctAnswer: 1,
+    explanation: 'Osteoporosis literally means "porous bone" — a condition where bones become fragile and more prone to fracture.',
+  },
+  {
+    id: 'cc-5', biome: 'crystal-caverns', format: 'mc', difficulty: 'hard',
+    text: 'In the first 5 years after menopause, women can lose up to what percentage of bone density?',
+    options: ['1–2%', '5–10%', 'Up to 20%', 'Over 50%'],
+    correctAnswer: 2,
+    explanation: 'Women can lose up to 20% of their bone density in the 5–7 years following menopause due to estrogen decline.',
+  },
+  {
+    id: 'cc-6', biome: 'crystal-caverns', format: 'mc', difficulty: 'easy',
+    text: 'A DEXA scan measures:',
+    options: ['Blood pressure', 'Bone mineral density', 'Hormone levels', 'Muscle mass'],
+    correctAnswer: 1,
+    explanation: 'DEXA (Dual-energy X-ray Absorptiometry) is the standard test for measuring bone mineral density.',
+  },
+  {
+    id: 'cc-7', biome: 'crystal-caverns', format: 'mc', difficulty: 'medium',
+    text: 'Which of these increases the risk of osteoporosis?',
+    options: ['Regular strength training', 'Smoking and excessive alcohol', 'Eating dairy products', 'Walking daily'],
+    correctAnswer: 1,
+    explanation: 'Smoking and excessive alcohol both accelerate bone loss and increase fracture risk.',
+  },
+  {
+    id: 'cc-8', biome: 'crystal-caverns', format: 'mc', difficulty: 'medium',
+    text: 'How much calcium per day do postmenopausal women typically need?',
+    options: ['200 mg', '500 mg', '1,200 mg', '3,000 mg'],
+    correctAnswer: 2,
+    explanation: 'Most guidelines recommend 1,200 mg of calcium daily for postmenopausal women, ideally from food sources.',
+  },
+
+  // ========== HEARTLAND ==========
   {
     id: 'hl-1', biome: 'heartland', format: 'mc', difficulty: 'easy',
     text: 'How does menopause affect cardiovascular risk?',
@@ -408,6 +552,99 @@ export const questions: Question[] = [
     options: ['LDL cholesterol decreases', 'HDL cholesterol increases', 'LDL cholesterol increases', 'Triglycerides decrease'],
     correctAnswer: 2,
     explanation: 'After menopause, LDL ("bad") cholesterol often increases while HDL ("good") cholesterol may decrease.',
+  },
+  {
+    id: 'hl-4', biome: 'heartland', format: 'mc', difficulty: 'easy',
+    text: 'Estrogen helps blood vessels by:',
+    options: ['Making them rigid', 'Keeping them flexible and dilated', 'Shrinking them', 'Having no effect on them'],
+    correctAnswer: 1,
+    explanation: 'Estrogen promotes blood vessel elasticity and helps them dilate, supporting healthy blood flow.',
+  },
+  {
+    id: 'hl-5', biome: 'heartland', format: 'mc', difficulty: 'medium',
+    text: 'Heart disease symptoms in women often differ from men. Women may experience:',
+    options: ['Only chest pain', 'Jaw pain, nausea, and unusual fatigue', 'No symptoms at all ever', 'Only arm pain'],
+    correctAnswer: 1,
+    explanation: 'Women\'s heart attack symptoms can be subtler — including jaw pain, nausea, shortness of breath, and extreme fatigue.',
+  },
+  {
+    id: 'hl-6', biome: 'heartland', format: 'mc', difficulty: 'easy',
+    text: 'Which lifestyle factor most reduces cardiovascular risk after menopause?',
+    options: ['Taking more naps', 'Regular physical activity', 'Eating more red meat', 'Avoiding sunlight'],
+    correctAnswer: 1,
+    explanation: 'Regular exercise strengthens the heart, improves cholesterol, and helps maintain healthy blood pressure.',
+  },
+  {
+    id: 'hl-7', biome: 'heartland', format: 'mc', difficulty: 'hard',
+    text: 'Blood pressure after menopause tends to:',
+    options: ['Decrease significantly', 'Stay exactly the same', 'Rise due to loss of estrogen\'s vasodilating effect', 'Become unpredictable randomly'],
+    correctAnswer: 2,
+    explanation: 'Without estrogen\'s vasodilating effect, blood vessels become less flexible, often leading to higher blood pressure.',
+  },
+  {
+    id: 'hl-8', biome: 'heartland', format: 'mc', difficulty: 'medium',
+    text: 'The Mediterranean diet is recommended for heart health because it:',
+    options: ['Eliminates all fat', 'Is rich in healthy fats, fiber, and antioxidants', 'Focuses on red meat', 'Avoids all carbohydrates'],
+    correctAnswer: 1,
+    explanation: 'The Mediterranean diet emphasizes olive oil, fish, vegetables, and whole grains — all linked to better cardiovascular outcomes.',
+  },
+
+  // ========== BLOOM GARDEN ==========
+  {
+    id: 'bg-1', biome: 'bloom-garden', format: 'mc', difficulty: 'easy',
+    text: 'Hormone Replacement Therapy (HRT) can help manage:',
+    options: ['Only hot flashes', 'Multiple menopause symptoms including hot flashes, bone loss, and mood changes', 'No menopause symptoms', 'Only weight gain'],
+    correctAnswer: 1,
+    explanation: 'HRT can effectively treat hot flashes, vaginal dryness, bone loss, and mood symptoms by supplementing declining hormones.',
+  },
+  {
+    id: 'bg-2', biome: 'bloom-garden', format: 'mc', difficulty: 'medium',
+    text: 'Self-care during menopause is:',
+    options: ['Selfish and indulgent', 'A medically supported strategy for managing symptoms', 'Only for people with severe symptoms', 'A waste of time'],
+    correctAnswer: 1,
+    explanation: 'Self-care practices — exercise, sleep hygiene, nutrition, and stress management — are evidence-based strategies for symptom management.',
+  },
+  {
+    id: 'bg-3', biome: 'bloom-garden', format: 'mc', difficulty: 'easy',
+    text: 'After the menopausal transition, many women report:',
+    options: ['Only negative changes', 'A sense of freedom and renewed purpose', 'Complete loss of identity', 'Nothing changes'],
+    correctAnswer: 1,
+    explanation: 'Many postmenopausal women report feeling more confident, free, and purposeful — a phase sometimes called the "second spring."',
+  },
+  {
+    id: 'bg-4', biome: 'bloom-garden', format: 'mc', difficulty: 'medium',
+    text: 'Which of these is an evidence-based complementary approach for menopause symptoms?',
+    options: ['Mindfulness meditation', 'Ignoring all symptoms', 'Extreme calorie restriction', 'Avoiding all physical activity'],
+    correctAnswer: 0,
+    explanation: 'Mindfulness meditation has shown benefits for managing hot flashes, anxiety, and sleep disturbances during menopause.',
+  },
+  {
+    id: 'bg-5', biome: 'bloom-garden', format: 'mc', difficulty: 'hard',
+    text: 'The concept of "postmenopausal zest" was coined by:',
+    options: ['Sigmund Freud', 'Margaret Mead', 'Florence Nightingale', 'Marie Curie'],
+    correctAnswer: 1,
+    explanation: 'Anthropologist Margaret Mead described "postmenopausal zest" — the increase in energy and confidence many women feel after menopause.',
+  },
+  {
+    id: 'bg-6', biome: 'bloom-garden', format: 'mc', difficulty: 'easy',
+    text: 'Good sleep hygiene during menopause includes:',
+    options: ['Scrolling on your phone in bed', 'Keeping a cool, dark room and consistent schedule', 'Sleeping whenever you feel like it', 'Drinking wine before bed'],
+    correctAnswer: 1,
+    explanation: 'A cool room helps with night sweats, darkness promotes melatonin, and consistency trains your circadian rhythm.',
+  },
+  {
+    id: 'bg-7', biome: 'bloom-garden', format: 'mc', difficulty: 'medium',
+    text: 'Talking openly about menopause is important because:',
+    options: ['It\'s trendy', 'It reduces stigma and helps others seek support', 'It doesn\'t matter', 'It makes things worse'],
+    correctAnswer: 1,
+    explanation: 'Breaking the silence around menopause reduces shame, normalizes the experience, and encourages women to seek help.',
+  },
+  {
+    id: 'bg-8', biome: 'bloom-garden', format: 'mc', difficulty: 'hard',
+    text: 'The endocrine system during menopause:',
+    options: ['Shuts down completely', 'Reorganizes — adrenal glands and fat tissue take over some hormone production', 'Functions identically to before', 'Only affects reproduction'],
+    correctAnswer: 1,
+    explanation: 'After menopause, the adrenal glands and adipose tissue become important sources of estrogen, though at lower levels.',
   },
 ];
 
