@@ -821,16 +821,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {phase === 'monster_attack' && (
           <motion.div key="monster_attack" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="flex flex-col items-center justify-center min-h-[300px] space-y-6 relative">
-            <div className="relative">
-              <motion.div
-                animate={{ scale: [1, 1.3, 1], rotate: [0, -5, 5, 0] }}
-                transition={{ duration: 0.6 }}
-                className="text-7xl"
-              >
-                {monster.emoji}
-              </motion.div>
-              <EnergyAura intensity={Math.min(1, monsterSurge * 0.3)} color="red" />
-            </div>
+            <BattlePortrait emoji={monster.emoji} name={monster.name} state="attack" variant="monster" size="lg" surgeLevel={monsterSurge} />
             <motion.p
               initial={{ scale: 2, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
