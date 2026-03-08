@@ -64,7 +64,7 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   return (
     <AnimatePresence mode="wait">
       {currentView === 'battle' && selectedMonster ? (
-        <TacticalBattle
+        <ATBBattle
           key="battle"
           monster={monsters.find(m => m.id === selectedMonster)!}
           onVictory={handleBattleVictory}
