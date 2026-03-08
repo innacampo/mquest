@@ -22,12 +22,6 @@ type MonsterMechanic = {
 };
 
 const MONSTER_MECHANICS: Record<string, MonsterMechanic> = {
-  'shame-dragon': {
-    id: 'shame-dragon', name: 'Phantom Pain',
-    description: 'A master of self-deception and psychological warfare.',
-    icon: <EyeOff className="h-3.5 w-3.5" />,
-    effect: 'multi', // No special mechanic - normal battle
-  },
   'confusion-cyclone': {
     id: 'confusion-cyclone', name: 'Whirlwind Scramble',
     description: 'Answer options are randomly shuffled each time!',
