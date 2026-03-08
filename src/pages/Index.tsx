@@ -16,8 +16,8 @@ import { Button } from '@/components/ui/button';
 type GameView = 'title' | 'character' | 'map' | 'biome' | 'village';
 
 const GameScreen = () => {
-  const { state, resetGame, enterBiome, leaveBiome } = useGame();
-  const [view, setView] = useState<GameView>('title');
+  const { state, resetGame, enterBiome, leaveBiome, setCharacter } = useGame();
+  const [view, setView] = useState<GameView>(() => state.character ? 'map' : 'title');
   const [activeBiome, setActiveBiome] = useState<BiomeId | null>(null);
   const audio = useAudio();
 
