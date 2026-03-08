@@ -13,7 +13,7 @@ interface BiomeExploreProps {
 }
 
 const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
-  const { state, addXp, clearBiome, unlockCompendiumEntry, addInventory } = useGame();
+  const { state, addXp, clearBiome, unlockCompendiumEntry, addInventory, meetNpc } = useGame();
   const xpMult = getXpMultiplier(state.character);
   const shrineMult = getShrineDiscoveryMultiplier(state.character);
   const [currentView, setCurrentView] = useState<'explore' | 'battle' | 'npc' | 'shrine'>('explore');
