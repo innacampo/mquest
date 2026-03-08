@@ -952,7 +952,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {/* ============ KNOCKOUT ============ */}
         {phase === 'knockout' && (
           <motion.div key="knockout" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
+            className="flex flex-col items-center justify-center min-h-[400px] space-y-6 relative">
+            <KnockoutShatter />
             <motion.div
               animate={{ opacity: [1, 0.3] }}
               transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
