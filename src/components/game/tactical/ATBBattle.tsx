@@ -376,31 +376,21 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
       addDmgNumber(damage, 'dealt', '72%');
     }, 400);
 
-    setTimeout(() => {
-      setMonsterHp(prev => {
-        const newHp = Math.max(0, prev - damage);
-        if (newHp <= 0) {
-          setMonsterAnim('defeated');
-          setTimeout(() => setPhase('victory'), 1200);
-        } else {
-          setPlayerAnim('idle');
-          setMonsterAnim('idle');
-          setPlayerAtb(0);
-          setPhase('active');
-        }
-        return newHp;
-      });
-      // Fake damage mechanic — spawn 2-3 decoy numbers alongside real damage
-      if (shouldFakeDamage) {
-        const fakeCount = 2 + Math.floor(Math.random() * 2);
-        for (let i = 0; i < fakeCount; i++) {
-          const fakeVal = Math.round(damage * (0.4 + Math.random() * 1.2));
-          const fakeX = `${55 + Math.round((Math.random() - 0.5) * 30)}%`;
-          const fakeType = Math.random() > 0.3 ? 'dealt' : 'heal';
-          setTimeout(() => addDmgNumber(fakeVal, fakeType as 'dealt' | 'heal', fakeX), 100 + i * 150);
-        }
-      }
-    }, 800);
+      setTimeout(() => {
+        setMonsterHp(prev => {
+          const newHp = Math.max(0, prev - damage);
+          if (newHp <= 0) {
+            setMonsterAnim('defeated');
+            setTimeout(() => setPhase('victory'), 1200);
+          } else {
+            setPlayerAnim('idle');
+            setMonsterAnim('idle');
+            setPlayerAtb(0);
+            setPhase('active');
+          }
+          return newHp;
+        });
+      }, 800);
   }, [combo, damageMultiplier, shouldFakeDamage]);
 
   const triggerMonsterAttack = useCallback(() => {
