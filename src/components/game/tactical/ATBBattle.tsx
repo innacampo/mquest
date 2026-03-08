@@ -431,15 +431,34 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
     }, 800);
   }, [defending, totalQuestions]);
 
-  const usePotion = () => {
-    if (state.inventory.remedyPotionBasic <= 0) return;
-    addInventory('remedyPotionBasic', -1);
-    const heal = 30;
-    setPlayerHp(prev => Math.min(PLAYER_MAX_HP, prev + heal));
-    addDmgNumber(heal, 'heal', '28%');
+  const [potionMenu, setPotionMenu] = useState(false);
+
+  const usePotion = (type: 'basic' | 'enhanced' | 'clarity') => {
+    if (type === 'basic') {
+      if (state.inventory.remedyPotionBasic <= 0) return;
+      addInventory('remedyPotionBasic', -1);
+      const heal = 30;
+      setPlayerHp(prev => Math.min(PLAYER_MAX_HP, prev + heal));
+      addDmgNumber(heal, 'heal', '28%');
+    } else if (type === 'enhanced') {
+      if (state.inventory.remedyPotionEnhanced <= 0) return;
+      addInventory('remedyPotionEnhanced', -1);
+      const heal = 60;
+      setPlayerHp(prev => Math.min(PLAYER_MAX_HP, prev + heal));
+      addDmgNumber(heal, 'heal', '28%');
+    } else if (type === 'clarity') {
+      if (state.inventory.clarityElixir <= 0) return;
+      addInventory('clarityElixir', -1);
+      // Remove one monster surge charge (reduce monster ATB)
+      setMonsterAtb(prev => Math.max(0, prev - 50));
+      addDmgNumber(50, 'dealt', '72%');
+    }
+    setPotionMenu(false);
     setPlayerAtb(0);
     setPhase('active');
   };
+
+  const totalPotions = state.inventory.remedyPotionBasic + state.inventory.remedyPotionEnhanced + state.inventory.clarityElixir;
 
   const defend = () => {
     setDefending(true);
