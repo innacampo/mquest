@@ -420,6 +420,14 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
     setTimeout(() => {
       setPlayerAnim('hit');
       addDmgNumber(damage, 'taken', '28%');
+      // Fake damage numbers during monster attack too
+      if (shouldFakeDamage) {
+        for (let i = 0; i < 2; i++) {
+          const fakeVal = Math.round(damage * (0.3 + Math.random() * 1.5));
+          const fakeX = `${20 + Math.round((Math.random() - 0.5) * 20)}%`;
+          setTimeout(() => addDmgNumber(fakeVal, Math.random() > 0.5 ? 'taken' : 'dealt', fakeX), 80 + i * 120);
+        }
+      }
     }, 400);
 
     setTimeout(() => {
