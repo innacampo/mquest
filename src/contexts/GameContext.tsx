@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { GameState, createInitialGameState, getLevelFromXp, BiomeId, biomes, CharacterProfile } from '@/lib/gameData';
+import { GameState, createInitialGameState, getLevelFromXp, BiomeId, biomes, CharacterProfile, getStartingBonuses } from '@/lib/gameData';
 
 interface GameContextType {
   state: GameState;
@@ -143,7 +143,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const setCharacter = useCallback((profile: CharacterProfile) => {
     setState(prev => {
-      const next = { ...prev, character: profile };
+      const bonuses = getStartingBonuses(profile);
+      const next = {
+        ...prev,
+        character: profile,
+        estraBond: prev.estraBond + (bonuses.estraBond || 0),
+        inventory: {
+          ...prev.inventory,
+          ...(bonuses.inventory || {}),
+        },
+      };
       save(next);
       return next;
     });

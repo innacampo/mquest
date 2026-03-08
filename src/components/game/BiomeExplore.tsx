@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
-import { BiomeId, biomes, monsters, questions, npcs } from '@/lib/gameData';
+import { BiomeId, biomes, monsters, questions, npcs, getShrineDiscoveryMultiplier, getXpMultiplier } from '@/lib/gameData';
 import BattleScreen from './BattleScreen';
 import { ArrowLeft, Swords, MessageCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,8 @@ interface BiomeExploreProps {
 
 const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   const { state, addXp, clearBiome, unlockCompendiumEntry, addInventory } = useGame();
+  const xpMult = getXpMultiplier(state.character);
+  const shrineMult = getShrineDiscoveryMultiplier(state.character);
   const [currentView, setCurrentView] = useState<'explore' | 'battle' | 'npc' | 'shrine'>('explore');
   const [selectedMonster, setSelectedMonster] = useState<string | null>(null);
   const [shrineVisited, setShrineVisited] = useState(false);
@@ -36,7 +38,7 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   const handleVisitShrine = () => {
     if (!shrineVisited) {
       setShrineVisited(true);
-      addXp(50);
+      addXp(Math.round(50 * xpMult));
       // Unlock fact card for this biome
       const factEntry = state.compendium.find(e => e.type === 'fact' && e.biome === biomeId && !e.unlocked);
       if (factEntry) unlockCompendiumEntry(factEntry.id);
@@ -47,14 +49,15 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   const handleTalkToNpc = () => {
     if (!npcTalkedTo && biomeNpc) {
       setNpcTalkedTo(true);
-      addInventory('wellnessHerbs', 2);
+      const herbCount = state.character?.background === 'caregiver' ? 3 : 2;
+      addInventory('wellnessHerbs', herbCount);
     }
     setCurrentView('npc');
   };
 
   const handleClearBiome = () => {
     clearBiome(biomeId);
-    addXp(500);
+    addXp(Math.round(500 * xpMult));
     onExit();
   };
 

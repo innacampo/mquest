@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
-import { Monster, Question, questions, BiomeId } from '@/lib/gameData';
-import { Swords, Timer, Zap, Heart, ArrowLeft } from 'lucide-react';
+import { Monster, Question, questions, BiomeId, getSpecialtyDamageMultiplier, getXpMultiplier } from '@/lib/gameData';
+import { Swords, Timer, Zap, Heart, ArrowLeft, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface BattleScreenProps {
@@ -12,7 +12,9 @@ interface BattleScreenProps {
 }
 
 const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetreat }) => {
-  const { addXp, defeatMonster, unlockCompendiumEntry, updateEstraBond } = useGame();
+  const { state, addXp, defeatMonster, unlockCompendiumEntry, updateEstraBond } = useGame();
+  const damageMultiplier = getSpecialtyDamageMultiplier(state.character, monster.biome);
+  const xpMultiplier = getXpMultiplier(state.character);
 
   const [monsterHp, setMonsterHp] = useState(monster.hp);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -78,7 +80,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     setTotalQuestions(prev => prev + 1);
 
     if (correct) {
-      const damage = 25;
+      const baseDamage = 25;
+      const damage = Math.round(baseDamage * damageMultiplier);
       const newHp = Math.max(0, monsterHp - damage);
       setMonsterHp(newHp);
       setStreak(prev => prev + 1);
@@ -104,7 +107,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     const baseXp = 150;
     const perfectBonus = totalCorrect === totalQuestions ? 100 : 0;
     const streakBonus = Math.max(0, (streak - 2)) * 15;
-    const totalXp = baseXp + perfectBonus + streakBonus;
+    const totalXp = Math.round((baseXp + perfectBonus + streakBonus) * xpMultiplier);
 
     addXp(totalXp);
     defeatMonster(monster.id);
@@ -178,6 +181,17 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
                 </div>
               </div>
               <div className="flex items-center gap-4">
+                {damageMultiplier > 1 && (
+                  <div className="flex items-center gap-1 text-accent">
+                    <Sparkles className="h-4 w-4" />
+                    <span className="text-xs">Specialty ×{damageMultiplier}</span>
+                  </div>
+                )}
+                {xpMultiplier > 1 && (
+                  <div className="flex items-center gap-1 text-secondary">
+                    <span className="text-xs">XP ×{xpMultiplier.toFixed(2)}</span>
+                  </div>
+                )}
                 {monsterSurge > 0 && (
                   <div className="flex items-center gap-1 text-destructive">
                     <Zap className="h-4 w-4" />
