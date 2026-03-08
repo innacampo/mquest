@@ -112,6 +112,8 @@ export default {
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "float": "float 3s ease-in-out infinite",
         "shimmer": "shimmer 3s linear infinite",
+        "shake": "shake 0.5s ease-in-out",
+        "hit-flash": "hit-flash 0.3s ease-out forwards",
       },
     },
   },
