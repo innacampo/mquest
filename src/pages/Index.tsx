@@ -189,6 +189,7 @@ const GameScreen = () => {
 const Index = () => (
   <GameProvider>
     <GameScreen />
+    <FeedbackButton />
   </GameProvider>
 );
 
