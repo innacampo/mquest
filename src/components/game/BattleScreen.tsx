@@ -217,6 +217,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     if (correct) {
       setStreak(prev => prev + 1);
       setTotalCorrect(prev => prev + 1);
+      setFlashGold(prev => prev + 1);
       // Go to combo phase
       setTimeout(() => {
         setPhase('combo');
@@ -231,6 +232,10 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       const newPlayerHp = Math.max(0, playerHp - monsterDmg);
       setPlayerHp(newPlayerHp);
       triggerShake();
+      setFlashRed(prev => prev + 1);
+      setMonsterSlash(prev => prev + 1);
+      setImpactPlayer(prev => prev + 1);
+      addDamageNumber(monsterDmg, 'taken');
 
       if (monster.mechanic === 'Drain Bond') {
         updateEstraBond(-1);
