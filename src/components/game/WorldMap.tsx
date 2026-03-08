@@ -111,23 +111,124 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
 
         {/* SVG Path connections */}
         <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 1 }}>
+          <defs>
+            {/* Glow filter */}
+            <filter id="pathGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <filter id="pathGlowStrong" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            {/* Animated gradient for energy flow */}
+            <linearGradient id="energyFlow" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="hsl(45, 100%, 70%)" stopOpacity="0.1" />
+              <stop offset="40%" stopColor="hsl(45, 100%, 80%)" stopOpacity="0.9" />
+              <stop offset="50%" stopColor="hsl(40, 100%, 90%)" stopOpacity="1" />
+              <stop offset="60%" stopColor="hsl(45, 100%, 80%)" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="hsl(45, 100%, 70%)" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
           {pathConnections.map(([from, to], i) => {
             const fromPos = biomePositions[from];
             const toPos = biomePositions[to];
             const lit = isPathLit(from, to);
+            const bothCleared = isCleared(from) && isCleared(to);
+
+            // Calculate control point for a curved path
+            const x1 = fromPos.x + 4;
+            const y1 = fromPos.y + 4;
+            const x2 = toPos.x + 4;
+            const y2 = toPos.y + 4;
+            const mx = (x1 + x2) / 2;
+            const my = (y1 + y2) / 2;
+            // Slight curve offset
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const cx = mx + dy * 0.15;
+            const cy = my - dx * 0.15;
+
+            const pathD = `M ${x1}% ${y1}% Q ${cx}% ${cy}% ${x2}% ${y2}%`;
+            const pathId = `path-${i}`;
+
             return (
-              <line
-                key={i}
-                x1={`${fromPos.x + 4}%`}
-                y1={`${fromPos.y + 4}%`}
-                x2={`${toPos.x + 4}%`}
-                y2={`${toPos.y + 4}%`}
-                stroke={lit ? `hsl(45, 100%, 70%)` : `hsl(230, 15%, 25%)`}
-                strokeWidth={lit ? 2 : 1}
-                strokeDasharray={lit ? 'none' : '6 4'}
-                opacity={lit ? 0.6 : 0.3}
-                style={{ transition: 'all 1s ease' }}
-              />
+              <g key={i}>
+                {/* Base dim path (always visible) */}
+                <path
+                  d={pathD}
+                  fill="none"
+                  stroke={lit ? 'hsl(45, 60%, 40%)' : 'hsl(230, 15%, 20%)'}
+                  strokeWidth={lit ? 1.5 : 0.8}
+                  strokeDasharray={lit ? 'none' : '4 6'}
+                  opacity={lit ? 0.3 : 0.2}
+                />
+
+                {lit && (
+                  <>
+                    {/* Outer glow layer */}
+                    <path
+                      d={pathD}
+                      fill="none"
+                      stroke="hsl(45, 100%, 65%)"
+                      strokeWidth={6}
+                      opacity={bothCleared ? 0.15 : 0.08}
+                      filter="url(#pathGlow)"
+                    >
+                      <animate
+                        attributeName="opacity"
+                        values={bothCleared ? '0.1;0.2;0.1' : '0.05;0.12;0.05'}
+                        dur="3s"
+                        repeatCount="indefinite"
+                      />
+                    </path>
+
+                    {/* Main glowing path */}
+                    <path
+                      id={pathId}
+                      d={pathD}
+                      fill="none"
+                      stroke="hsl(45, 100%, 70%)"
+                      strokeWidth={bothCleared ? 2.5 : 1.8}
+                      opacity={bothCleared ? 0.7 : 0.45}
+                      filter="url(#pathGlowStrong)"
+                      strokeLinecap="round"
+                    >
+                      <animate
+                        attributeName="opacity"
+                        values={bothCleared ? '0.5;0.8;0.5' : '0.3;0.55;0.3'}
+                        dur={`${2.5 + i * 0.3}s`}
+                        repeatCount="indefinite"
+                      />
+                    </path>
+
+                    {/* Flowing energy particle 1 */}
+                    <circle r={bothCleared ? 3 : 2} fill="hsl(45, 100%, 85%)" opacity="0.9" filter="url(#pathGlow)">
+                      <animateMotion
+                        dur={`${3 + i * 0.5}s`}
+                        repeatCount="indefinite"
+                        path={pathD.replace(/%/g, '')}
+                      >
+                        {/* SVG animateMotion uses unitless coords, so we approximate with viewBox-relative */}
+                      </animateMotion>
+                    </circle>
+
+                    {/* Flowing energy particle 2 (offset) */}
+                    <circle r={bothCleared ? 2 : 1.5} fill="hsl(40, 100%, 90%)" opacity="0.7">
+                      <animateMotion
+                        dur={`${3 + i * 0.5}s`}
+                        repeatCount="indefinite"
+                        path={pathD.replace(/%/g, '')}
+                        begin={`${1.5 + i * 0.25}s`}
+                      />
+                    </circle>
+                  </>
+                )}
+              </g>
             );
           })}
         </svg>
