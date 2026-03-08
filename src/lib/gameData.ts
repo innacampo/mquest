@@ -675,6 +675,10 @@ export const initialCompendium: CompendiumEntry[] = [
   { id: 'bio-priya', type: 'bio', title: 'Priya — The Early Warrior', content: 'Priya, 38, from Mood Tides. She thought she was "too young" for perimenopause. Learning the truth erased her shame.', biome: 'mood-tides', npcName: 'Priya', unlocked: false },
   { id: 'bio-saoirse', type: 'bio', title: 'Saoirse — The Bone Guardian', content: 'Saoirse, 45, from Crystal Caverns. Family history of osteoporosis drove her fear. Now armed with prevention knowledge, she feels in control.', biome: 'crystal-caverns', npcName: 'Saoirse', unlocked: false },
   { id: 'bio-rosa', type: 'bio', title: 'Rosa — The Heart Advocate', content: 'Rosa, 55, from Heartland. A cardiac event shocked her into action. Now she champions heart health awareness for menopausal women.', biome: 'heartland', npcName: 'Rosa', unlocked: false },
+  // Hidden entries (unlocked via Compendium Seal)
+  { id: 'seal-1', type: 'fact', title: 'Perimenopause: The Hidden Chapter', content: 'Perimenopause can begin up to 10 years before menopause, often in a woman\'s late 30s or 40s. Symptoms like irregular periods, mood changes, and sleep disruption can appear years before periods stop entirely.', sealOnly: true, unlocked: false },
+  { id: 'seal-2', type: 'fact', title: 'The Gut-Hormone Connection', content: 'The gut microbiome contains a collection of bacteria called the estrobolome, which helps metabolise estrogen. During menopause, gut changes can amplify hormonal imbalance, making digestive health a hidden factor in symptom severity.', sealOnly: true, unlocked: false },
+  { id: 'seal-3', type: 'fact', title: 'Sleep & Menopause', content: 'Up to 61% of postmenopausal women report insomnia. Declining progesterone — a natural sleep promoter — combined with night sweats and anxiety creates a perfect storm for disrupted rest.', sealOnly: true, unlocked: false },
 ];
 
 export const initialMilestones: CompendiumMilestone[] = [
