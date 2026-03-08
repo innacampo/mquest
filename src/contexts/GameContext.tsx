@@ -164,9 +164,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const defeatMonster = useCallback((monsterId: string) => {
     setState(prev => {
       if (prev.monstersDefeated.includes(monsterId)) return prev;
+      // Auto-unlock bestiary and myth entries for this monster
+      const updatedCompendium = prev.compendium.map(e =>
+        (e.monsterId === monsterId && (e.type === 'bestiary' || e.type === 'myth'))
+          ? { ...e, unlocked: true }
+          : e
+      );
       const next = {
         ...prev,
         monstersDefeated: [...prev.monstersDefeated, monsterId],
+        compendium: updatedCompendium,
         inventory: {
           ...prev.inventory,
           hormoneCrystals: prev.inventory.hormoneCrystals + 3,
