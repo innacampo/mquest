@@ -5,6 +5,10 @@ import { Monster, Question, questions, getSpecialtyDamageMultiplier, getXpMultip
 import { Swords, Timer, Zap, Heart, ArrowLeft, Sparkles, Shield, FlaskConical, BookOpen, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import {
+  DamageNumber, ScreenFlash, ImpactBurst, EnergyAura,
+  SlashEffect, VictoryFireworks, KnockoutShatter, ComboSparks
+} from './BattleEffects';
 
 interface BattleScreenProps {
   monster: Monster;
@@ -90,6 +94,22 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
 
   // Items state
   const [showItems, setShowItems] = useState(false);
+
+  // VFX triggers
+  const [flashRed, setFlashRed] = useState(0);
+  const [flashGold, setFlashGold] = useState(0);
+  const [flashGreen, setFlashGreen] = useState(0);
+  const [playerSlash, setPlayerSlash] = useState(0);
+  const [monsterSlash, setMonsterSlash] = useState(0);
+  const [impactPlayer, setImpactPlayer] = useState(0);
+  const [impactMonster, setImpactMonster] = useState(0);
+  const [damageNumbers, setDamageNumbers] = useState<{ id: string; value: number; type: 'dealt' | 'taken' | 'heal' }[]>([]);
+
+  const addDamageNumber = (value: number, type: 'dealt' | 'taken' | 'heal') => {
+    const id = `${Date.now()}-${Math.random()}`;
+    setDamageNumbers(prev => [...prev, { id, value, type }]);
+    setTimeout(() => setDamageNumbers(prev => prev.filter(d => d.id !== id)), 1500);
+  };
 
   const biomeQuestions = questions.filter(q => q.biome === monster.biome);
 
@@ -197,6 +217,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     if (correct) {
       setStreak(prev => prev + 1);
       setTotalCorrect(prev => prev + 1);
+      setFlashGold(prev => prev + 1);
       // Go to combo phase
       setTimeout(() => {
         setPhase('combo');
@@ -211,6 +232,10 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       const newPlayerHp = Math.max(0, playerHp - monsterDmg);
       setPlayerHp(newPlayerHp);
       triggerShake();
+      setFlashRed(prev => prev + 1);
+      setMonsterSlash(prev => prev + 1);
+      setImpactPlayer(prev => prev + 1);
+      addDamageNumber(monsterDmg, 'taken');
 
       if (monster.mechanic === 'Drain Bond') {
         updateEstraBond(-1);
@@ -268,6 +293,13 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
 
     const newMonsterHp = Math.max(0, monsterHp - damage);
     setMonsterHp(newMonsterHp);
+
+    // VFX for player attacking monster
+    setPlayerSlash(prev => prev + 1);
+    setImpactMonster(prev => prev + 1);
+    addDamageNumber(damage, 'dealt');
+    if (rating === 'perfect') setFlashGold(prev => prev + 1);
+    else if (rating === 'good') setFlashGreen(prev => prev + 1);
 
     if (newMonsterHp <= 0) {
       setTimeout(() => setPhase('victory'), 1500);
@@ -374,9 +406,13 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     switch (item) {
       case 'remedyPotionBasic':
         setPlayerHp(prev => Math.min(PLAYER_MAX_HP, prev + 30));
+        setFlashGreen(prev => prev + 1);
+        addDamageNumber(30, 'heal');
         break;
       case 'remedyPotionEnhanced':
         setPlayerHp(prev => Math.min(PLAYER_MAX_HP, prev + 60));
+        setFlashGreen(prev => prev + 1);
+        addDamageNumber(60, 'heal');
         break;
       case 'clarityElixir':
         setActiveEffect('none');
@@ -440,7 +476,23 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
   const playerHpColor = playerHpPercent > 60 ? 'bg-glow-green' : playerHpPercent > 30 ? 'bg-primary' : 'bg-destructive';
 
   return (
-    <div className={`min-h-[500px] rounded-xl bg-gradient-battle border border-border p-6 relative overflow-hidden ${shakeScreen ? 'animate-shake' : ''}`}>
+    <div className={`min-h-[500px] rounded-xl bg-gradient-battle border border-border p-6 relative overflow-hidden ${shakeScreen ? 'animate-shake' : ''} ${playerHpPercent < 30 ? 'battle-vignette-danger' : 'battle-vignette'}`}>
+      {/* VFX Overlays */}
+      <ScreenFlash color="red" trigger={flashRed} />
+      <ScreenFlash color="gold" trigger={flashGold} />
+      <ScreenFlash color="green" trigger={flashGreen} />
+      <SlashEffect trigger={playerSlash} variant="player" />
+      <SlashEffect trigger={monsterSlash} variant="monster" />
+      <ImpactBurst trigger={impactMonster} color="bg-primary" x="25%" y="30%" />
+      <ImpactBurst trigger={impactPlayer} color="bg-destructive" x="75%" y="30%" />
+
+      {/* Floating damage numbers */}
+      <AnimatePresence>
+        {damageNumbers.map(d => (
+          <DamageNumber key={d.id} id={d.id} value={d.value} type={d.type} />
+        ))}
+      </AnimatePresence>
+
       {/* Ambient battle effects */}
       {monsterSurge > 0 && (
         <div className="absolute inset-0 pointer-events-none">
@@ -461,8 +513,11 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {phase === 'intro' && (
           <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 10 }}
-              className="text-7xl">{monster.emoji}</motion.div>
+            <div className="relative">
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 10 }}
+                className="text-7xl">{monster.emoji}</motion.div>
+              <EnergyAura intensity={0.6} color="red" />
+            </div>
             <h2 className="font-display text-2xl text-foreground">{monster.name}</h2>
             <p className="text-sm text-destructive italic max-w-md text-center">"{monster.myth}"</p>
             <p className="text-xs text-muted-foreground max-w-sm text-center">{monster.mechanicDescription}</p>
@@ -690,7 +745,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {/* ============ RESULT (after combo) ============ */}
         {phase === 'result' && (
           <motion.div key="result" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center min-h-[300px] space-y-6">
+            className="flex flex-col items-center justify-center min-h-[300px] space-y-6 relative">
+            <ComboSparks rating={comboRating} />
             {comboRating && (
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}
                 className="text-center space-y-2">
@@ -756,14 +812,17 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {/* ============ MONSTER ATTACK ============ */}
         {phase === 'monster_attack' && (
           <motion.div key="monster_attack" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center min-h-[300px] space-y-6">
-            <motion.div
-              animate={{ scale: [1, 1.3, 1], rotate: [0, -5, 5, 0] }}
-              transition={{ duration: 0.6 }}
-              className="text-7xl"
-            >
-              {monster.emoji}
-            </motion.div>
+            className="flex flex-col items-center justify-center min-h-[300px] space-y-6 relative">
+            <div className="relative">
+              <motion.div
+                animate={{ scale: [1, 1.3, 1], rotate: [0, -5, 5, 0] }}
+                transition={{ duration: 0.6 }}
+                className="text-7xl"
+              >
+                {monster.emoji}
+              </motion.div>
+              <EnergyAura intensity={Math.min(1, monsterSurge * 0.3)} color="red" />
+            </div>
             <motion.p
               initial={{ scale: 2, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -877,7 +936,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {/* ============ VICTORY ============ */}
         {phase === 'victory' && (
           <motion.div key="victory" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
+            className="flex flex-col items-center justify-center min-h-[400px] space-y-6 relative">
+            <VictoryFireworks />
             <motion.div initial={{ rotate: 0 }} animate={{ rotate: [0, -10, 10, -5, 5, 0] }}
               transition={{ duration: 0.6 }} className="text-7xl opacity-30">{monster.emoji}</motion.div>
             <h2 className="font-display text-2xl text-glow-green text-glow-teal">Myth Defeated!</h2>
@@ -899,7 +959,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {/* ============ KNOCKOUT ============ */}
         {phase === 'knockout' && (
           <motion.div key="knockout" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
+            className="flex flex-col items-center justify-center min-h-[400px] space-y-6 relative">
+            <KnockoutShatter />
             <motion.div
               animate={{ opacity: [1, 0.3] }}
               transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}

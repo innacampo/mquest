@@ -108,4 +108,10 @@
   .bg-gradient-battle {
     background: var(--gradient-battle);
   }
+  .battle-vignette {
+    box-shadow: inset 0 0 80px 20px hsl(0 0% 0% / 0.5);
+  }
+  .battle-vignette-danger {
+    box-shadow: inset 0 0 100px 30px hsl(0 70% 20% / 0.4);
+  }
 }
