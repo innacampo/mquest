@@ -163,8 +163,8 @@ const BattlePortrait: React.FC<BattlePortraitProps> = ({
           {/* Emoji sprite */}
           <motion.span
             className={`${s.emoji} select-none`}
-            animate={anim.animate}
-            transition={anim.transition}
+            animate={anim.animate as any}
+            transition={anim.transition as any}
             style={{
               filter: currentState === 'defeated' ? 'grayscale(0.7)' : 'none',
             }}
