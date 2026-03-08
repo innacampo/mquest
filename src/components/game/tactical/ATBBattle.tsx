@@ -499,6 +499,13 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               <h2 className="font-display text-2xl text-foreground">{monster.name}</h2>
               <p className="text-sm text-destructive italic max-w-md mx-auto">"{monster.myth}"</p>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">{monster.mechanicDescription}</p>
+              {mechanic && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-xs font-display mx-auto">
+                  {mechanic.icon}
+                  <span className="font-bold">{mechanic.name}:</span> {mechanic.description}
+                </motion.div>
+              )}
               <motion.p className="text-xs text-secondary mt-2"
                 animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
                 ⚡ Active Time Battle — React fast, answer smart!
