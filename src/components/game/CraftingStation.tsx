@@ -86,7 +86,7 @@ interface CraftingStationProps {
 }
 
 const CraftingStation: React.FC<CraftingStationProps> = ({ onClose }) => {
-  const { state, addInventory, addXp, updateEstraBond } = useGame();
+  const { state, addInventory, addXp, updateEstraBond, unlockCompendiumEntry } = useGame();
   const [craftedId, setCraftedId] = useState<string | null>(null);
 
   const canCraft = (recipe: Recipe) => {
