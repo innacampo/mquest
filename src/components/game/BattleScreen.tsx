@@ -224,6 +224,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       setTotalCorrect(prev => prev + 1);
       setFlashGold(prev => prev + 1);
       setPlayerPortraitState('charge');
+      // Bonus time for correct answer (+5s, capped at 15)
+      setTimeLeft(prev => Math.min(15, prev + 5));
       // Go to combo phase
       setTimeout(() => {
         setPhase('combo');
