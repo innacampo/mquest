@@ -8,6 +8,7 @@ import BiomeExplore from '@/components/game/BiomeExplore';
 import HearthVillage from '@/components/game/HearthVillage';
 import AudioControls from '@/components/game/AudioControls';
 import TitleScreen from '@/components/game/TitleScreen';
+import CharacterCreation from '@/components/game/CharacterCreation';
 import { useAudio } from '@/hooks/useAudio';
 import { Map, RotateCcw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
