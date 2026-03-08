@@ -113,7 +113,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .maybeSingle();
 
       if (data?.game_state && mounted) {
-        setState(data.game_state as unknown as GameState);
+        const defaults = createInitialGameState();
+        setState({ ...defaults, ...(data.game_state as unknown as GameState) });
       } else {
         // No save in DB — check localStorage for migration, else fresh state
         const localSave = localStorage.getItem('menopause-quest-save');
