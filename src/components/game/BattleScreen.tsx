@@ -95,6 +95,22 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
   // Items state
   const [showItems, setShowItems] = useState(false);
 
+  // VFX triggers
+  const [flashRed, setFlashRed] = useState(0);
+  const [flashGold, setFlashGold] = useState(0);
+  const [flashGreen, setFlashGreen] = useState(0);
+  const [playerSlash, setPlayerSlash] = useState(0);
+  const [monsterSlash, setMonsterSlash] = useState(0);
+  const [impactPlayer, setImpactPlayer] = useState(0);
+  const [impactMonster, setImpactMonster] = useState(0);
+  const [damageNumbers, setDamageNumbers] = useState<{ id: string; value: number; type: 'dealt' | 'taken' | 'heal' }[]>([]);
+
+  const addDamageNumber = (value: number, type: 'dealt' | 'taken' | 'heal') => {
+    const id = `${Date.now()}-${Math.random()}`;
+    setDamageNumbers(prev => [...prev, { id, value, type }]);
+    setTimeout(() => setDamageNumbers(prev => prev.filter(d => d.id !== id)), 1500);
+  };
+
   const biomeQuestions = questions.filter(q => q.biome === monster.biome);
 
   // ---- HELPERS ----
