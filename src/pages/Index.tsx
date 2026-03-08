@@ -6,6 +6,7 @@ import PlayerHUD from '@/components/game/PlayerHUD';
 import WorldMap from '@/components/game/WorldMap';
 import BiomeExplore from '@/components/game/BiomeExplore';
 import CompendiumView from '@/components/game/CompendiumView';
+import CraftingStation from '@/components/game/CraftingStation';
 import { BookOpen, Map, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
