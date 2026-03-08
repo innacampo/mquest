@@ -4,7 +4,7 @@ import { MessageSquare, Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const FeedbackButton: React.FC = () => {
   const [open, setOpen] = useState(false);
