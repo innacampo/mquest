@@ -110,27 +110,147 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/40" />
 
         {/* SVG Path connections */}
-        <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 1 }}>
+        <svg
+          className="absolute inset-0 w-full h-full"
+          viewBox="0 0 1000 562"
+          preserveAspectRatio="xMidYMid slice"
+          style={{ zIndex: 1 }}
+        >
+          <defs>
+            <filter id="pathGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <filter id="pathGlowStrong" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="particleGlow" x="-200%" y="-200%" width="500%" height="500%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
           {pathConnections.map(([from, to], i) => {
             const fromPos = biomePositions[from];
             const toPos = biomePositions[to];
             const lit = isPathLit(from, to);
+            const bothCleared = isCleared(from) && isCleared(to);
+
+            // Convert percentage positions to viewBox coords (1000x562)
+            const x1 = (fromPos.x + 4) * 10;
+            const y1 = (fromPos.y + 4) * 5.62;
+            const x2 = (toPos.x + 4) * 10;
+            const y2 = (toPos.y + 4) * 5.62;
+            const mx = (x1 + x2) / 2;
+            const my = (y1 + y2) / 2;
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const cx = mx + dy * 0.18;
+            const cy = my - dx * 0.18;
+
+            const pathD = `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
+            const pathId = `trail-${i}`;
+            const dur1 = `${2.5 + i * 0.4}s`;
+            const dur2 = `${3 + i * 0.4}s`;
+
             return (
-              <line
-                key={i}
-                x1={`${fromPos.x + 4}%`}
-                y1={`${fromPos.y + 4}%`}
-                x2={`${toPos.x + 4}%`}
-                y2={`${toPos.y + 4}%`}
-                stroke={lit ? `hsl(45, 100%, 70%)` : `hsl(230, 15%, 25%)`}
-                strokeWidth={lit ? 2 : 1}
-                strokeDasharray={lit ? 'none' : '6 4'}
-                opacity={lit ? 0.6 : 0.3}
-                style={{ transition: 'all 1s ease' }}
-              />
+              <g key={i}>
+                {/* Base dim dotted path */}
+                <path
+                  d={pathD}
+                  fill="none"
+                  stroke={lit ? 'hsl(45, 50%, 35%)' : 'hsl(230, 15%, 18%)'}
+                  strokeWidth={lit ? 1.5 : 0.8}
+                  strokeDasharray={lit ? 'none' : '8 12'}
+                  opacity={lit ? 0.25 : 0.15}
+                />
+
+                {lit && (
+                  <>
+                    {/* Wide soft glow */}
+                    <path
+                      d={pathD}
+                      fill="none"
+                      stroke="hsl(45, 100%, 60%)"
+                      strokeWidth={12}
+                      opacity={0}
+                      filter="url(#pathGlow)"
+                      strokeLinecap="round"
+                    >
+                      <animate
+                        attributeName="opacity"
+                        values={bothCleared ? '0.06;0.14;0.06' : '0.03;0.08;0.03'}
+                        dur="3.5s"
+                        repeatCount="indefinite"
+                      />
+                    </path>
+
+                    {/* Main visible glowing trail */}
+                    <path
+                      id={pathId}
+                      d={pathD}
+                      fill="none"
+                      stroke="hsl(45, 100%, 70%)"
+                      strokeWidth={bothCleared ? 2.5 : 1.5}
+                      opacity={0}
+                      filter="url(#pathGlowStrong)"
+                      strokeLinecap="round"
+                    >
+                      <animate
+                        attributeName="opacity"
+                        values={bothCleared ? '0.4;0.7;0.4' : '0.2;0.45;0.2'}
+                        dur={dur1}
+                        repeatCount="indefinite"
+                      />
+                    </path>
+
+                    {/* Flowing energy orb 1 */}
+                    <circle
+                      r={bothCleared ? 5 : 3.5}
+                      fill="hsl(45, 100%, 85%)"
+                      opacity="0"
+                      filter="url(#particleGlow)"
+                    >
+                      <animateMotion dur={dur2} repeatCount="indefinite" path={pathD} />
+                      <animate attributeName="opacity" values="0;0.9;0.9;0" dur={dur2} repeatCount="indefinite" />
+                      <animate attributeName="r" values={bothCleared ? '3;5;3' : '2;3.5;2'} dur={dur2} repeatCount="indefinite" />
+                    </circle>
+
+                    {/* Flowing energy orb 2 (offset timing) */}
+                    <circle
+                      r={bothCleared ? 3.5 : 2.5}
+                      fill="hsl(40, 100%, 90%)"
+                      opacity="0"
+                      filter="url(#particleGlow)"
+                    >
+                      <animateMotion dur={dur2} repeatCount="indefinite" path={pathD} begin={`-${parseFloat(dur2) / 2}s`} />
+                      <animate attributeName="opacity" values="0;0.7;0.7;0" dur={dur2} repeatCount="indefinite" begin={`-${parseFloat(dur2) / 2}s`} />
+                    </circle>
+
+                    {/* Tiny trailing spark 3 */}
+                    <circle
+                      r={1.5}
+                      fill="hsl(50, 100%, 95%)"
+                      opacity="0"
+                    >
+                      <animateMotion dur={`${parseFloat(dur2) * 1.3}s`} repeatCount="indefinite" path={pathD} begin={`-${parseFloat(dur2) * 0.3}s`} />
+                      <animate attributeName="opacity" values="0;0.5;0.5;0" dur={`${parseFloat(dur2) * 1.3}s`} repeatCount="indefinite" begin={`-${parseFloat(dur2) * 0.3}s`} />
+                    </circle>
+                  </>
+                )}
+              </g>
             );
           })}
         </svg>
+
+
 
         {/* Biome Nodes */}
         {biomes.map((biome, i) => {
