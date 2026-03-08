@@ -4,6 +4,7 @@ import { useGame } from '@/contexts/GameContext';
 import {
   Monster, Question, questions, getSpecialtyDamageMultiplier, getXpMultiplier,
 } from '@/lib/gameData';
+import { battleBackgrounds, monsterSprites, playerSprite } from '@/lib/battleAssets';
 import { Swords, ArrowLeft, Heart, Timer, FlaskConical, Shield, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DamageNumber, ScreenFlash, VictoryFireworks, KnockoutShatter, ImpactBurst, SlashEffect } from '../BattleEffects';
@@ -309,23 +310,35 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
         {/* ====== INTRO ====== */}
         {phase === 'intro' && (
           <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="text-center space-y-4 py-6">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', bounce: 0.5 }}
-              className="text-7xl">{monster.emoji}</motion.div>
-            <h2 className="font-display text-2xl text-foreground">{monster.name}</h2>
-            <p className="text-sm text-destructive italic max-w-md mx-auto">"{monster.myth}"</p>
-            <p className="text-xs text-muted-foreground max-w-sm mx-auto">{monster.mechanicDescription}</p>
-            <motion.p className="text-xs text-secondary mt-2"
-              animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
-              ⚡ Active Time Battle — React fast, answer smart!
-            </motion.p>
-            <div className="flex gap-3 justify-center">
-              <Button onClick={startBattle} className="bg-primary text-primary-foreground font-display">
-                <Swords className="h-4 w-4 mr-2" /> Begin Battle
-              </Button>
-              <Button variant="outline" onClick={onRetreat}>
-                <ArrowLeft className="h-4 w-4 mr-2" /> Retreat
-              </Button>
+            className="relative rounded-xl overflow-hidden" style={{ minHeight: 400 }}>
+            {/* Background */}
+            <img src={battleBackgrounds[monster.biome]} alt="" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+            
+            <div className="relative z-10 text-center space-y-4 py-10 px-6">
+              <motion.img 
+                src={monsterSprites[monster.id]} 
+                alt={monster.name}
+                className="mx-auto h-40 w-40 object-contain drop-shadow-[0_0_20px_hsl(0_70%_50%/0.5)]"
+                initial={{ scale: 0, rotate: -10 }} 
+                animate={{ scale: 1, rotate: 0 }} 
+                transition={{ type: 'spring', bounce: 0.5 }}
+              />
+              <h2 className="font-display text-2xl text-foreground">{monster.name}</h2>
+              <p className="text-sm text-destructive italic max-w-md mx-auto">"{monster.myth}"</p>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">{monster.mechanicDescription}</p>
+              <motion.p className="text-xs text-secondary mt-2"
+                animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
+                ⚡ Active Time Battle — React fast, answer smart!
+              </motion.p>
+              <div className="flex gap-3 justify-center">
+                <Button onClick={startBattle} className="bg-primary text-primary-foreground font-display">
+                  <Swords className="h-4 w-4 mr-2" /> Begin Battle
+                </Button>
+                <Button variant="outline" onClick={onRetreat}>
+                  <ArrowLeft className="h-4 w-4 mr-2" /> Retreat
+                </Button>
+              </div>
             </div>
           </motion.div>
         )}
@@ -340,9 +353,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               {/* Player HP */}
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">
-                    {state.character?.background === 'caregiver' ? '🩺' : state.character?.background === 'scholar' ? '📚' : state.character?.background === 'advocate' ? '⚖️' : '🧭'}
-                  </span>
+                  <img src={playerSprite} alt="Player" className="w-6 h-6 object-contain rounded-full border border-secondary/40" />
                   <span className="font-display text-xs">{state.character?.name || 'Lyra'}</span>
                 </div>
                 <div className="h-2.5 rounded-full bg-muted overflow-hidden">
@@ -368,7 +379,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               <div className="flex-1 space-y-1 text-right">
                 <div className="flex items-center gap-2 justify-end">
                   <span className="font-display text-xs">{monster.name}</span>
-                  <span className="text-lg">{monster.emoji}</span>
+                  <img src={monsterSprites[monster.id]} alt={monster.name} className="w-6 h-6 object-contain rounded-full border border-destructive/40" />
                 </div>
                 <div className="h-2.5 rounded-full bg-muted overflow-hidden">
                   <motion.div className="h-full rounded-full bg-destructive"
@@ -379,26 +390,35 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
             </div>
 
             {/* Battle Stage */}
-            <div className="relative w-full rounded-xl bg-gradient-battle border border-border overflow-hidden"
-              style={{ height: 280 }}>
+            <div className="relative w-full rounded-xl overflow-hidden border border-border"
+              style={{ height: 300 }}>
+              {/* Battle background */}
+              <img src={battleBackgrounds[monster.biome]} alt="" 
+                className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/30" />
+              
+              {/* Battle vignette */}
+              <div className="absolute inset-0 battle-vignette" />
+
               {/* Impact burst VFX */}
               <ImpactBurst trigger={impactTrigger} color="bg-primary" x="70%" y="45%" />
               <SlashEffect trigger={playerSlash} variant="player" />
               <SlashEffect trigger={monsterSlash} variant="monster" />
 
-              {/* Ground line */}
-              <div className="absolute bottom-16 left-0 right-0 h-px bg-border/30" />
+              {/* Ground shadow */}
+              <div className="absolute bottom-8 left-[15%] w-24 h-4 rounded-full bg-black/30 blur-md" />
+              <div className="absolute bottom-8 right-[15%] w-28 h-5 rounded-full bg-black/30 blur-md" />
 
               {/* Player sprite */}
               <motion.div
-                className="absolute flex flex-col items-center"
-                style={{ left: '22%', bottom: '18%' }}
+                className="absolute"
+                style={{ left: '12%', bottom: '12%' }}
                 animate={
-                  playerAnim === 'idle' ? { y: [0, -4, 0] } :
-                  playerAnim === 'attack' ? { x: [0, 80, 120, 0], scale: [1, 1.1, 1.2, 1] } :
-                  playerAnim === 'hit' ? { x: [0, -10, 8, -5, 0], rotate: [0, -3, 3, -2, 0] } :
-                  playerAnim === 'defend' ? { scale: [1, 0.95], y: [0, 2] } :
-                  playerAnim === 'defeated' ? { opacity: [1, 0.2], y: [0, 20], rotate: [0, -15] } :
+                  playerAnim === 'idle' ? { y: [0, -6, 0] } :
+                  playerAnim === 'attack' ? { x: [0, 80, 140, 0], scale: [1, 1.05, 1.15, 1] } :
+                  playerAnim === 'hit' ? { x: [0, -12, 10, -6, 0], rotate: [0, -4, 4, -2, 0] } :
+                  playerAnim === 'defend' ? { scale: [1, 0.92], y: [0, 4] } :
+                  playerAnim === 'defeated' ? { opacity: [1, 0.2], y: [0, 30], rotate: [0, -20] } :
                   {}
                 }
                 transition={
@@ -411,31 +431,27 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               >
                 {/* Defend aura */}
                 {defending && (
-                  <motion.div className="absolute -inset-3 rounded-full border-2 border-secondary/40"
-                    animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+                  <motion.div className="absolute -inset-4 rounded-full border-2 border-secondary/40"
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.5, 0.2] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
-                    style={{ boxShadow: '0 0 20px hsl(180 60% 50% / 0.3)' }}
+                    style={{ boxShadow: '0 0 30px hsl(180 60% 50% / 0.4)' }}
                   />
                 )}
-                <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
-                  style={{
-                    background: 'radial-gradient(circle, hsl(230 20% 18%), hsl(230 25% 10%))',
-                    boxShadow: '0 0 12px hsl(180 50% 40% / 0.5), 0 4px 8px hsl(0 0% 0% / 0.5)',
-                    border: '2px solid hsl(180 50% 40%)',
-                  }}>
-                  {state.character?.background === 'caregiver' ? '🩺' : state.character?.background === 'scholar' ? '📚' : state.character?.background === 'advocate' ? '⚖️' : '🧭'}
-                </div>
+                <img src={playerSprite} alt="Player" 
+                  className="h-44 w-auto object-contain drop-shadow-[0_0_12px_hsl(180_50%_40%/0.4)]"
+                  style={{ transform: 'scaleX(1)' }}
+                />
               </motion.div>
 
               {/* Monster sprite */}
               <motion.div
-                className="absolute flex flex-col items-center"
-                style={{ right: '22%', bottom: '18%' }}
+                className="absolute"
+                style={{ right: '8%', bottom: '10%' }}
                 animate={
-                  monsterAnim === 'idle' ? { y: [0, -6, 0], rotate: [0, 2, 0, -2, 0] } :
-                  monsterAnim === 'attack' ? { x: [0, -80, -120, 0], scale: [1, 1.15, 1.25, 1] } :
-                  monsterAnim === 'hit' ? { x: [0, 12, -8, 5, 0], scale: [1, 0.9, 1.05, 0.95, 1] } :
-                  monsterAnim === 'defeated' ? { opacity: [1, 0], scale: [1, 0.3], rotate: [0, 20], y: [0, 40] } :
+                  monsterAnim === 'idle' ? { y: [0, -8, 0], rotate: [0, 1, 0, -1, 0] } :
+                  monsterAnim === 'attack' ? { x: [0, -80, -140, 0], scale: [1, 1.1, 1.2, 1] } :
+                  monsterAnim === 'hit' ? { x: [0, 15, -10, 8, 0], scale: [1, 0.88, 1.05, 0.95, 1] } :
+                  monsterAnim === 'defeated' ? { opacity: [1, 0], scale: [1, 0.2], rotate: [0, 25], y: [0, 60] } :
                   {}
                 }
                 transition={
@@ -445,22 +461,18 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   { duration: 1.2 }
                 }
               >
-                <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl"
-                  style={{
-                    background: 'radial-gradient(circle, hsl(0 30% 18%), hsl(0 20% 10%))',
-                    boxShadow: '0 0 16px hsl(0 60% 40% / 0.5), 0 4px 8px hsl(0 0% 0% / 0.5)',
-                    border: '2px solid hsl(0 60% 40%)',
-                  }}>
-                  {monster.emoji}
-                </div>
+                <img src={monsterSprites[monster.id]} alt={monster.name}
+                  className="h-48 w-auto object-contain drop-shadow-[0_0_16px_hsl(0_60%_40%/0.5)]"
+                  style={{ transform: 'scaleX(-1)' }}
+                />
               </motion.div>
 
               {/* Ambient particles */}
-              {[...Array(8)].map((_, i) => (
+              {[...Array(10)].map((_, i) => (
                 <motion.div key={i}
-                  className="absolute w-1 h-1 rounded-full bg-primary/20"
-                  style={{ left: `${10 + Math.random() * 80}%`, top: `${20 + Math.random() * 50}%` }}
-                  animate={{ y: [0, -20, 0], opacity: [0.1, 0.4, 0.1] }}
+                  className="absolute w-1.5 h-1.5 rounded-full bg-primary/30"
+                  style={{ left: `${10 + Math.random() * 80}%`, top: `${15 + Math.random() * 55}%` }}
+                  animate={{ y: [0, -25, 0], opacity: [0.1, 0.5, 0.1] }}
                   transition={{ duration: 3 + Math.random() * 3, repeat: Infinity, delay: Math.random() * 2 }}
                 />
               ))}
@@ -625,10 +637,10 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
           <motion.div key="victory" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center justify-center py-10 space-y-5 relative">
             <VictoryFireworks />
-            <motion.div className="text-5xl opacity-30"
-              animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 0.6 }}>
-              {monster.emoji}
-            </motion.div>
+            <motion.img src={monsterSprites[monster.id]} alt={monster.name}
+              className="h-24 w-24 object-contain opacity-30 grayscale"
+              animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 0.6 }}
+            />
             <h2 className="font-display text-2xl text-glow-green">Myth Defeated!</h2>
             <div className="text-center space-y-1">
               <p className="text-sm text-foreground/70 italic">"{monster.myth}"</p>
@@ -649,9 +661,11 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
           <motion.div key="knockout" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-10 space-y-5 relative">
             <KnockoutShatter />
-            <motion.div animate={{ opacity: [1, 0.3] }}
+            <motion.img src={playerSprite} alt="Player"
+              className="h-20 w-20 object-contain"
+              animate={{ opacity: [1, 0.3] }}
               transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
-              className="text-5xl">💔</motion.div>
+            />
             <h2 className="font-display text-2xl text-destructive">Knocked Out!</h2>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
               {monster.name} was too powerful. Retreat and return stronger.
