@@ -48,11 +48,22 @@ export interface NPC {
 
 export interface CompendiumEntry {
   id: string;
-  type: 'fact' | 'myth' | 'bio';
+  type: 'fact' | 'myth' | 'bestiary' | 'bio';
   title: string;
   content: string;
   biome?: BiomeId;
+  monsterId?: string;  // links bestiary entries to monsters
+  npcName?: string;    // links bio entries to NPCs
   unlocked: boolean;
+}
+
+export interface CompendiumMilestone {
+  id: string;
+  title: string;
+  description: string;
+  requiredCount: number; // total unlocked entries needed
+  reward: { type: 'item'; item: keyof GameState['inventory']; amount: number } | { type: 'xp'; amount: number };
+  claimed: boolean;
 }
 
 export type CharacterBackground = 'caregiver' | 'scholar' | 'advocate' | 'explorer';
