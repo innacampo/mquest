@@ -391,7 +391,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
           return newHp;
         });
       }, 800);
-  }, [combo, damageMultiplier, shouldFakeDamage]);
+  }, [combo, damageMultiplier]);
 
   const triggerMonsterAttack = useCallback(() => {
     setPhase('monster_attack');
