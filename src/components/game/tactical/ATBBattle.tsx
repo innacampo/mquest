@@ -4,6 +4,7 @@ import { useGame } from '@/contexts/GameContext';
 import {
   Monster, Question, questions, getSpecialtyDamageMultiplier, getXpMultiplier,
 } from '@/lib/gameData';
+import { battleBackgrounds, monsterSprites, playerSprite } from '@/lib/battleAssets';
 import { Swords, ArrowLeft, Heart, Timer, FlaskConical, Shield, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DamageNumber, ScreenFlash, VictoryFireworks, KnockoutShatter, ImpactBurst, SlashEffect } from '../BattleEffects';
