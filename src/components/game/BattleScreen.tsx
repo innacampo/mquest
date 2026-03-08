@@ -76,6 +76,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
   const [isCorrect, setIsCorrect] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15);
   const [timerActive, setTimerActive] = useState(false);
+  const [pendingContinue, setPendingContinue] = useState<(() => void) | null>(null);
 
   // Monster effects
   const [activeEffect, setActiveEffect] = useState<MonsterEffect>('none');
