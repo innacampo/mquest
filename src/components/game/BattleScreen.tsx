@@ -230,7 +230,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       setTimeout(() => {
         setPhase('combo');
         startComboBar();
-      }, 3000);
+      }, 6000);
     } else {
       setStreak(0);
       setMonsterSurge(prev => prev + 1);
@@ -252,10 +252,10 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       }
 
       if (newPlayerHp <= 0) {
-        setTimeout(() => setPhase('knockout'), 3000);
+        setTimeout(() => setPhase('knockout'), 6000);
       } else {
         // Show monster attack phase briefly
-        setTimeout(() => setPhase('monster_attack'), 3000);
+        setTimeout(() => setPhase('monster_attack'), 6000);
       }
     }
   };
