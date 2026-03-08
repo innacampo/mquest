@@ -16,10 +16,19 @@ import { Button } from '@/components/ui/button';
 type GameView = 'title' | 'character' | 'map' | 'biome' | 'village';
 
 const GameScreen = () => {
-  const { state, resetGame, enterBiome, leaveBiome, setCharacter } = useGame();
-  const [view, setView] = useState<GameView>(() => state.character ? 'map' : 'title');
+  const { state, resetGame, enterBiome, leaveBiome, setCharacter, isLoading } = useGame();
+  const [view, setView] = useState<GameView>('title');
+  const [viewInitialized, setViewInitialized] = useState(false);
   const [activeBiome, setActiveBiome] = useState<BiomeId | null>(null);
   const audio = useAudio();
+
+  // Set initial view once loading completes
+  useEffect(() => {
+    if (!isLoading && !viewInitialized) {
+      setView(state.character ? 'map' : 'title');
+      setViewInitialized(true);
+    }
+  }, [isLoading, viewInitialized, state.character]);
 
   // Switch ambient audio based on view
   useEffect(() => {
