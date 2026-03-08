@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
 import { BiomeId, biomes, monsters, questions, npcs, getShrineDiscoveryMultiplier, getXpMultiplier } from '@/lib/gameData';
+import { battleBackgrounds, monsterSprites, npcPortraits } from '@/lib/battleAssets';
 import ATBBattle from './tactical/ATBBattle';
 import { ArrowLeft, Swords, MessageCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -39,7 +40,6 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
     if (!shrineVisited) {
       setShrineVisited(true);
       addXp(Math.round(50 * xpMult));
-      // Unlock fact card for this biome
       const factEntry = state.compendium.find(e => e.type === 'fact' && e.biome === biomeId && !e.unlocked);
       if (factEntry) unlockCompendiumEntry(factEntry.id);
     }
@@ -114,7 +114,20 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
           exit={{ opacity: 0 }}
           className="rounded-xl bg-card/60 border border-border p-6 space-y-4"
         >
-          <h3 className="font-display text-xl text-foreground">{biomeNpc.name}{biomeNpc.age ? `, ${biomeNpc.age}` : ''}</h3>
+          <div className="flex items-center gap-4">
+            {npcPortraits[biomeNpc.name] && (
+              <img
+                src={npcPortraits[biomeNpc.name]}
+                alt={biomeNpc.name}
+                className="w-16 h-16 rounded-full object-cover border-2 border-primary/30"
+                style={{ boxShadow: '0 0 15px hsla(35 90% 55% / 0.2)' }}
+              />
+            )}
+            <div>
+              <h3 className="font-display text-xl text-foreground">{biomeNpc.name}{biomeNpc.age ? `, ${biomeNpc.age}` : ''}</h3>
+              <p className="text-xs text-muted-foreground">Biome resident</p>
+            </div>
+          </div>
           <div className="rounded-lg bg-muted/30 p-4">
             <p className="text-sm text-foreground/80 italic">
               "{allMonstersDefeated ? biomeNpc.postRemedy : biomeNpc.preRemedy}"
@@ -133,18 +146,27 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
           exit={{ opacity: 0 }}
           className="space-y-5"
         >
-          {/* Biome header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">{biome.emoji}</span>
-              <div>
-                <h2 className="font-display text-xl text-foreground">{biome.name}</h2>
-                <p className="text-xs text-muted-foreground">{biome.bodySystem}</p>
+          {/* Biome header with background art */}
+          <div className="relative rounded-xl overflow-hidden border-2 border-border">
+            <img
+              src={battleBackgrounds[biomeId]}
+              alt={biome.name}
+              className="w-full h-40 md:h-52 object-cover"
+              style={{ filter: 'brightness(0.7) saturate(1.1)' }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">{biome.emoji}</span>
+                <div>
+                  <h2 className="font-display text-xl text-foreground drop-shadow-lg">{biome.name}</h2>
+                  <p className="text-xs text-muted-foreground drop-shadow">{biome.bodySystem}</p>
+                </div>
               </div>
+              <Button variant="outline" size="sm" onClick={onExit} className="bg-background/60 backdrop-blur-sm">
+                <ArrowLeft className="h-4 w-4 mr-2" /> Leave
+              </Button>
             </div>
-            <Button variant="outline" size="sm" onClick={onExit}>
-              <ArrowLeft className="h-4 w-4 mr-2" /> Leave Biome
-            </Button>
           </div>
 
           {/* Actions grid */}
@@ -161,15 +183,25 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
               </p>
             </button>
 
-            {/* NPC */}
+            {/* NPC with portrait */}
             {biomeNpc && (
               <button
                 onClick={handleTalkToNpc}
                 className="text-left rounded-lg border-2 border-border hover:border-primary/50 bg-card/30 p-4 transition-all"
               >
-                <MessageCircle className="h-5 w-5 text-primary mb-2" />
-                <h3 className="font-display text-sm">{biomeNpc.name}{biomeNpc.age ? `, ${biomeNpc.age}` : ''}</h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <div className="flex items-center gap-3 mb-2">
+                  {npcPortraits[biomeNpc.name] ? (
+                    <img
+                      src={npcPortraits[biomeNpc.name]}
+                      alt={biomeNpc.name}
+                      className="w-10 h-10 rounded-full object-cover border border-primary/30"
+                    />
+                  ) : (
+                    <MessageCircle className="h-5 w-5 text-primary" />
+                  )}
+                  <h3 className="font-display text-sm">{biomeNpc.name}{biomeNpc.age ? `, ${biomeNpc.age}` : ''}</h3>
+                </div>
+                <p className="text-xs text-muted-foreground">
                   {npcTalkedTo ? '✓ Spoken to' : 'Talk to this character'}
                 </p>
               </button>
@@ -188,12 +220,13 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
             )}
           </div>
 
-          {/* Monsters */}
+          {/* Monsters with sprite art */}
           <div className="space-y-3">
             <h3 className="font-display text-sm text-muted-foreground uppercase tracking-wider">Myth Monsters</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {biomeMonsters.map(m => {
                 const defeated = state.monstersDefeated.includes(m.id);
+                const sprite = monsterSprites[m.id];
                 return (
                   <motion.button
                     key={m.id}
@@ -207,10 +240,28 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl">{m.emoji}</span>
-                      <div>
+                      {sprite ? (
+                        <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-destructive/20 flex-shrink-0">
+                          <img
+                            src={sprite}
+                            alt={m.name}
+                            className="w-full h-full object-cover"
+                            style={{
+                              filter: defeated ? 'grayscale(1) brightness(0.5)' : 'none',
+                            }}
+                          />
+                          {defeated && (
+                            <div className="absolute inset-0 bg-glow-green/20 flex items-center justify-center">
+                              <span className="text-lg">✓</span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-2xl">{m.emoji}</span>
+                      )}
+                      <div className="flex-1 min-w-0">
                         <h4 className="font-display text-sm">{m.name}</h4>
-                        <p className="text-xs text-muted-foreground italic">"{m.myth}"</p>
+                        <p className="text-xs text-muted-foreground italic truncate">"{m.myth}"</p>
                         {defeated && <p className="text-xs text-glow-green mt-1">✓ Defeated</p>}
                       </div>
                     </div>
