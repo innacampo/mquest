@@ -582,9 +582,6 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   </div>
                   <div className="flex items-center gap-1 justify-end">
                     <p className="text-[10px] text-muted-foreground">{monsterHp}/{monster.hp} HP</p>
-                    {shouldFakeDamage && (
-                      <span className="text-[9px] text-destructive/70 italic">👻 phantom</span>
-                    )}
                   </div>
                 </>
               </div>
