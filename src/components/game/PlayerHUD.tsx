@@ -21,7 +21,7 @@ const PlayerHUD = () => {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-primary" />
-            <span className="font-display text-sm text-primary">Lyra — Level {state.level}</span>
+            <span className="font-display text-sm text-primary">{state.character?.name || 'Lyra'} — Level {state.level}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="h-1.5 w-24 rounded-full bg-muted overflow-hidden">

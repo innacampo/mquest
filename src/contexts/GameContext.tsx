@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { GameState, createInitialGameState, getLevelFromXp, BiomeId, biomes } from '@/lib/gameData';
+import { GameState, createInitialGameState, getLevelFromXp, BiomeId, biomes, CharacterProfile } from '@/lib/gameData';
 
 interface GameContextType {
   state: GameState;
@@ -13,6 +13,7 @@ interface GameContextType {
   resetGame: () => void;
   enterBiome: (biomeId: BiomeId) => void;
   leaveBiome: () => void;
+  setCharacter: (profile: CharacterProfile) => void;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -140,10 +141,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setState(fresh);
   }, []);
 
+  const setCharacter = useCallback((profile: CharacterProfile) => {
+    setState(prev => {
+      const next = { ...prev, character: profile };
+      save(next);
+      return next;
+    });
+  }, [save]);
+
   return (
     <GameContext.Provider value={{
       state, addXp, defeatMonster, clearBiome, unlockCompendiumEntry,
-      addInventory, updateEstraGlow, updateEstraBond, resetGame, enterBiome, leaveBiome,
+      addInventory, updateEstraGlow, updateEstraBond, resetGame, enterBiome, leaveBiome, setCharacter,
     }}>
       {children}
     </GameContext.Provider>

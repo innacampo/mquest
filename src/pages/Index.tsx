@@ -8,15 +8,16 @@ import BiomeExplore from '@/components/game/BiomeExplore';
 import HearthVillage from '@/components/game/HearthVillage';
 import AudioControls from '@/components/game/AudioControls';
 import TitleScreen from '@/components/game/TitleScreen';
+import CharacterCreation from '@/components/game/CharacterCreation';
 import { useAudio } from '@/hooks/useAudio';
 import { Map, RotateCcw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-type GameView = 'title' | 'map' | 'biome' | 'village';
+type GameView = 'title' | 'character' | 'map' | 'biome' | 'village';
 
 const GameScreen = () => {
-  const { state, resetGame, enterBiome, leaveBiome } = useGame();
-  const [view, setView] = useState<GameView>('title');
+  const { state, resetGame, enterBiome, leaveBiome, setCharacter } = useGame();
+  const [view, setView] = useState<GameView>(() => state.character ? 'map' : 'title');
   const [activeBiome, setActiveBiome] = useState<BiomeId | null>(null);
   const audio = useAudio();
 
@@ -43,7 +44,19 @@ const GameScreen = () => {
   };
 
   if (view === 'title') {
-    return <TitleScreen onStart={() => { setView('map'); audio.playChime(); }} />;
+    return <TitleScreen onStart={() => { setView(state.character ? 'map' : 'character'); audio.playChime(); }} />;
+  }
+
+  if (view === 'character') {
+    return (
+      <CharacterCreation
+        onComplete={(background, specialty, name) => {
+          setCharacter({ background, specialty, name: name || 'Lyra' });
+          setView('map');
+          audio.playVictory();
+        }}
+      />
+    );
   }
 
   return (

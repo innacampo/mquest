@@ -54,6 +54,15 @@ export interface CompendiumEntry {
   unlocked: boolean;
 }
 
+export type CharacterBackground = 'caregiver' | 'scholar' | 'advocate' | 'explorer';
+export type Specialty = 'thermoregulation' | 'neuroscience' | 'cardiology' | 'endocrinology';
+
+export interface CharacterProfile {
+  background: CharacterBackground;
+  specialty: Specialty;
+  name: string; // display name override, defaults to "Lyra"
+}
+
 export interface GameState {
   level: number;
   xp: number;
@@ -75,6 +84,7 @@ export interface GameState {
     compendiumSeal: number;
   };
   estraGlow: number; // 0.0 - 1.0
+  character: CharacterProfile | null;
 }
 
 // ============ BIOMES ============
@@ -450,6 +460,7 @@ export const createInitialGameState = (): GameState => ({
     compendiumSeal: 0,
   },
   estraGlow: 0.05,
+  character: null,
 });
 
 // ============ XP / LEVEL HELPERS ============
