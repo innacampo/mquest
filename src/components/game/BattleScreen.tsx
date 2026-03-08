@@ -76,6 +76,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
   const [isCorrect, setIsCorrect] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15);
   const [timerActive, setTimerActive] = useState(false);
+  const [pendingContinue, setPendingContinue] = useState<(() => void) | null>(null);
 
   // Monster effects
   const [activeEffect, setActiveEffect] = useState<MonsterEffect>('none');
@@ -224,13 +225,11 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       setTotalCorrect(prev => prev + 1);
       setFlashGold(prev => prev + 1);
       setPlayerPortraitState('charge');
-      // Bonus time for correct answer (+5s, capped at 15)
-      setTimeLeft(prev => Math.min(15, prev + 5));
-      // Go to combo phase
-      setTimeout(() => {
+      // Wait for player to click Continue
+      setPendingContinue(() => () => {
         setPhase('combo');
         startComboBar();
-      }, 6000);
+      });
     } else {
       setStreak(0);
       setMonsterSurge(prev => prev + 1);
@@ -252,11 +251,17 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       }
 
       if (newPlayerHp <= 0) {
-        setTimeout(() => setPhase('knockout'), 6000);
+        setPendingContinue(() => () => setPhase('knockout'));
       } else {
-        // Show monster attack phase briefly
-        setTimeout(() => setPhase('monster_attack'), 6000);
+        setPendingContinue(() => () => setPhase('monster_attack'));
       }
+    }
+  };
+
+  const handleContinue = () => {
+    if (pendingContinue) {
+      pendingContinue();
+      setPendingContinue(null);
     }
   };
 
@@ -690,13 +695,20 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
               </div>
             </div>
 
-            {/* Wrong answer feedback inline */}
+            {/* Answer feedback + Continue */}
             <AnimatePresence>
-              {showResult && !isCorrect && (
+              {showResult && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                  className="rounded-lg p-4 bg-destructive/10 border border-destructive/30 space-y-2">
-                  <p className="font-display text-sm text-destructive">💥 {monster.name} strikes! -{lastDamageTaken} HP</p>
+                  className={`rounded-lg p-4 border space-y-3 ${isCorrect ? 'bg-glow-green/10 border-glow-green/30' : 'bg-destructive/10 border-destructive/30'}`}>
+                  {isCorrect ? (
+                    <p className="font-display text-sm text-glow-green">✨ Correct!</p>
+                  ) : (
+                    <p className="font-display text-sm text-destructive">💥 {monster.name} strikes! -{lastDamageTaken} HP</p>
+                  )}
                   <p className="text-xs text-foreground/70">{currentQuestion.explanation}</p>
+                  <Button size="sm" onClick={handleContinue} className="w-full mt-2">
+                    Continue →
+                  </Button>
                 </motion.div>
               )}
             </AnimatePresence>
