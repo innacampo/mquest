@@ -661,9 +661,11 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
           <motion.div key="knockout" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-10 space-y-5 relative">
             <KnockoutShatter />
-            <motion.div animate={{ opacity: [1, 0.3] }}
+            <motion.img src={playerSprite} alt="Player"
+              className="h-20 w-20 object-contain"
+              animate={{ opacity: [1, 0.3] }}
               transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
-              className="text-5xl">💔</motion.div>
+            />
             <h2 className="font-display text-2xl text-destructive">Knocked Out!</h2>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
               {monster.name} was too powerful. Retreat and return stronger.
