@@ -75,16 +75,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
   return (
     <div className="space-y-4">
       <div className="text-center space-y-2">
-        <div className="flex items-center justify-center gap-2">
-          <h2 className="font-display text-2xl text-primary text-glow-amber">The Inner Realm</h2>
-          <button
-            onClick={() => setShowRules(true)}
-            className="p-1.5 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
-            title="How to Play"
-          >
-            <HelpCircle className="h-5 w-5" />
-          </button>
-        </div>
+        <h2 className="font-display text-2xl text-primary text-glow-amber">The Inner Realm</h2>
         <p className="text-sm text-muted-foreground">
           Explore the mystical world within — each region maps to a biological system
         </p>
