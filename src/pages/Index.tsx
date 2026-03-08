@@ -22,7 +22,8 @@ const GameScreen = () => {
 
   // Switch ambient audio based on view
   useEffect(() => {
-    if (view === 'map') audio.setScene('map');
+    if (view === 'title') audio.setScene('none');
+    else if (view === 'map') audio.setScene('map');
     else if (view === 'village') audio.setScene('village');
     else if (view === 'biome') audio.setScene('battle');
   }, [view]);
