@@ -483,3 +483,45 @@ export const getWorldState = (glow: number): string => {
   if (glow < 0.75) return 'Healing';
   return 'Bloom';
 };
+
+// ============ CHARACTER BONUS HELPERS ============
+const specialtyBiomeMap: Record<Specialty, BiomeId[]> = {
+  thermoregulation: ['fever-peaks'],
+  neuroscience: ['fog-marshes', 'mood-tides'],
+  cardiology: ['heartland'],
+  endocrinology: ['crystal-caverns', 'bloom-garden'],
+};
+
+export const getSpecialtyDamageMultiplier = (character: CharacterProfile | null, biomeId: BiomeId): number => {
+  if (!character) return 1;
+  const bonusBiomes = specialtyBiomeMap[character.specialty] || [];
+  return bonusBiomes.includes(biomeId) ? 1.5 : 1;
+};
+
+export const getXpMultiplier = (character: CharacterProfile | null): number => {
+  if (!character) return 1;
+  return character.background === 'scholar' ? 1.15 : 1;
+};
+
+export const getShrineDiscoveryMultiplier = (character: CharacterProfile | null): number => {
+  if (!character) return 1;
+  return character.background === 'explorer' ? 1.2 : 1;
+};
+
+export const getStartingBonuses = (character: CharacterProfile): Partial<{
+  estraBond: number;
+  inventory: Partial<GameState['inventory']>;
+}> => {
+  switch (character.background) {
+    case 'caregiver':
+      return { inventory: { wellnessHerbs: 5 } };
+    case 'scholar':
+      return { inventory: { knowledgeScrolls: 3 } };
+    case 'advocate':
+      return { estraBond: 1 };
+    case 'explorer':
+      return { inventory: { hormoneCrystals: 3 } };
+    default:
+      return {};
+  }
+};

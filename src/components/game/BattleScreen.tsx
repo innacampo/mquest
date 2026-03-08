@@ -107,7 +107,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     const baseXp = 150;
     const perfectBonus = totalCorrect === totalQuestions ? 100 : 0;
     const streakBonus = Math.max(0, (streak - 2)) * 15;
-    const totalXp = baseXp + perfectBonus + streakBonus;
+    const totalXp = Math.round((baseXp + perfectBonus + streakBonus) * xpMultiplier);
 
     addXp(totalXp);
     defeatMonster(monster.id);

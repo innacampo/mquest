@@ -57,7 +57,7 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
 
   const handleClearBiome = () => {
     clearBiome(biomeId);
-    addXp(500);
+    addXp(Math.round(500 * xpMult));
     onExit();
   };
 
