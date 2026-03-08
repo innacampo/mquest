@@ -4,7 +4,7 @@ import { MessageSquare, Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const FeedbackButton: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -23,9 +23,9 @@ const FeedbackButton: React.FC = () => {
     setSending(false);
 
     if (error) {
-      toast({ title: 'Oops', description: 'Could not send feedback.', variant: 'destructive' });
+      toast.error('Could not send feedback.', { position: 'bottom-left' });
     } else {
-      toast({ title: '💜 Thank you!', description: 'Your feedback has been saved.' });
+      toast.success('💜 Thank you! Your feedback has been saved.', { position: 'bottom-left' });
       setMessage('');
       setOpen(false);
     }
