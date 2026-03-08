@@ -18,13 +18,17 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   const shrineMult = getShrineDiscoveryMultiplier(state.character);
   const [currentView, setCurrentView] = useState<'explore' | 'battle' | 'npc' | 'shrine'>('explore');
   const [selectedMonster, setSelectedMonster] = useState<string | null>(null);
-  const [shrineVisited, setShrineVisited] = useState(false);
-  const [npcTalkedTo, setNpcTalkedTo] = useState(false);
+  const [justVisitedShrine, setJustVisitedShrine] = useState(false);
+  const [justTalkedNpc, setJustTalkedNpc] = useState(false);
 
   const biome = biomes.find(b => b.id === biomeId)!;
   const biomeMonsters = monsters.filter(m => m.biome === biomeId);
   const biomeNpc = npcs.find(n => n.biome === biomeId);
   const allMonstersDefeated = biomeMonsters.every(m => state.monstersDefeated.includes(m.id));
+
+  // Derive visited state from global game state — persists across biome exits
+  const shrineVisited = justVisitedShrine || state.compendium.some(e => e.type === 'fact' && e.biome === biomeId && e.unlocked);
+  const npcTalkedTo = justTalkedNpc || (biomeNpc ? (state.npcsMet || []).includes(biomeNpc.name) : false);
 
   const handleMonsterSelect = (monsterId: string) => {
     setSelectedMonster(monsterId);
@@ -38,7 +42,7 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
 
   const handleVisitShrine = () => {
     if (!shrineVisited) {
-      setShrineVisited(true);
+      setJustVisitedShrine(true);
       addXp(Math.round(50 * xpMult));
       // Explorer gets 2 scrolls + bonus bloom essence; others get 1 scroll
       const isExplorer = state.character?.background === 'explorer';
@@ -54,7 +58,7 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
 
   const handleTalkToNpc = () => {
     if (!npcTalkedTo && biomeNpc) {
-      setNpcTalkedTo(true);
+      setJustTalkedNpc(true);
       // Caregiver gets extra herbs; Advocate gets bonus XP and wellness from NPCs
       const isAdvocate = state.character?.background === 'advocate';
       const isCaregiver = state.character?.background === 'caregiver';
