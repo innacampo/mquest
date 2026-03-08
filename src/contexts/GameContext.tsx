@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { GameState, createInitialGameState, getLevelFromXp, BiomeId, biomes } from '@/lib/gameData';
+import { GameState, createInitialGameState, getLevelFromXp, BiomeId, biomes, CharacterProfile } from '@/lib/gameData';
 
 interface GameContextType {
   state: GameState;
