@@ -340,14 +340,21 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
     if (correct) {
       setTotalCorrect(prev => prev + 1);
       setCombo(prev => prev + 1);
-      setTimeout(() => executePlayerAttack(), 1000);
+      setPendingContinue(() => () => executePlayerAttack());
     } else {
       setCombo(0);
-      setTimeout(() => {
+      setPendingContinue(() => () => {
         setPlayerAtb(0);
         setMonsterAtb(prev => Math.min(ATB_MAX, prev + 30));
         setPhase('active');
-      }, 1500);
+      });
+    }
+  };
+
+  const handleQuizContinue = () => {
+    if (pendingContinue) {
+      pendingContinue();
+      setPendingContinue(null);
     }
   };
 
