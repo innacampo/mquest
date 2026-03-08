@@ -241,6 +241,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       setFlashRed(prev => prev + 1);
       setMonsterSlash(prev => prev + 1);
       setImpactPlayer(prev => prev + 1);
+      setMonsterPortraitState('attack');
+      setPlayerPortraitState('hit');
       addDamageNumber(monsterDmg, 'taken');
 
       if (monster.mechanic === 'Drain Bond') {
