@@ -181,6 +181,17 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
                 </div>
               </div>
               <div className="flex items-center gap-4">
+                {damageMultiplier > 1 && (
+                  <div className="flex items-center gap-1 text-accent">
+                    <Sparkles className="h-4 w-4" />
+                    <span className="text-xs">Specialty ×{damageMultiplier}</span>
+                  </div>
+                )}
+                {xpMultiplier > 1 && (
+                  <div className="flex items-center gap-1 text-secondary">
+                    <span className="text-xs">XP ×{xpMultiplier.toFixed(2)}</span>
+                  </div>
+                )}
                 {monsterSurge > 0 && (
                   <div className="flex items-center gap-1 text-destructive">
                     <Zap className="h-4 w-4" />
