@@ -637,10 +637,10 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
           <motion.div key="victory" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center justify-center py-10 space-y-5 relative">
             <VictoryFireworks />
-            <motion.div className="text-5xl opacity-30"
-              animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 0.6 }}>
-              {monster.emoji}
-            </motion.div>
+            <motion.img src={monsterSprites[monster.id]} alt={monster.name}
+              className="h-24 w-24 object-contain opacity-30 grayscale"
+              animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 0.6 }}
+            />
             <h2 className="font-display text-2xl text-glow-green">Myth Defeated!</h2>
             <div className="text-center space-y-1">
               <p className="text-sm text-foreground/70 italic">"{monster.myth}"</p>
