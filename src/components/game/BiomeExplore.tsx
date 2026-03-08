@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
-import { BiomeId, biomes, monsters, questions, npcs } from '@/lib/gameData';
+import { BiomeId, biomes, monsters, questions, npcs, getShrineDiscoveryMultiplier, getXpMultiplier } from '@/lib/gameData';
 import BattleScreen from './BattleScreen';
 import { ArrowLeft, Swords, MessageCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,8 @@ interface BiomeExploreProps {
 
 const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   const { state, addXp, clearBiome, unlockCompendiumEntry, addInventory } = useGame();
+  const xpMult = getXpMultiplier(state.character);
+  const shrineMult = getShrineDiscoveryMultiplier(state.character);
   const [currentView, setCurrentView] = useState<'explore' | 'battle' | 'npc' | 'shrine'>('explore');
   const [selectedMonster, setSelectedMonster] = useState<string | null>(null);
   const [shrineVisited, setShrineVisited] = useState(false);
