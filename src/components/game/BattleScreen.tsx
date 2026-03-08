@@ -553,7 +553,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {/* ============ QUESTION PHASE ============ */}
         {phase === 'question' && currentQuestion && (
           <motion.div key="question" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-            className="space-y-4">
+            className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
             {/* Battle HUD - both HP bars */}
             <div className="flex items-center justify-between gap-4">
               {/* Monster */}
