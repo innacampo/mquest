@@ -5,12 +5,13 @@ export type QuestionFormat = 'mc' | 'visual_id' | 'sort';
 export interface Question {
   id: string;
   biome: BiomeId;
+  monster: string; // monster id this question belongs to
   format: QuestionFormat;
   difficulty: 'easy' | 'medium' | 'hard';
   text: string;
   options: string[];
-  correctAnswer: number; // index for mc/visual_id
-  correctSort?: Record<string, string[]>; // for sorting
+  correctAnswer: number;
+  correctSort?: Record<string, string[]>;
   explanation: string;
 }
 
