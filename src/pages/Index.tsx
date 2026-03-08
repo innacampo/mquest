@@ -49,7 +49,14 @@ const GameScreen = () => {
   const handleExitBiome = () => {
     leaveBiome();
     setActiveBiome(null);
-    setView('village');
+    // Check if all 6 biomes are cleared → trigger ending
+    const ALL_BIOMES: BiomeId[] = ['fever-peaks', 'fog-marshes', 'mood-tides', 'crystal-caverns', 'heartland', 'bloom-garden'];
+    const allCleared = ALL_BIOMES.every(b => state.biomesCleared.includes(b));
+    if (allCleared) {
+      setView('ending');
+    } else {
+      setView('village');
+    }
     audio.playVictory();
   };
 
