@@ -8,6 +8,7 @@ import BiomeExplore from '@/components/game/BiomeExplore';
 import HearthVillage from '@/components/game/HearthVillage';
 import AudioControls from '@/components/game/AudioControls';
 import TitleScreen from '@/components/game/TitleScreen';
+import FeedbackButton from '@/components/game/FeedbackButton';
 import CharacterCreation from '@/components/game/CharacterCreation';
 import EndingScreen from '@/components/game/EndingScreen';
 import { useAudio } from '@/hooks/useAudio';
