@@ -83,7 +83,9 @@ export interface GameState {
   currentBiome: BiomeId | null;
   biomesCleared: BiomeId[];
   compendium: CompendiumEntry[];
+  compendiumMilestones: CompendiumMilestone[];
   monstersDefeated: string[];
+  npcsMet: string[];  // NPC names the player has spoken to
   inventory: {
     hormoneCrystals: number;
     wellnessHerbs: number;
