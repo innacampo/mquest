@@ -391,8 +391,18 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
         }
         return newHp;
       });
+      // Fake damage mechanic — spawn 2-3 decoy numbers alongside real damage
+      if (shouldFakeDamage) {
+        const fakeCount = 2 + Math.floor(Math.random() * 2);
+        for (let i = 0; i < fakeCount; i++) {
+          const fakeVal = Math.round(damage * (0.4 + Math.random() * 1.2));
+          const fakeX = `${55 + Math.round((Math.random() - 0.5) * 30)}%`;
+          const fakeType = Math.random() > 0.3 ? 'dealt' : 'heal';
+          setTimeout(() => addDmgNumber(fakeVal, fakeType as 'dealt' | 'heal', fakeX), 100 + i * 150);
+        }
+      }
     }, 800);
-  }, [combo, damageMultiplier]);
+  }, [combo, damageMultiplier, shouldFakeDamage]);
 
   const triggerMonsterAttack = useCallback(() => {
     setPhase('monster_attack');
