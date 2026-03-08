@@ -871,7 +871,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   Continue →
                 </Button>
               </motion.div>
-            )
+            )}
           </motion.div>
         )}
 
