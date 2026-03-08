@@ -172,8 +172,8 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
   const shouldFreezeAnswer = mechanic?.effect === 'freeze_answer';
   const shouldFog = mechanic?.effect === 'screen_fog';
   const shouldDecayCombo = mechanic?.effect === 'combo_decay';
-  const hideMonsterHp = mechanic?.effect === 'hide_monster_hp';
-  const hidePlayerHp = mechanic?.effect === 'hide_player_hp';
+  const shouldFakeDamage = mechanic?.effect === 'fake_damage';
+  const shouldDrainPotions = mechanic?.effect === 'potion_drain';
 
   const addDmgNumber = (value: number, type: 'dealt' | 'taken' | 'heal', x = '50%') => {
     const id = `${Date.now()}-${Math.random()}`;
