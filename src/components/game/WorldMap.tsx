@@ -55,7 +55,6 @@ const pathConnections: [BiomeId, BiomeId][] = [
 ];
 
 const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
-  const [showRules, setShowRules] = useState(false);
   const { state } = useGame();
 
   const isBiomeUnlocked = (biomeId: BiomeId) => {
