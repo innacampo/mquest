@@ -80,7 +80,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     setTotalQuestions(prev => prev + 1);
 
     if (correct) {
-      const damage = 25;
+      const baseDamage = 25;
+      const damage = Math.round(baseDamage * damageMultiplier);
       const newHp = Math.max(0, monsterHp - damage);
       setMonsterHp(newHp);
       setStreak(prev => prev + 1);
