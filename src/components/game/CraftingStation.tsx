@@ -22,7 +22,7 @@ const recipes: Recipe[] = [
     name: 'Remedy Potion (Basic)',
     emoji: '🧪',
     description: 'A simple healing remedy crafted from herbs.',
-    effect: 'Unlocks NPC side quest. Awards 75 XP.',
+    effect: 'Restores 30 HP in battle. Awards 75 XP.',
     ingredients: [{ item: 'wellnessHerbs', label: 'Wellness Herbs', amount: 2 }],
     output: 'remedyPotionBasic',
     xpReward: 75,
@@ -32,7 +32,7 @@ const recipes: Recipe[] = [
     name: 'Remedy Potion (Enhanced)',
     emoji: '✨',
     description: 'A powerful remedy infused with crystal energy.',
-    effect: 'Unlocks extended NPC story arc. Awards 150 XP + bonus Compendium entry.',
+    effect: 'Restores 60 HP in battle. Awards 150 XP + bonus Compendium entry.',
     ingredients: [
       { item: 'wellnessHerbs', label: 'Wellness Herbs', amount: 4 },
       { item: 'hormoneCrystals', label: 'Hormone Crystals', amount: 1 },
