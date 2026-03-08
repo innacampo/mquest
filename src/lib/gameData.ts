@@ -68,6 +68,11 @@ export interface GameState {
     wellnessHerbs: number;
     knowledgeScrolls: number;
     bloomEssence: number;
+    remedyPotionBasic: number;
+    remedyPotionEnhanced: number;
+    clarityElixir: number;
+    estraBoost: number;
+    compendiumSeal: number;
   };
   estraGlow: number; // 0.0 - 1.0
 }
@@ -438,6 +443,11 @@ export const createInitialGameState = (): GameState => ({
     wellnessHerbs: 0,
     knowledgeScrolls: 0,
     bloomEssence: 0,
+    remedyPotionBasic: 0,
+    remedyPotionEnhanced: 0,
+    clarityElixir: 0,
+    estraBoost: 0,
+    compendiumSeal: 0,
   },
   estraGlow: 0.05,
 });
