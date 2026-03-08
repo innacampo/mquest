@@ -12,7 +12,7 @@ const backgrounds: { id: CharacterBackground; label: string; icon: React.ReactNo
     id: 'caregiver',
     label: 'The Caregiver',
     icon: <Heart className="h-6 w-6" />,
-    desc: '+10% healing potency, bonus wellness herbs at start',
+    desc: 'Bonus wellness herbs at start',
     flavor: 'You spent years tending to others. Now it\'s time to understand yourself.',
   },
   {
