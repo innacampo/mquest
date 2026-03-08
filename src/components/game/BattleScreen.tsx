@@ -246,7 +246,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       setPlayerPortraitState('hit');
       addDamageNumber(monsterDmg, 'taken');
 
-      if (monster.mechanic === 'Drain Bond') {
+      if (monster.mechanic === 'Heartbreak') {
         updateEstraBond(-1);
       }
 
