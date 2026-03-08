@@ -9,11 +9,12 @@ import HearthVillage from '@/components/game/HearthVillage';
 import AudioControls from '@/components/game/AudioControls';
 import TitleScreen from '@/components/game/TitleScreen';
 import CharacterCreation from '@/components/game/CharacterCreation';
+import EndingScreen from '@/components/game/EndingScreen';
 import { useAudio } from '@/hooks/useAudio';
 import { Map, RotateCcw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-type GameView = 'title' | 'character' | 'map' | 'biome' | 'village';
+type GameView = 'title' | 'character' | 'map' | 'biome' | 'village' | 'ending';
 
 const GameScreen = () => {
   const { state, resetGame, enterBiome, leaveBiome, setCharacter, isLoading } = useGame();
@@ -48,7 +49,14 @@ const GameScreen = () => {
   const handleExitBiome = () => {
     leaveBiome();
     setActiveBiome(null);
-    setView('village');
+    // Check if all 6 biomes are cleared → trigger ending
+    const ALL_BIOMES: BiomeId[] = ['fever-peaks', 'fog-marshes', 'mood-tides', 'crystal-caverns', 'heartland', 'bloom-garden'];
+    const allCleared = ALL_BIOMES.every(b => state.biomesCleared.includes(b));
+    if (allCleared) {
+      setView('ending');
+    } else {
+      setView('village');
+    }
     audio.playVictory();
   };
 
@@ -64,6 +72,10 @@ const GameScreen = () => {
 
   if (view === 'title') {
     return <TitleScreen onStart={() => { setView(state.character ? 'map' : 'character'); audio.playChime(); }} />;
+  }
+
+  if (view === 'ending') {
+    return <EndingScreen onRestart={() => setView('map')} />;
   }
 
   if (view === 'character') {
