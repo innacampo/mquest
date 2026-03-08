@@ -5,9 +5,90 @@ import {
   Monster, Question, questions, getSpecialtyDamageMultiplier, getXpMultiplier,
 } from '@/lib/gameData';
 import { battleBackgrounds, monsterSprites, playerSprite } from '@/lib/battleAssets';
-import { Swords, ArrowLeft, Heart, Timer, FlaskConical, Shield, Zap } from 'lucide-react';
+import { Swords, ArrowLeft, Heart, Timer, FlaskConical, Shield, Zap, EyeOff, Shuffle, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DamageNumber, ScreenFlash, VictoryFireworks, KnockoutShatter, ImpactBurst, SlashEffect } from '../BattleEffects';
+
+// ---- MONSTER MECHANIC DEFINITIONS ----
+type MonsterMechanic = {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ReactNode;
+  // Which part of battle it affects
+  effect: 'hide_monster_hp' | 'hide_player_hp' | 'scramble_answers' | 'blur_question' |
+          'shorter_timer' | 'shrink_text' | 'fade_answers' | 'freeze_answer' |
+          'screen_fog' | 'combo_decay' | 'multi';
+};
+
+const MONSTER_MECHANICS: Record<string, MonsterMechanic> = {
+  'shame-dragon': {
+    id: 'shame-dragon', name: 'Veil of Shame',
+    description: 'Monster HP bar is hidden — fight blind!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'hide_monster_hp',
+  },
+  'confusion-cyclone': {
+    id: 'confusion-cyclone', name: 'Whirlwind Scramble',
+    description: 'Answer options are randomly shuffled each time!',
+    icon: <Shuffle className="h-3.5 w-3.5" />,
+    effect: 'scramble_answers',
+  },
+  'silence-specter': {
+    id: 'silence-specter', name: 'Spectral Silence',
+    description: 'Questions are blurred — read carefully!',
+    icon: <VolumeX className="h-3.5 w-3.5" />,
+    effect: 'blur_question',
+  },
+  'dismissal-wraith': {
+    id: 'dismissal-wraith', name: 'Dismissive Haste',
+    description: 'Timer reduced to 10 seconds!',
+    icon: <Timer className="h-3.5 w-3.5" />,
+    effect: 'shorter_timer',
+  },
+  'minimizer': {
+    id: 'minimizer', name: 'Minimizing Gaze',
+    description: 'Answer text shrinks over time — act fast!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'shrink_text',
+  },
+  'shame-tide': {
+    id: 'shame-tide', name: 'Tidal Shame',
+    description: 'Your HP bar is hidden — trust your instincts!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'hide_player_hp',
+  },
+  'brittle-giant': {
+    id: 'brittle-giant', name: 'Crumbling Choices',
+    description: 'Wrong answers fade away... but so might the right one!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'fade_answers',
+  },
+  'cold-certainty': {
+    id: 'cold-certainty', name: 'Frozen Deceit',
+    description: 'One wrong answer glows like the correct one!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'freeze_answer',
+  },
+  'fog-of-shame': {
+    id: 'fog-of-shame', name: 'Creeping Fog',
+    description: 'Screen fills with fog as the timer runs down!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'screen_fog',
+  },
+  'heartbreak-myth': {
+    id: 'heartbreak-myth', name: 'Heartbreak',
+    description: 'Combo decays each turn — keep the streak alive!',
+    icon: <Heart className="h-3.5 w-3.5" />,
+    effect: 'combo_decay',
+  },
+  'grand-silencer': {
+    id: 'grand-silencer', name: 'Grand Silence',
+    description: 'Blurred questions AND scrambled answers!',
+    icon: <VolumeX className="h-3.5 w-3.5" />,
+    effect: 'multi',
+  },
+};
 
 interface ATBBattleProps {
   monster: Monster;
@@ -18,18 +99,18 @@ interface ATBBattleProps {
 
 type BattlePhase =
   | 'intro'
-  | 'active'       // ATB gauges filling
-  | 'player_menu'  // Player gauge full, choose action
-  | 'quiz'         // Answering question
-  | 'player_attack' // Player attack animation
-  | 'monster_attack' // Monster attack animation
+  | 'active'
+  | 'player_menu'
+  | 'quiz'
+  | 'player_attack'
+  | 'monster_attack'
   | 'victory'
   | 'knockout';
 
 const PLAYER_MAX_HP = 100;
 const PLAYER_BASE_DAMAGE = 28;
 const MONSTER_BASE_DAMAGE = 15;
-const PLAYER_ATB_SPEED = 1.8;  // gauge units per tick
+const PLAYER_ATB_SPEED = 1.8;
 const MONSTER_ATB_SPEED = 1.2;
 const ATB_MAX = 100;
 const ATB_TICK_MS = 50;
@@ -38,6 +119,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
   const { state, addXp, defeatMonster, unlockCompendiumEntry, updateEstraBond, addInventory } = useGame();
   const damageMultiplier = getSpecialtyDamageMultiplier(state.character, monster.biome);
   const xpMultiplier = getXpMultiplier(state.character);
+  const mechanic = MONSTER_MECHANICS[monster.id] || null;
 
   const [phase, setPhase] = useState<BattlePhase>('intro');
   const [playerHp, setPlayerHp] = useState(PLAYER_MAX_HP);
@@ -49,12 +131,18 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
   // Quiz
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [scrambledOptions, setScrambledOptions] = useState<{ text: string; originalIndex: number }[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15);
   const [timerActive, setTimerActive] = useState(false);
   const [usedQuestionIds, setUsedQuestionIds] = useState<Set<string>>(new Set());
+  const [blurAmount, setBlurAmount] = useState(0);
+  const [shrinkScale, setShrinkScale] = useState(1);
+  const [fadedAnswers, setFadedAnswers] = useState<Set<number>>(new Set());
+  const [frozenDeceitIndex, setFrozenDeceitIndex] = useState<number | null>(null);
+  const [fogOpacity, setFogOpacity] = useState(0);
 
   // VFX triggers
   const [flashRed, setFlashRed] = useState(0);
@@ -74,6 +162,18 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
   const biomeQuestions = useMemo(() => questions.filter(q => q.monster === monster.id), [monster.id]);
   const atbRunning = useRef(false);
+
+  // Helper: does this monster use scrambled answers?
+  const shouldScramble = mechanic?.effect === 'scramble_answers' || mechanic?.effect === 'multi';
+  const shouldBlur = mechanic?.effect === 'blur_question' || mechanic?.effect === 'multi';
+  const shouldShortenTimer = mechanic?.effect === 'shorter_timer';
+  const shouldShrink = mechanic?.effect === 'shrink_text';
+  const shouldFadeAnswers = mechanic?.effect === 'fade_answers';
+  const shouldFreezeAnswer = mechanic?.effect === 'freeze_answer';
+  const shouldFog = mechanic?.effect === 'screen_fog';
+  const shouldDecayCombo = mechanic?.effect === 'combo_decay';
+  const hideMonsterHp = mechanic?.effect === 'hide_monster_hp';
+  const hidePlayerHp = mechanic?.effect === 'hide_player_hp';
 
   const addDmgNumber = (value: number, type: 'dealt' | 'taken' | 'heal', x = '50%') => {
     const id = `${Date.now()}-${Math.random()}`;
