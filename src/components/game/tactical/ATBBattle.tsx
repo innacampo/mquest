@@ -310,23 +310,35 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
         {/* ====== INTRO ====== */}
         {phase === 'intro' && (
           <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="text-center space-y-4 py-6">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', bounce: 0.5 }}
-              className="text-7xl">{monster.emoji}</motion.div>
-            <h2 className="font-display text-2xl text-foreground">{monster.name}</h2>
-            <p className="text-sm text-destructive italic max-w-md mx-auto">"{monster.myth}"</p>
-            <p className="text-xs text-muted-foreground max-w-sm mx-auto">{monster.mechanicDescription}</p>
-            <motion.p className="text-xs text-secondary mt-2"
-              animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
-              ⚡ Active Time Battle — React fast, answer smart!
-            </motion.p>
-            <div className="flex gap-3 justify-center">
-              <Button onClick={startBattle} className="bg-primary text-primary-foreground font-display">
-                <Swords className="h-4 w-4 mr-2" /> Begin Battle
-              </Button>
-              <Button variant="outline" onClick={onRetreat}>
-                <ArrowLeft className="h-4 w-4 mr-2" /> Retreat
-              </Button>
+            className="relative rounded-xl overflow-hidden" style={{ minHeight: 400 }}>
+            {/* Background */}
+            <img src={battleBackgrounds[monster.biome]} alt="" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+            
+            <div className="relative z-10 text-center space-y-4 py-10 px-6">
+              <motion.img 
+                src={monsterSprites[monster.id]} 
+                alt={monster.name}
+                className="mx-auto h-40 w-40 object-contain drop-shadow-[0_0_20px_hsl(0_70%_50%/0.5)]"
+                initial={{ scale: 0, rotate: -10 }} 
+                animate={{ scale: 1, rotate: 0 }} 
+                transition={{ type: 'spring', bounce: 0.5 }}
+              />
+              <h2 className="font-display text-2xl text-foreground">{monster.name}</h2>
+              <p className="text-sm text-destructive italic max-w-md mx-auto">"{monster.myth}"</p>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">{monster.mechanicDescription}</p>
+              <motion.p className="text-xs text-secondary mt-2"
+                animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
+                ⚡ Active Time Battle — React fast, answer smart!
+              </motion.p>
+              <div className="flex gap-3 justify-center">
+                <Button onClick={startBattle} className="bg-primary text-primary-foreground font-display">
+                  <Swords className="h-4 w-4 mr-2" /> Begin Battle
+                </Button>
+                <Button variant="outline" onClick={onRetreat}>
+                  <ArrowLeft className="h-4 w-4 mr-2" /> Retreat
+                </Button>
+              </div>
             </div>
           </motion.div>
         )}
