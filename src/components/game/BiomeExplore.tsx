@@ -69,6 +69,7 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
           monster={monsters.find(m => m.id === selectedMonster)!}
           onVictory={handleBattleVictory}
           onRetreat={() => { setCurrentView('explore'); setSelectedMonster(null); }}
+          onKnockout={() => { setCurrentView('explore'); setSelectedMonster(null); }}
         />
       ) : currentView === 'shrine' ? (
         <motion.div
