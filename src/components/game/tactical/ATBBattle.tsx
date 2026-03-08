@@ -860,14 +860,18 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
             {showResult && (
               <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                className={`rounded-lg p-3 text-sm ${
+                className={`rounded-lg p-3 text-sm space-y-2 ${
                   isCorrect
                     ? 'bg-glow-green/10 border border-glow-green/30 text-glow-green'
                     : 'bg-destructive/10 border border-destructive/30 text-destructive'
                 }`}>
-                {isCorrect ? `✅ Correct! Striking for ${Math.round(PLAYER_BASE_DAMAGE * damageMultiplier * (1 + combo * 0.15))} damage!` : `❌ Wrong — ${monster.name} gains momentum!`}
-                <p className="text-xs text-foreground/60 mt-1">{currentQuestion.explanation}</p>
+                <p>{isCorrect ? `✅ Correct! Striking for ${Math.round(PLAYER_BASE_DAMAGE * damageMultiplier * (1 + combo * 0.15))} damage!` : `❌ Wrong — ${monster.name} gains momentum!`}</p>
+                <p className="text-xs text-foreground/60">{currentQuestion.explanation}</p>
+                <Button size="sm" onClick={handleQuizContinue} className="w-full mt-1">
+                  Continue →
+                </Button>
               </motion.div>
+            )}
             )}
           </motion.div>
         )}
