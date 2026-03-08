@@ -535,11 +535,21 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   <img src={playerSprite} alt="Player" className="w-6 h-6 object-contain rounded-full border border-secondary/40" />
                   <span className="font-display text-xs">{state.character?.name || 'Lyra'}</span>
                 </div>
-                <div className="h-2.5 rounded-full bg-muted overflow-hidden">
-                  <motion.div className={`h-full rounded-full ${playerHpColor}`}
-                    animate={{ width: `${playerHpPercent}%` }} transition={{ duration: 0.5 }} />
-                </div>
-                <p className="text-[10px] text-muted-foreground">{playerHp}/{PLAYER_MAX_HP} HP</p>
+                {hidePlayerHp ? (
+                  <div className="h-2.5 rounded-full bg-muted overflow-hidden relative">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-[8px] text-muted-foreground italic">Hidden by {monster.name}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+                      <motion.div className={`h-full rounded-full ${playerHpColor}`}
+                        animate={{ width: `${playerHpPercent}%` }} transition={{ duration: 0.5 }} />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">{playerHp}/{PLAYER_MAX_HP} HP</p>
+                  </>
+                )}
               </div>
 
               {/* Combo indicator */}
@@ -551,6 +561,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                     {combo}x
                   </motion.span>
                   <span className="text-[9px] text-primary/70">COMBO</span>
+                  {shouldDecayCombo && <span className="text-[8px] text-destructive/60">decaying</span>}
                 </motion.div>
               )}
 
@@ -560,11 +571,26 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   <span className="font-display text-xs">{monster.name}</span>
                   <img src={monsterSprites[monster.id]} alt={monster.name} className="w-6 h-6 object-contain rounded-full border border-destructive/40" />
                 </div>
-                <div className="h-2.5 rounded-full bg-muted overflow-hidden">
-                  <motion.div className="h-full rounded-full bg-destructive"
-                    animate={{ width: `${monsterHpPercent}%` }} transition={{ duration: 0.5 }} />
-                </div>
-                <p className="text-[10px] text-muted-foreground">{monsterHp}/{monster.hp} HP</p>
+                {hideMonsterHp ? (
+                  <div className="h-2.5 rounded-full bg-muted overflow-hidden relative">
+                    <motion.div className="h-full rounded-full bg-destructive/30"
+                      animate={{ width: ['30%', '70%', '45%', '60%', '30%'] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-[8px] text-destructive/70 font-display">???</span>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+                      <motion.div className="h-full rounded-full bg-destructive"
+                        animate={{ width: `${monsterHpPercent}%` }} transition={{ duration: 0.5 }} />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">{monsterHp}/{monster.hp} HP</p>
+                  </>
+                )}
+              </div>
+            </div>
               </div>
             </div>
 
