@@ -772,21 +772,38 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
         {/* ====== QUIZ PHASE ====== */}
         {phase === 'quiz' && currentQuestion && (
           <motion.div key="quiz" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-            className="space-y-4">
+            className="space-y-4 relative">
+
+            {/* Fog overlay for fog-of-shame mechanic */}
+            {shouldFog && fogOpacity > 0 && (
+              <div className="absolute inset-0 z-20 pointer-events-none rounded-xl"
+                style={{
+                  background: `radial-gradient(ellipse at center, transparent 20%, hsl(var(--muted)) ${Math.round(fogOpacity * 100)}%)`,
+                  opacity: fogOpacity,
+                }} />
+            )}
+
             <div className="flex items-center justify-between">
               <h3 className="font-display text-sm text-secondary flex items-center gap-2">
                 <Zap className="h-4 w-4" /> Knowledge Strike — Answer to Attack!
               </h3>
-              <motion.div
-                className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${
-                  timeLeft <= 5 ? 'bg-destructive/20 text-destructive' : 'bg-muted text-muted-foreground'
-                }`}
-                animate={timeLeft <= 5 ? { scale: [1, 1.05, 1] } : {}}
-                transition={{ duration: 0.5, repeat: Infinity }}
-              >
-                <Timer className="h-3 w-3" />
-                <span className="text-sm font-mono">{timeLeft}s</span>
-              </motion.div>
+              <div className="flex items-center gap-2">
+                {mechanic && (
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-[10px] font-display">
+                    {mechanic.icon} {mechanic.name}
+                  </span>
+                )}
+                <motion.div
+                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${
+                    timeLeft <= 5 ? 'bg-destructive/20 text-destructive' : 'bg-muted text-muted-foreground'
+                  }`}
+                  animate={timeLeft <= 5 ? { scale: [1, 1.05, 1] } : {}}
+                  transition={{ duration: 0.5, repeat: Infinity }}
+                >
+                  <Timer className="h-3 w-3" />
+                  <span className="text-sm font-mono">{timeLeft}s</span>
+                </motion.div>
+              </div>
             </div>
 
             {combo > 0 && (
@@ -797,24 +814,47 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
             )}
 
             <div className="rounded-xl bg-card/60 border border-border p-5 space-y-4">
-              <p className="text-foreground text-sm leading-relaxed">{currentQuestion.text}</p>
+              {/* Question text with optional blur */}
+              <p className="text-foreground text-sm leading-relaxed transition-all duration-300"
+                style={{ filter: blurAmount > 0 ? `blur(${blurAmount}px)` : 'none' }}>
+                {currentQuestion.text}
+              </p>
+              {blurAmount > 0 && !showResult && (
+                <p className="text-[10px] text-destructive/60 italic">Spectral Silence — question is clearing...</p>
+              )}
+
+              {/* Answer options using scrambled order */}
               <div className="grid grid-cols-1 gap-2">
-                {currentQuestion.options.map((option, i) => {
+                {scrambledOptions.map((opt, i) => {
+                  const origIdx = opt.originalIndex;
                   let style = 'border-border hover:border-secondary/60 hover:bg-secondary/5';
+
+                  // Frozen deceit: make a wrong answer look green-ish before reveal
+                  if (!showResult && frozenDeceitIndex === i) {
+                    style = 'border-secondary/50 bg-secondary/5';
+                  }
+
                   if (showResult) {
-                    if (i === currentQuestion.correctAnswer) style = 'border-glow-green bg-glow-green/10';
+                    if (origIdx === currentQuestion.correctAnswer) style = 'border-glow-green bg-glow-green/10';
                     else if (i === selectedAnswer && !isCorrect) style = 'border-destructive bg-destructive/10';
                     else style = 'border-border opacity-40';
                   }
+
+                  // Fade mechanic
+                  const isFaded = fadedAnswers.has(i) && !showResult;
+
                   return (
                     <motion.button key={i}
-                      onClick={() => handleQuizAnswer(i)} disabled={showResult}
-                      className={`text-left rounded-lg border-2 px-4 py-2.5 text-sm transition-colors ${style}`}
-                      whileHover={!showResult ? { scale: 1.01, x: 4 } : {}}
-                      whileTap={!showResult ? { scale: 0.98 } : {}}
+                      onClick={() => handleQuizAnswer(i)} disabled={showResult || isFaded}
+                      className={`text-left rounded-lg border-2 px-4 py-2.5 text-sm transition-all ${style} ${isFaded ? 'opacity-20 pointer-events-none' : ''}`}
+                      style={{
+                        fontSize: shouldShrink ? `${Math.max(0.65, shrinkScale) * 0.875}rem` : undefined,
+                      }}
+                      whileHover={!showResult && !isFaded ? { scale: 1.01, x: 4 } : {}}
+                      whileTap={!showResult && !isFaded ? { scale: 0.98 } : {}}
                     >
                       <span className="text-muted-foreground mr-2 font-mono text-xs">{String.fromCharCode(65 + i)}</span>
-                      {option}
+                      {opt.text}
                     </motion.button>
                   );
                 })}
