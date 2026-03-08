@@ -13,6 +13,7 @@ interface GameContextType {
   resetGame: () => void;
   enterBiome: (biomeId: BiomeId) => void;
   leaveBiome: () => void;
+  setCharacter: (profile: CharacterProfile) => void;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
