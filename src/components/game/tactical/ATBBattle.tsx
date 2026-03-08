@@ -131,6 +131,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
   const [isCorrect, setIsCorrect] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15);
   const [timerActive, setTimerActive] = useState(false);
+  const [pendingContinue, setPendingContinue] = useState<(() => void) | null>(null);
   const [usedQuestionIds, setUsedQuestionIds] = useState<Set<string>>(new Set());
   const [blurAmount, setBlurAmount] = useState(0);
   const [shrinkScale, setShrinkScale] = useState(1);
