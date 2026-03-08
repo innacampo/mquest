@@ -591,8 +591,6 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                 )}
               </div>
             </div>
-              </div>
-            </div>
 
             {/* Battle Stage */}
             <div className="relative w-full rounded-xl overflow-hidden border border-border"
