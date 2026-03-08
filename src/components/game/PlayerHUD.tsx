@@ -44,7 +44,7 @@ const PlayerHUD = () => {
       </div>
 
       {/* Stats */}
-      <div className="flex items-center gap-3 text-xs">
+      <div className="flex items-center gap-3 text-xs flex-wrap">
         <div className="flex items-center gap-1" title="Estra Bond">
           <span>❤️</span>
           <span>{state.estraBond}/5</span>
@@ -61,6 +61,30 @@ const PlayerHUD = () => {
           <span>📜</span>
           <span>{state.inventory.knowledgeScrolls}</span>
         </div>
+        {state.inventory.remedyPotionBasic > 0 && (
+          <div className="flex items-center gap-1" title="Remedy Potions (Basic)">
+            <span>🧪</span>
+            <span>{state.inventory.remedyPotionBasic}</span>
+          </div>
+        )}
+        {state.inventory.remedyPotionEnhanced > 0 && (
+          <div className="flex items-center gap-1" title="Remedy Potions (Enhanced)">
+            <span>✨</span>
+            <span>{state.inventory.remedyPotionEnhanced}</span>
+          </div>
+        )}
+        {state.inventory.clarityElixir > 0 && (
+          <div className="flex items-center gap-1" title="Clarity Elixirs">
+            <span>💧</span>
+            <span>{state.inventory.clarityElixir}</span>
+          </div>
+        )}
+        {state.inventory.estraBoost > 0 && (
+          <div className="flex items-center gap-1" title="Estra Boosts">
+            <span>🌟</span>
+            <span>{state.inventory.estraBoost}</span>
+          </div>
+        )}
         <div className="flex items-center gap-1" title="Compendium">
           <BookOpen className="h-3.5 w-3.5 text-glow-teal" />
           <span>{state.compendium.filter(e => e.unlocked).length}/{state.compendium.length}</span>
