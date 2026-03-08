@@ -49,10 +49,13 @@ const GameScreen = () => {
 
   const handleExitBiome = () => {
     leaveBiome();
+    const exitedBiome = activeBiome;
     setActiveBiome(null);
     // Check if all 6 biomes are cleared → trigger ending
+    // Include the current biome since state may not have updated yet
     const ALL_BIOMES: BiomeId[] = ['fever-peaks', 'fog-marshes', 'mood-tides', 'crystal-caverns', 'heartland', 'bloom-garden'];
-    const allCleared = ALL_BIOMES.every(b => state.biomesCleared.includes(b));
+    const clearedSet = new Set([...state.biomesCleared, ...(exitedBiome ? [exitedBiome] : [])]);
+    const allCleared = ALL_BIOMES.every(b => clearedSet.has(b));
     if (allCleared) {
       setView('ending');
     } else {
