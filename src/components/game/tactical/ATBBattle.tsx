@@ -237,6 +237,8 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
     setMonsterAtb(30); // Monster gets a head start
   };
 
+  const getDefaultTimer = () => shouldShortenTimer ? 10 : 15;
+
   const openQuiz = useCallback(() => {
     const available = biomeQuestions.filter(q => !usedQuestionIds.has(q.id));
     const q = available.length > 0
@@ -246,20 +248,91 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
     setSelectedAnswer(null);
     setShowResult(false);
     setIsCorrect(false);
-    setTimeLeft(15);
+    setTimeLeft(getDefaultTimer());
     setTimerActive(true);
     setUsedQuestionIds(prev => new Set([...prev, q.id]));
-    setPhase('quiz');
-  }, [biomeQuestions, usedQuestionIds]);
+    setBlurAmount(shouldBlur ? 8 : 0);
+    setShrinkScale(1);
+    setFadedAnswers(new Set());
+    setFogOpacity(0);
+    setFrozenDeceitIndex(null);
 
-  const handleQuizAnswer = (index: number) => {
+    // Scramble answers if mechanic applies
+    const opts = q.options.map((text, i) => ({ text, originalIndex: i }));
+    if (shouldScramble) {
+      for (let i = opts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [opts[i], opts[j]] = [opts[j], opts[i]];
+      }
+    }
+    setScrambledOptions(opts);
+
+    // Frozen deceit: pick a random wrong answer to glow green
+    if (shouldFreezeAnswer) {
+      const wrongIndices = opts
+        .map((o, i) => ({ i, orig: o.originalIndex }))
+        .filter(o => o.orig !== q.correctAnswer);
+      if (wrongIndices.length > 0) {
+        setFrozenDeceitIndex(wrongIndices[Math.floor(Math.random() * wrongIndices.length)].i);
+      }
+    }
+
+    // Combo decay mechanic
+    if (shouldDecayCombo) {
+      setCombo(prev => Math.max(0, prev - 1));
+    }
+
+    setPhase('quiz');
+  }, [biomeQuestions, usedQuestionIds, shouldScramble, shouldBlur, shouldShortenTimer, shouldFreezeAnswer, shouldDecayCombo]);
+
+  // Mechanic effects during quiz (blur fades, text shrinks, fog grows, answers fade)
+  useEffect(() => {
+    if (phase !== 'quiz' || !timerActive) return;
+    const interval = setInterval(() => {
+      // Blur gradually clears (reward patience)
+      if (shouldBlur) {
+        setBlurAmount(prev => Math.max(0, prev - 0.6));
+      }
+      // Shrink text over time
+      if (shouldShrink) {
+        setShrinkScale(prev => Math.max(0.55, prev - 0.03));
+      }
+      // Fog grows
+      if (shouldFog) {
+        setFogOpacity(prev => Math.min(0.7, prev + 0.04));
+      }
+      // Fade random answers
+      if (shouldFadeAnswers && currentQuestion) {
+        setFadedAnswers(prev => {
+          if (prev.size >= scrambledOptions.length - 1) return prev;
+          const available = scrambledOptions
+            .map((_, i) => i)
+            .filter(i => !prev.has(i));
+          if (available.length > 0 && Math.random() < 0.15) {
+            const next = new Set(prev);
+            next.add(available[Math.floor(Math.random() * available.length)]);
+            return next;
+          }
+          return prev;
+        });
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  }, [phase, timerActive, shouldBlur, shouldShrink, shouldFog, shouldFadeAnswers, currentQuestion, scrambledOptions]);
+
+  const handleQuizAnswer = (scrambledIndex: number) => {
     if (showResult || !currentQuestion) return;
     setTimerActive(false);
-    setSelectedAnswer(index);
+    setBlurAmount(0);
+    setFogOpacity(0);
+
+    // Map scrambled index back to original
+    const originalIndex = scrambledIndex === -1 ? -1 : scrambledOptions[scrambledIndex]?.originalIndex ?? -1;
+    setSelectedAnswer(scrambledIndex);
     setShowResult(true);
     setTotalQuestions(prev => prev + 1);
 
-    const correct = index === currentQuestion.correctAnswer;
+    const correct = originalIndex === currentQuestion.correctAnswer;
     setIsCorrect(correct);
 
     if (correct) {
@@ -268,7 +341,6 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
       setTimeout(() => executePlayerAttack(), 1000);
     } else {
       setCombo(0);
-      // Wrong = skip turn, monster gets ATB boost
       setTimeout(() => {
         setPlayerAtb(0);
         setMonsterAtb(prev => Math.min(ATB_MAX, prev + 30));
