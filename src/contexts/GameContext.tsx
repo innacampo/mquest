@@ -113,7 +113,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .maybeSingle();
 
       if (data?.game_state && mounted) {
-        setState(data.game_state as unknown as GameState);
+        const defaults = createInitialGameState();
+        setState({ ...defaults, ...(data.game_state as unknown as GameState) });
       } else {
         // No save in DB — check localStorage for migration, else fresh state
         const localSave = localStorage.getItem('menopause-quest-save');
@@ -287,13 +288,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const meetNpc = useCallback((npcName: string) => {
     setState(prev => {
-      if (prev.npcsMet.includes(npcName)) return prev;
+      if ((prev.npcsMet || []).includes(npcName)) return prev;
       const updatedCompendium = prev.compendium.map(e =>
         (e.npcName === npcName && e.type === 'bio') ? { ...e, unlocked: true } : e
       );
       const next = {
         ...prev,
-        npcsMet: [...prev.npcsMet, npcName],
+        npcsMet: [...(prev.npcsMet || []), npcName],
         compendium: updatedCompendium,
       };
       save(next);
