@@ -42,7 +42,7 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
 
   const handleVisitShrine = () => {
     if (!shrineVisited) {
-      setShrineVisited(true);
+      setJustVisitedShrine(true);
       addXp(Math.round(50 * xpMult));
       // Explorer gets 2 scrolls + bonus bloom essence; others get 1 scroll
       const isExplorer = state.character?.background === 'explorer';
