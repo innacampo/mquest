@@ -94,7 +94,7 @@ const TacticalBattle: React.FC<TacticalBattleProps> = ({ monster, onVictory, onR
   const [hasMovedThisTurn, setHasMovedThisTurn] = useState(false);
 
   const units = useMemo(() => [playerUnit, monsterUnit], [playerUnit, monsterUnit]);
-  const biomeQuestions = useMemo(() => questions.filter(q => q.biome === monster.biome), [monster.biome]);
+  const biomeQuestions = useMemo(() => questions.filter(q => q.monster === monster.id), [monster.id]);
 
   const addDmgNumber = (value: number, type: 'dealt' | 'taken' | 'heal') => {
     const id = `${Date.now()}-${Math.random()}`;

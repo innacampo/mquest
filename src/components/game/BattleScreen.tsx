@@ -116,7 +116,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     setTimeout(() => setDamageNumbers(prev => prev.filter(d => d.id !== id)), 1500);
   };
 
-  const biomeQuestions = questions.filter(q => q.biome === monster.biome);
+  const biomeQuestions = questions.filter(q => q.monster === monster.id);
 
   // ---- HELPERS ----
   const getNextQuestion = useCallback(() => {
