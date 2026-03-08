@@ -509,8 +509,11 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {phase === 'intro' && (
           <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 10 }}
-              className="text-7xl">{monster.emoji}</motion.div>
+            <div className="relative">
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 10 }}
+                className="text-7xl">{monster.emoji}</motion.div>
+              <EnergyAura intensity={0.6} color="red" />
+            </div>
             <h2 className="font-display text-2xl text-foreground">{monster.name}</h2>
             <p className="text-sm text-destructive italic max-w-md text-center">"{monster.myth}"</p>
             <p className="text-xs text-muted-foreground max-w-sm text-center">{monster.mechanicDescription}</p>
