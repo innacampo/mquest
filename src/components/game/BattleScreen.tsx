@@ -604,7 +604,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
                   </div>
                   <p className="text-[10px] text-muted-foreground">{playerHp}/{PLAYER_MAX_HP}</p>
                 </div>
-                <Heart className="h-5 w-5 text-glow-rose" />
+                <PlayerBattlePortrait name="" background={state.character?.background} state={playerPortraitState} size="sm" />
               </div>
             </div>
 
