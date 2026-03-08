@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
 import { BiomeId, biomes, monsters, questions, npcs, getShrineDiscoveryMultiplier, getXpMultiplier } from '@/lib/gameData';
-import BattleScreen from './BattleScreen';
+import TacticalBattle from './tactical/TacticalBattle';
 import { ArrowLeft, Swords, MessageCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
