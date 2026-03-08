@@ -131,6 +131,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
   const [isCorrect, setIsCorrect] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15);
   const [timerActive, setTimerActive] = useState(false);
+  const [pendingContinue, setPendingContinue] = useState<(() => void) | null>(null);
   const [usedQuestionIds, setUsedQuestionIds] = useState<Set<string>>(new Set());
   const [blurAmount, setBlurAmount] = useState(0);
   const [shrinkScale, setShrinkScale] = useState(1);
@@ -339,14 +340,21 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
     if (correct) {
       setTotalCorrect(prev => prev + 1);
       setCombo(prev => prev + 1);
-      setTimeout(() => executePlayerAttack(), 1000);
+      setPendingContinue(() => () => executePlayerAttack());
     } else {
       setCombo(0);
-      setTimeout(() => {
+      setPendingContinue(() => () => {
         setPlayerAtb(0);
         setMonsterAtb(prev => Math.min(ATB_MAX, prev + 30));
         setPhase('active');
-      }, 1500);
+      });
+    }
+  };
+
+  const handleQuizContinue = () => {
+    if (pendingContinue) {
+      pendingContinue();
+      setPendingContinue(null);
     }
   };
 
@@ -852,13 +860,16 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
             {showResult && (
               <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                className={`rounded-lg p-3 text-sm ${
+                className={`rounded-lg p-3 text-sm space-y-2 ${
                   isCorrect
                     ? 'bg-glow-green/10 border border-glow-green/30 text-glow-green'
                     : 'bg-destructive/10 border border-destructive/30 text-destructive'
                 }`}>
-                {isCorrect ? `✅ Correct! Striking for ${Math.round(PLAYER_BASE_DAMAGE * damageMultiplier * (1 + combo * 0.15))} damage!` : `❌ Wrong — ${monster.name} gains momentum!`}
-                <p className="text-xs text-foreground/60 mt-1">{currentQuestion.explanation}</p>
+                <p>{isCorrect ? `✅ Correct! Striking for ${Math.round(PLAYER_BASE_DAMAGE * damageMultiplier * (1 + combo * 0.15))} damage!` : `❌ Wrong — ${monster.name} gains momentum!`}</p>
+                <p className="text-xs text-foreground/60">{currentQuestion.explanation}</p>
+                <Button size="sm" onClick={handleQuizContinue} className="w-full mt-1">
+                  Continue →
+                </Button>
               </motion.div>
             )}
           </motion.div>
