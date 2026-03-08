@@ -9,6 +9,7 @@ import {
   DamageNumber, ScreenFlash, ImpactBurst, EnergyAura,
   SlashEffect, VictoryFireworks, KnockoutShatter, ComboSparks
 } from './BattleEffects';
+import BattlePortrait, { PlayerBattlePortrait, PortraitState } from './BattlePortrait';
 
 interface BattleScreenProps {
   monster: Monster;
@@ -63,6 +64,10 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
   const [lastDamageDealt, setLastDamageDealt] = useState(0);
   const [lastDamageTaken, setLastDamageTaken] = useState(0);
   const [comboRating, setComboRating] = useState<'miss' | 'light' | 'good' | 'perfect' | null>(null);
+
+  // Portrait states
+  const [monsterPortraitState, setMonsterPortraitState] = useState<PortraitState>('idle');
+  const [playerPortraitState, setPlayerPortraitState] = useState<PortraitState>('idle');
 
   // Question state
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -218,6 +223,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       setStreak(prev => prev + 1);
       setTotalCorrect(prev => prev + 1);
       setFlashGold(prev => prev + 1);
+      setPlayerPortraitState('charge');
       // Go to combo phase
       setTimeout(() => {
         setPhase('combo');
@@ -235,6 +241,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
       setFlashRed(prev => prev + 1);
       setMonsterSlash(prev => prev + 1);
       setImpactPlayer(prev => prev + 1);
+      setMonsterPortraitState('attack');
+      setPlayerPortraitState('hit');
       addDamageNumber(monsterDmg, 'taken');
 
       if (monster.mechanic === 'Drain Bond') {
@@ -298,6 +306,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     setPlayerSlash(prev => prev + 1);
     setImpactMonster(prev => prev + 1);
     addDamageNumber(damage, 'dealt');
+    setPlayerPortraitState('attack');
+    setMonsterPortraitState('hit');
     if (rating === 'perfect') setFlashGold(prev => prev + 1);
     else if (rating === 'good') setFlashGreen(prev => prev + 1);
 
@@ -408,11 +418,13 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         setPlayerHp(prev => Math.min(PLAYER_MAX_HP, prev + 30));
         setFlashGreen(prev => prev + 1);
         addDamageNumber(30, 'heal');
+        setPlayerPortraitState('heal');
         break;
       case 'remedyPotionEnhanced':
         setPlayerHp(prev => Math.min(PLAYER_MAX_HP, prev + 60));
         setFlashGreen(prev => prev + 1);
         addDamageNumber(60, 'heal');
+        setPlayerPortraitState('heal');
         break;
       case 'clarityElixir':
         setActiveEffect('none');
@@ -513,11 +525,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {phase === 'intro' && (
           <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
-            <div className="relative">
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 10 }}
-                className="text-7xl">{monster.emoji}</motion.div>
-              <EnergyAura intensity={0.6} color="red" />
-            </div>
+            <BattlePortrait emoji={monster.emoji} name={monster.name} state="charge" variant="monster" size="lg" surgeLevel={0} />
             <h2 className="font-display text-2xl text-foreground">{monster.name}</h2>
             <p className="text-sm text-destructive italic max-w-md text-center">"{monster.myth}"</p>
             <p className="text-xs text-muted-foreground max-w-sm text-center">{monster.mechanicDescription}</p>
@@ -550,7 +558,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
             <div className="flex items-center justify-between gap-4">
               {/* Monster */}
               <div className="flex items-center gap-3 flex-1">
-                <span className="text-2xl">{monster.emoji}</span>
+                <BattlePortrait emoji={monster.emoji} name="" state={monsterPortraitState} variant="monster" size="sm" surgeLevel={monsterSurge} />
                 <div className="flex-1">
                   <p className="font-display text-xs">{monster.name}</p>
                   <div className="h-2 w-full max-w-[140px] rounded-full bg-muted overflow-hidden">
@@ -596,7 +604,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
                   </div>
                   <p className="text-[10px] text-muted-foreground">{playerHp}/{PLAYER_MAX_HP}</p>
                 </div>
-                <Heart className="h-5 w-5 text-glow-rose" />
+                <PlayerBattlePortrait name="" background={state.character?.background} state={playerPortraitState} size="sm" />
               </div>
             </div>
 
@@ -813,16 +821,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {phase === 'monster_attack' && (
           <motion.div key="monster_attack" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="flex flex-col items-center justify-center min-h-[300px] space-y-6 relative">
-            <div className="relative">
-              <motion.div
-                animate={{ scale: [1, 1.3, 1], rotate: [0, -5, 5, 0] }}
-                transition={{ duration: 0.6 }}
-                className="text-7xl"
-              >
-                {monster.emoji}
-              </motion.div>
-              <EnergyAura intensity={Math.min(1, monsterSurge * 0.3)} color="red" />
-            </div>
+            <BattlePortrait emoji={monster.emoji} name={monster.name} state="attack" variant="monster" size="lg" surgeLevel={monsterSurge} />
             <motion.p
               initial={{ scale: 2, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -938,8 +937,10 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
           <motion.div key="victory" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center justify-center min-h-[400px] space-y-6 relative">
             <VictoryFireworks />
-            <motion.div initial={{ rotate: 0 }} animate={{ rotate: [0, -10, 10, -5, 5, 0] }}
-              transition={{ duration: 0.6 }} className="text-7xl opacity-30">{monster.emoji}</motion.div>
+            <div className="flex items-center gap-8">
+              <BattlePortrait emoji={monster.emoji} name={monster.name} state="defeated" variant="monster" size="md" />
+              <PlayerBattlePortrait name={state.character?.name || 'Lyra'} background={state.character?.background} state="victory" size="md" />
+            </div>
             <h2 className="font-display text-2xl text-glow-green text-glow-teal">Myth Defeated!</h2>
             <div className="text-center space-y-2">
               <p className="text-sm text-foreground/70 italic">"{monster.myth}"</p>
@@ -961,13 +962,10 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
           <motion.div key="knockout" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center min-h-[400px] space-y-6 relative">
             <KnockoutShatter />
-            <motion.div
-              animate={{ opacity: [1, 0.3] }}
-              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
-              className="text-6xl"
-            >
-              💔
-            </motion.div>
+            <div className="flex items-center gap-8">
+              <BattlePortrait emoji={monster.emoji} name={monster.name} state="charge" variant="monster" size="md" surgeLevel={monsterSurge} />
+              <PlayerBattlePortrait name={state.character?.name || 'Lyra'} background={state.character?.background} state="defeated" size="md" />
+            </div>
             <h2 className="font-display text-2xl text-destructive">Knocked Out!</h2>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
               {monster.name} was too powerful this time. Retreat, heal up, and return stronger.
