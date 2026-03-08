@@ -16,17 +16,17 @@ type MonsterMechanic = {
   description: string;
   icon: React.ReactNode;
   // Which part of battle it affects
-  effect: 'hide_monster_hp' | 'hide_player_hp' | 'scramble_answers' | 'blur_question' |
+  effect: 'fake_damage' | 'potion_drain' | 'scramble_answers' | 'blur_question' |
           'shorter_timer' | 'shrink_text' | 'fade_answers' | 'freeze_answer' |
           'screen_fog' | 'combo_decay' | 'multi';
 };
 
 const MONSTER_MECHANICS: Record<string, MonsterMechanic> = {
   'shame-dragon': {
-    id: 'shame-dragon', name: 'Veil of Shame',
-    description: 'Monster HP bar is hidden — fight blind!',
+    id: 'shame-dragon', name: 'Phantom Pain',
+    description: 'Spawns fake damage numbers to confuse you!',
     icon: <EyeOff className="h-3.5 w-3.5" />,
-    effect: 'hide_monster_hp',
+    effect: 'fake_damage',
   },
   'confusion-cyclone': {
     id: 'confusion-cyclone', name: 'Whirlwind Scramble',
@@ -53,10 +53,10 @@ const MONSTER_MECHANICS: Record<string, MonsterMechanic> = {
     effect: 'shrink_text',
   },
   'shame-tide': {
-    id: 'shame-tide', name: 'Tidal Shame',
-    description: 'Your HP bar is hidden — trust your instincts!',
-    icon: <EyeOff className="h-3.5 w-3.5" />,
-    effect: 'hide_player_hp',
+    id: 'shame-tide', name: 'Tidal Drain',
+    description: 'Each turn may consume a potion automatically!',
+    icon: <FlaskConical className="h-3.5 w-3.5" />,
+    effect: 'potion_drain',
   },
   'brittle-giant': {
     id: 'brittle-giant', name: 'Crumbling Choices',
@@ -172,8 +172,8 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
   const shouldFreezeAnswer = mechanic?.effect === 'freeze_answer';
   const shouldFog = mechanic?.effect === 'screen_fog';
   const shouldDecayCombo = mechanic?.effect === 'combo_decay';
-  const hideMonsterHp = mechanic?.effect === 'hide_monster_hp';
-  const hidePlayerHp = mechanic?.effect === 'hide_player_hp';
+  const shouldFakeDamage = mechanic?.effect === 'fake_damage';
+  const shouldDrainPotions = mechanic?.effect === 'potion_drain';
 
   const addDmgNumber = (value: number, type: 'dealt' | 'taken' | 'heal', x = '50%') => {
     const id = `${Date.now()}-${Math.random()}`;
@@ -282,8 +282,16 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
       setCombo(prev => Math.max(0, prev - 1));
     }
 
+    // Potion drain mechanic — 40% chance to auto-consume a potion
+    if (shouldDrainPotions && Math.random() < 0.4) {
+      if (state.inventory.remedyPotionBasic > 0) {
+        addInventory('remedyPotionBasic', -1);
+        setTimeout(() => addDmgNumber(1, 'taken', '15%'), 200);
+      }
+    }
+
     setPhase('quiz');
-  }, [biomeQuestions, usedQuestionIds, shouldScramble, shouldBlur, shouldShortenTimer, shouldFreezeAnswer, shouldDecayCombo]);
+  }, [biomeQuestions, usedQuestionIds, shouldScramble, shouldBlur, shouldShortenTimer, shouldFreezeAnswer, shouldDecayCombo, shouldDrainPotions, state.inventory.remedyPotionBasic]);
 
   // Mechanic effects during quiz (blur fades, text shrinks, fog grows, answers fade)
   useEffect(() => {
@@ -383,8 +391,18 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
         }
         return newHp;
       });
+      // Fake damage mechanic — spawn 2-3 decoy numbers alongside real damage
+      if (shouldFakeDamage) {
+        const fakeCount = 2 + Math.floor(Math.random() * 2);
+        for (let i = 0; i < fakeCount; i++) {
+          const fakeVal = Math.round(damage * (0.4 + Math.random() * 1.2));
+          const fakeX = `${55 + Math.round((Math.random() - 0.5) * 30)}%`;
+          const fakeType = Math.random() > 0.3 ? 'dealt' : 'heal';
+          setTimeout(() => addDmgNumber(fakeVal, fakeType as 'dealt' | 'heal', fakeX), 100 + i * 150);
+        }
+      }
     }, 800);
-  }, [combo, damageMultiplier]);
+  }, [combo, damageMultiplier, shouldFakeDamage]);
 
   const triggerMonsterAttack = useCallback(() => {
     setPhase('monster_attack');
@@ -402,6 +420,14 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
     setTimeout(() => {
       setPlayerAnim('hit');
       addDmgNumber(damage, 'taken', '28%');
+      // Fake damage numbers during monster attack too
+      if (shouldFakeDamage) {
+        for (let i = 0; i < 2; i++) {
+          const fakeVal = Math.round(damage * (0.3 + Math.random() * 1.5));
+          const fakeX = `${20 + Math.round((Math.random() - 0.5) * 20)}%`;
+          setTimeout(() => addDmgNumber(fakeVal, Math.random() > 0.5 ? 'taken' : 'dealt', fakeX), 80 + i * 120);
+        }
+      }
     }, 400);
 
     setTimeout(() => {
@@ -535,37 +561,18 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   <img src={playerSprite} alt="Player" className="w-6 h-6 object-contain rounded-full border border-secondary/40" />
                   <span className="font-display text-xs">{state.character?.name || 'Lyra'}</span>
                 </div>
-                {hidePlayerHp ? (
-                  <div className="relative">
-                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
-                      <motion.div className={`h-full rounded-full ${playerHpColor}`}
-                        animate={{ width: `${playerHpPercent}%` }} transition={{ duration: 0.5 }} />
-                    </div>
-                    {/* Cracked mirror overlay */}
-                    <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 200 10" preserveAspectRatio="none">
-                      <line x1="30" y1="0" x2="45" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.8" opacity="0.5" />
-                      <line x1="45" y1="10" x2="55" y2="2" stroke="hsl(var(--foreground))" strokeWidth="0.6" opacity="0.4" />
-                      <line x1="80" y1="0" x2="70" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.8" opacity="0.5" />
-                      <line x1="70" y1="10" x2="90" y2="3" stroke="hsl(var(--foreground))" strokeWidth="0.5" opacity="0.3" />
-                      <line x1="120" y1="0" x2="130" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.7" opacity="0.45" />
-                      <line x1="130" y1="10" x2="115" y2="4" stroke="hsl(var(--foreground))" strokeWidth="0.5" opacity="0.3" />
-                      <line x1="160" y1="0" x2="155" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.6" opacity="0.4" />
-                    </svg>
-                    <motion.div className="absolute inset-0 rounded-full"
-                      style={{ background: 'linear-gradient(135deg, transparent 40%, hsl(var(--foreground) / 0.08) 50%, transparent 60%)' }}
-                      animate={{ opacity: [0.3, 0.7, 0.3] }}
-                      transition={{ duration: 2, repeat: Infinity }} />
-                    <p className="text-[10px] text-muted-foreground/50 italic">⚠ cracked</p>
+                <>
+                  <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+                    <motion.div className={`h-full rounded-full ${playerHpColor}`}
+                      animate={{ width: `${playerHpPercent}%` }} transition={{ duration: 0.5 }} />
                   </div>
-                ) : (
-                  <>
-                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
-                      <motion.div className={`h-full rounded-full ${playerHpColor}`}
-                        animate={{ width: `${playerHpPercent}%` }} transition={{ duration: 0.5 }} />
-                    </div>
+                  <div className="flex items-center gap-1">
                     <p className="text-[10px] text-muted-foreground">{playerHp}/{PLAYER_MAX_HP} HP</p>
-                  </>
-                )}
+                    {shouldDrainPotions && (
+                      <span className="text-[9px] text-destructive/70 italic">🌊 draining</span>
+                    )}
+                  </div>
+                </>
               </div>
 
               {/* Combo indicator */}
@@ -587,38 +594,18 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   <span className="font-display text-xs">{monster.name}</span>
                   <img src={monsterSprites[monster.id]} alt={monster.name} className="w-6 h-6 object-contain rounded-full border border-destructive/40" />
                 </div>
-                {hideMonsterHp ? (
-                  <div className="relative">
-                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
-                      <motion.div className="h-full rounded-full bg-destructive"
-                        animate={{ width: `${monsterHpPercent}%` }} transition={{ duration: 0.5 }} />
-                    </div>
-                    {/* Cracked mirror overlay */}
-                    <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 200 10" preserveAspectRatio="none">
-                      <line x1="25" y1="0" x2="40" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.9" opacity="0.5" />
-                      <line x1="40" y1="10" x2="50" y2="1" stroke="hsl(var(--foreground))" strokeWidth="0.5" opacity="0.35" />
-                      <line x1="75" y1="0" x2="65" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.8" opacity="0.5" />
-                      <line x1="65" y1="10" x2="85" y2="4" stroke="hsl(var(--foreground))" strokeWidth="0.6" opacity="0.35" />
-                      <line x1="110" y1="0" x2="100" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.7" opacity="0.4" />
-                      <line x1="140" y1="0" x2="150" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.8" opacity="0.5" />
-                      <line x1="150" y1="10" x2="135" y2="3" stroke="hsl(var(--foreground))" strokeWidth="0.5" opacity="0.3" />
-                      <line x1="175" y1="0" x2="170" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.6" opacity="0.4" />
-                    </svg>
-                    <motion.div className="absolute inset-0 rounded-full"
-                      style={{ background: 'linear-gradient(225deg, transparent 35%, hsl(var(--destructive) / 0.1) 50%, transparent 65%)' }}
-                      animate={{ opacity: [0.2, 0.6, 0.2] }}
-                      transition={{ duration: 2.5, repeat: Infinity }} />
-                    <p className="text-[10px] text-destructive/50 italic text-right">⚠ cracked</p>
+                <>
+                  <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+                    <motion.div className="h-full rounded-full bg-destructive"
+                      animate={{ width: `${monsterHpPercent}%` }} transition={{ duration: 0.5 }} />
                   </div>
-                ) : (
-                  <>
-                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
-                      <motion.div className="h-full rounded-full bg-destructive"
-                        animate={{ width: `${monsterHpPercent}%` }} transition={{ duration: 0.5 }} />
-                    </div>
+                  <div className="flex items-center gap-1 justify-end">
                     <p className="text-[10px] text-muted-foreground">{monsterHp}/{monster.hp} HP</p>
-                  </>
-                )}
+                    {shouldFakeDamage && (
+                      <span className="text-[9px] text-destructive/70 italic">👻 phantom</span>
+                    )}
+                  </div>
+                </>
               </div>
             </div>
 
