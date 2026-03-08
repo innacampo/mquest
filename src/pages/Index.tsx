@@ -158,6 +158,7 @@ const GameScreen = () => {
             >
               <Home className="h-4 w-4 mr-1" /> Village
             </Button>
+            <GameRules />
             <Button variant="ghost" size="sm" onClick={resetGame} title="Reset Game">
               <RotateCcw className="h-4 w-4" />
             </Button>
