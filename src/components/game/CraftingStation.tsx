@@ -86,7 +86,7 @@ interface CraftingStationProps {
 }
 
 const CraftingStation: React.FC<CraftingStationProps> = ({ onClose }) => {
-  const { state, addInventory, addXp, updateEstraBond } = useGame();
+  const { state, addInventory, addXp, updateEstraBond, unlockCompendiumEntry } = useGame();
   const [craftedId, setCraftedId] = useState<string | null>(null);
 
   const canCraft = (recipe: Recipe) => {
@@ -110,6 +110,15 @@ const CraftingStation: React.FC<CraftingStationProps> = ({ onClose }) => {
     // Special: Estra Boost increases bond
     if (recipe.id === 'estra-boost') {
       updateEstraBond(1);
+    }
+
+    // Special: Compendium Seal unlocks a hidden entry immediately
+    if (recipe.id === 'compendium-seal') {
+      const sealEntry = state.compendium.find(e => e.sealOnly && !e.unlocked);
+      if (sealEntry) {
+        unlockCompendiumEntry(sealEntry.id);
+        addInventory('compendiumSeal', -1); // consume the seal
+      }
     }
 
     setCraftedId(recipe.id);

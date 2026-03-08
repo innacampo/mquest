@@ -54,6 +54,7 @@ export interface CompendiumEntry {
   biome?: BiomeId;
   monsterId?: string;  // links bestiary entries to monsters
   npcName?: string;    // links bio entries to NPCs
+  sealOnly?: boolean;  // only unlockable via Compendium Seal
   unlocked: boolean;
 }
 
@@ -675,6 +676,10 @@ export const initialCompendium: CompendiumEntry[] = [
   { id: 'bio-priya', type: 'bio', title: 'Priya — The Early Warrior', content: 'Priya, 38, from Mood Tides. She thought she was "too young" for perimenopause. Learning the truth erased her shame.', biome: 'mood-tides', npcName: 'Priya', unlocked: false },
   { id: 'bio-saoirse', type: 'bio', title: 'Saoirse — The Bone Guardian', content: 'Saoirse, 45, from Crystal Caverns. Family history of osteoporosis drove her fear. Now armed with prevention knowledge, she feels in control.', biome: 'crystal-caverns', npcName: 'Saoirse', unlocked: false },
   { id: 'bio-rosa', type: 'bio', title: 'Rosa — The Heart Advocate', content: 'Rosa, 55, from Heartland. A cardiac event shocked her into action. Now she champions heart health awareness for menopausal women.', biome: 'heartland', npcName: 'Rosa', unlocked: false },
+  // Hidden entries (unlocked via Compendium Seal)
+  { id: 'seal-1', type: 'fact', title: 'Perimenopause: The Hidden Chapter', content: 'Perimenopause can begin up to 10 years before menopause, often in a woman\'s late 30s or 40s. Symptoms like irregular periods, mood changes, and sleep disruption can appear years before periods stop entirely.', sealOnly: true, unlocked: false },
+  { id: 'seal-2', type: 'fact', title: 'The Gut-Hormone Connection', content: 'The gut microbiome contains a collection of bacteria called the estrobolome, which helps metabolise estrogen. During menopause, gut changes can amplify hormonal imbalance, making digestive health a hidden factor in symptom severity.', sealOnly: true, unlocked: false },
+  { id: 'seal-3', type: 'fact', title: 'Sleep & Menopause', content: 'Up to 61% of postmenopausal women report insomnia. Declining progesterone — a natural sleep promoter — combined with night sweats and anxiety creates a perfect storm for disrupted rest.', sealOnly: true, unlocked: false },
 ];
 
 export const initialMilestones: CompendiumMilestone[] = [
@@ -682,7 +687,7 @@ export const initialMilestones: CompendiumMilestone[] = [
   { id: 'ms-2', title: 'Knowledge Seeker', description: 'Unlock 10 compendium entries', requiredCount: 10, reward: { type: 'item', item: 'knowledgeScrolls', amount: 3 }, claimed: false },
   { id: 'ms-3', title: 'Monster Scholar', description: 'Unlock 15 compendium entries', requiredCount: 15, reward: { type: 'item', item: 'remedyPotionBasic', amount: 2 }, claimed: false },
   { id: 'ms-4', title: 'Myth Breaker', description: 'Unlock 25 compendium entries', requiredCount: 25, reward: { type: 'xp', amount: 500 }, claimed: false },
-  { id: 'ms-5', title: 'Grand Archivist', description: 'Unlock all compendium entries', requiredCount: 34, reward: { type: 'item', item: 'compendiumSeal', amount: 3 }, claimed: false },
+  { id: 'ms-5', title: 'Grand Archivist', description: 'Unlock all compendium entries', requiredCount: 37, reward: { type: 'item', item: 'compendiumSeal', amount: 3 }, claimed: false },
 ];
 
 // ============ NPCs ============
