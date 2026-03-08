@@ -141,10 +141,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setState(fresh);
   }, []);
 
+  const setCharacter = useCallback((profile: CharacterProfile) => {
+    setState(prev => {
+      const next = { ...prev, character: profile };
+      save(next);
+      return next;
+    });
+  }, [save]);
+
   return (
     <GameContext.Provider value={{
       state, addXp, defeatMonster, clearBiome, unlockCompendiumEntry,
-      addInventory, updateEstraGlow, updateEstraBond, resetGame, enterBiome, leaveBiome,
+      addInventory, updateEstraGlow, updateEstraBond, resetGame, enterBiome, leaveBiome, setCharacter,
     }}>
       {children}
     </GameContext.Provider>
