@@ -472,7 +472,23 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
   const playerHpColor = playerHpPercent > 60 ? 'bg-glow-green' : playerHpPercent > 30 ? 'bg-primary' : 'bg-destructive';
 
   return (
-    <div className={`min-h-[500px] rounded-xl bg-gradient-battle border border-border p-6 relative overflow-hidden ${shakeScreen ? 'animate-shake' : ''}`}>
+    <div className={`min-h-[500px] rounded-xl bg-gradient-battle border border-border p-6 relative overflow-hidden ${shakeScreen ? 'animate-shake' : ''} ${playerHpPercent < 30 ? 'battle-vignette-danger' : 'battle-vignette'}`}>
+      {/* VFX Overlays */}
+      <ScreenFlash color="red" trigger={flashRed} />
+      <ScreenFlash color="gold" trigger={flashGold} />
+      <ScreenFlash color="green" trigger={flashGreen} />
+      <SlashEffect trigger={playerSlash} variant="player" />
+      <SlashEffect trigger={monsterSlash} variant="monster" />
+      <ImpactBurst trigger={impactMonster} color="bg-primary" x="25%" y="30%" />
+      <ImpactBurst trigger={impactPlayer} color="bg-destructive" x="75%" y="30%" />
+
+      {/* Floating damage numbers */}
+      <AnimatePresence>
+        {damageNumbers.map(d => (
+          <DamageNumber key={d.id} id={d.id} value={d.value} type={d.type} />
+        ))}
+      </AnimatePresence>
+
       {/* Ambient battle effects */}
       {monsterSurge > 0 && (
         <div className="absolute inset-0 pointer-events-none">
