@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameProvider, useGame } from '@/contexts/GameContext';
-import { BiomeId, getWorldState } from '@/lib/gameData';
+import { BiomeId } from '@/lib/gameData';
 import PlayerHUD from '@/components/game/PlayerHUD';
 import WorldMap from '@/components/game/WorldMap';
 import BiomeExplore from '@/components/game/BiomeExplore';
 import HearthVillage from '@/components/game/HearthVillage';
+import AudioControls from '@/components/game/AudioControls';
+import { useAudio } from '@/hooks/useAudio';
 import { Map, RotateCcw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -15,17 +17,27 @@ const GameScreen = () => {
   const { state, resetGame, enterBiome, leaveBiome } = useGame();
   const [view, setView] = useState<GameView>('map');
   const [activeBiome, setActiveBiome] = useState<BiomeId | null>(null);
+  const audio = useAudio();
+
+  // Switch ambient audio based on view
+  useEffect(() => {
+    if (view === 'map') audio.setScene('map');
+    else if (view === 'village') audio.setScene('village');
+    else if (view === 'biome') audio.setScene('battle');
+  }, [view]);
 
   const handleSelectBiome = (biomeId: BiomeId) => {
     setActiveBiome(biomeId);
     enterBiome(biomeId);
     setView('biome');
+    audio.playChime();
   };
 
   const handleExitBiome = () => {
     leaveBiome();
     setActiveBiome(null);
     setView('village');
+    audio.playVictory();
   };
 
   return (
@@ -66,6 +78,17 @@ const GameScreen = () => {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <AudioControls
+              muted={audio.muted}
+              masterVolume={audio.masterVolume}
+              musicVolume={audio.musicVolume}
+              sfxVolume={audio.sfxVolume}
+              toggleMute={audio.toggleMute}
+              setMasterVolume={audio.setMasterVolume}
+              setMusicVolume={audio.setMusicVolume}
+              setSfxVolume={audio.setSfxVolume}
+              playChime={audio.playChime}
+            />
             <Button
               variant={view === 'map' ? 'default' : 'outline'}
               size="sm"
