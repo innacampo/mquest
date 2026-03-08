@@ -68,6 +68,11 @@ export interface GameState {
     wellnessHerbs: number;
     knowledgeScrolls: number;
     bloomEssence: number;
+    remedyPotionBasic: number;
+    remedyPotionEnhanced: number;
+    clarityElixir: number;
+    estraBoost: number;
+    compendiumSeal: number;
   };
   estraGlow: number; // 0.0 - 1.0
 }
