@@ -306,6 +306,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     setPlayerSlash(prev => prev + 1);
     setImpactMonster(prev => prev + 1);
     addDamageNumber(damage, 'dealt');
+    setPlayerPortraitState('attack');
+    setMonsterPortraitState('hit');
     if (rating === 'perfect') setFlashGold(prev => prev + 1);
     else if (rating === 'good') setFlashGreen(prev => prev + 1);
 
