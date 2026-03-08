@@ -457,13 +457,6 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     addXp(totalXp);
     defeatMonster(monster.id);
 
-    const mythIndex = ['shame-dragon', 'dismissal-wraith', 'silence-specter', 'confusion-cyclone',
-      'shame-tide', 'minimizer', 'brittle-giant', 'cold-certainty', 'fog-of-shame', 'heartbreak-myth',
-      'grand-silencer'].indexOf(monster.id);
-    if (mythIndex >= 0 && mythIndex < 6) {
-      unlockCompendiumEntry(`myth-${mythIndex + 1}`);
-    }
-
     onVictory();
   };
 

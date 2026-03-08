@@ -17,8 +17,15 @@ interface HearthVillageProps {
 }
 
 const HearthVillage: React.FC<HearthVillageProps> = ({ onGoToMap }) => {
-  const { state, addXp } = useGame();
+  const { state, addXp, meetNpc } = useGame();
   const [zone, setZone] = useState<HubZone>('main');
+
+  // Auto-meet Dr. Mira on first village visit
+  React.useEffect(() => {
+    if (!state.npcsMet?.includes('Dr. Mira')) {
+      meetNpc('Dr. Mira');
+    }
+  }, []);
   const worldState = getWorldState(state.estraGlow);
 
   const drMira = npcs.find(n => n.name === 'Dr. Mira')!;

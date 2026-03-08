@@ -16,6 +16,8 @@ interface GameContextType {
   enterBiome: (biomeId: BiomeId) => void;
   leaveBiome: () => void;
   setCharacter: (profile: CharacterProfile) => void;
+  meetNpc: (npcName: string) => void;
+  claimMilestone: (milestoneId: string) => void;
   isLoading: boolean;
 }
 
@@ -32,6 +34,8 @@ const defaultContext: GameContextType = {
   enterBiome: () => {},
   leaveBiome: () => {},
   setCharacter: () => {},
+  meetNpc: () => {},
+  claimMilestone: () => {},
   isLoading: true,
 };
 
@@ -160,9 +164,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const defeatMonster = useCallback((monsterId: string) => {
     setState(prev => {
       if (prev.monstersDefeated.includes(monsterId)) return prev;
+      // Auto-unlock bestiary and myth entries for this monster
+      const updatedCompendium = prev.compendium.map(e =>
+        (e.monsterId === monsterId && (e.type === 'bestiary' || e.type === 'myth'))
+          ? { ...e, unlocked: true }
+          : e
+      );
       const next = {
         ...prev,
         monstersDefeated: [...prev.monstersDefeated, monsterId],
+        compendium: updatedCompendium,
         inventory: {
           ...prev.inventory,
           hormoneCrystals: prev.inventory.hormoneCrystals + 3,
@@ -274,10 +285,59 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   }, [save]);
 
+  const meetNpc = useCallback((npcName: string) => {
+    setState(prev => {
+      if (prev.npcsMet.includes(npcName)) return prev;
+      const updatedCompendium = prev.compendium.map(e =>
+        (e.npcName === npcName && e.type === 'bio') ? { ...e, unlocked: true } : e
+      );
+      const next = {
+        ...prev,
+        npcsMet: [...prev.npcsMet, npcName],
+        compendium: updatedCompendium,
+      };
+      save(next);
+      return next;
+    });
+  }, [save]);
+
+  const claimMilestone = useCallback((milestoneId: string) => {
+    setState(prev => {
+      const milestone = prev.compendiumMilestones.find(m => m.id === milestoneId);
+      if (!milestone || milestone.claimed) return prev;
+      const unlockedCount = prev.compendium.filter(e => e.unlocked).length;
+      if (unlockedCount < milestone.requiredCount) return prev;
+
+      let newInventory = { ...prev.inventory };
+      let newXp = prev.xp;
+      if (milestone.reward.type === 'item') {
+        newInventory = {
+          ...newInventory,
+          [milestone.reward.item]: newInventory[milestone.reward.item] + milestone.reward.amount,
+        };
+      } else {
+        newXp += milestone.reward.amount;
+      }
+
+      const next = {
+        ...prev,
+        xp: newXp,
+        level: getLevelFromXp(newXp),
+        inventory: newInventory,
+        compendiumMilestones: prev.compendiumMilestones.map(m =>
+          m.id === milestoneId ? { ...m, claimed: true } : m
+        ),
+      };
+      save(next);
+      return next;
+    });
+  }, [save]);
+
   return (
     <GameContext.Provider value={{
       state, addXp, defeatMonster, clearBiome, unlockCompendiumEntry,
       addInventory, updateEstraGlow, updateEstraBond, resetGame, enterBiome, leaveBiome, setCharacter,
+      meetNpc, claimMilestone,
       isLoading,
     }}>
       {children}
