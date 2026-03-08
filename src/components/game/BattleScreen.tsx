@@ -695,13 +695,20 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
               </div>
             </div>
 
-            {/* Wrong answer feedback inline */}
+            {/* Answer feedback + Continue */}
             <AnimatePresence>
-              {showResult && !isCorrect && (
+              {showResult && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                  className="rounded-lg p-4 bg-destructive/10 border border-destructive/30 space-y-2">
-                  <p className="font-display text-sm text-destructive">💥 {monster.name} strikes! -{lastDamageTaken} HP</p>
+                  className={`rounded-lg p-4 border space-y-3 ${isCorrect ? 'bg-glow-green/10 border-glow-green/30' : 'bg-destructive/10 border-destructive/30'}`}>
+                  {isCorrect ? (
+                    <p className="font-display text-sm text-glow-green">✨ Correct!</p>
+                  ) : (
+                    <p className="font-display text-sm text-destructive">💥 {monster.name} strikes! -{lastDamageTaken} HP</p>
+                  )}
                   <p className="text-xs text-foreground/70">{currentQuestion.explanation}</p>
+                  <Button size="sm" onClick={handleContinue} className="w-full mt-2">
+                    Continue →
+                  </Button>
                 </motion.div>
               )}
             </AnimatePresence>
