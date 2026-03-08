@@ -83,6 +83,13 @@ const GameScreen = () => {
             >
               <BookOpen className="h-4 w-4 mr-1" /> Compendium
             </Button>
+            <Button
+              variant={view === 'crafting' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setView('crafting')}
+            >
+              <FlaskConical className="h-4 w-4 mr-1" /> Craft
+            </Button>
             <Button variant="ghost" size="sm" onClick={resetGame} title="Reset Game">
               <RotateCcw className="h-4 w-4" />
             </Button>
