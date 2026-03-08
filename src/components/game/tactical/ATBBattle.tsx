@@ -24,9 +24,9 @@ type MonsterMechanic = {
 const MONSTER_MECHANICS: Record<string, MonsterMechanic> = {
   'shame-dragon': {
     id: 'shame-dragon', name: 'Phantom Pain',
-    description: 'Spawns fake damage numbers to confuse you!',
+    description: 'A master of self-deception and psychological warfare.',
     icon: <EyeOff className="h-3.5 w-3.5" />,
-    effect: 'fake_damage',
+    effect: 'multi', // No special mechanic - normal battle
   },
   'confusion-cyclone': {
     id: 'confusion-cyclone', name: 'Whirlwind Scramble',
@@ -172,7 +172,6 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
   const shouldFreezeAnswer = mechanic?.effect === 'freeze_answer';
   const shouldFog = mechanic?.effect === 'screen_fog';
   const shouldDecayCombo = mechanic?.effect === 'combo_decay';
-  const shouldFakeDamage = mechanic?.effect === 'fake_damage';
   const shouldDrainPotions = mechanic?.effect === 'potion_drain';
 
   const addDmgNumber = (value: number, type: 'dealt' | 'taken' | 'heal', x = '50%') => {
@@ -377,32 +376,22 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
       addDmgNumber(damage, 'dealt', '72%');
     }, 400);
 
-    setTimeout(() => {
-      setMonsterHp(prev => {
-        const newHp = Math.max(0, prev - damage);
-        if (newHp <= 0) {
-          setMonsterAnim('defeated');
-          setTimeout(() => setPhase('victory'), 1200);
-        } else {
-          setPlayerAnim('idle');
-          setMonsterAnim('idle');
-          setPlayerAtb(0);
-          setPhase('active');
-        }
-        return newHp;
-      });
-      // Fake damage mechanic — spawn 2-3 decoy numbers alongside real damage
-      if (shouldFakeDamage) {
-        const fakeCount = 2 + Math.floor(Math.random() * 2);
-        for (let i = 0; i < fakeCount; i++) {
-          const fakeVal = Math.round(damage * (0.4 + Math.random() * 1.2));
-          const fakeX = `${55 + Math.round((Math.random() - 0.5) * 30)}%`;
-          const fakeType = Math.random() > 0.3 ? 'dealt' : 'heal';
-          setTimeout(() => addDmgNumber(fakeVal, fakeType as 'dealt' | 'heal', fakeX), 100 + i * 150);
-        }
-      }
-    }, 800);
-  }, [combo, damageMultiplier, shouldFakeDamage]);
+      setTimeout(() => {
+        setMonsterHp(prev => {
+          const newHp = Math.max(0, prev - damage);
+          if (newHp <= 0) {
+            setMonsterAnim('defeated');
+            setTimeout(() => setPhase('victory'), 1200);
+          } else {
+            setPlayerAnim('idle');
+            setMonsterAnim('idle');
+            setPlayerAtb(0);
+            setPhase('active');
+          }
+          return newHp;
+        });
+      }, 800);
+  }, [combo, damageMultiplier]);
 
   const triggerMonsterAttack = useCallback(() => {
     setPhase('monster_attack');
@@ -420,14 +409,6 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
     setTimeout(() => {
       setPlayerAnim('hit');
       addDmgNumber(damage, 'taken', '28%');
-      // Fake damage numbers during monster attack too
-      if (shouldFakeDamage) {
-        for (let i = 0; i < 2; i++) {
-          const fakeVal = Math.round(damage * (0.3 + Math.random() * 1.5));
-          const fakeX = `${20 + Math.round((Math.random() - 0.5) * 20)}%`;
-          setTimeout(() => addDmgNumber(fakeVal, Math.random() > 0.5 ? 'taken' : 'dealt', fakeX), 80 + i * 120);
-        }
-      }
     }, 400);
 
     setTimeout(() => {
@@ -601,9 +582,6 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   </div>
                   <div className="flex items-center gap-1 justify-end">
                     <p className="text-[10px] text-muted-foreground">{monsterHp}/{monster.hp} HP</p>
-                    {shouldFakeDamage && (
-                      <span className="text-[9px] text-destructive/70 italic">👻 phantom</span>
-                    )}
                   </div>
                 </>
               </div>
