@@ -5,6 +5,10 @@ import { Monster, Question, questions, getSpecialtyDamageMultiplier, getXpMultip
 import { Swords, Timer, Zap, Heart, ArrowLeft, Sparkles, Shield, FlaskConical, BookOpen, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import {
+  DamageNumber, ScreenFlash, ImpactBurst, EnergyAura,
+  SlashEffect, VictoryFireworks, KnockoutShatter, ComboSparks
+} from './BattleEffects';
 
 interface BattleScreenProps {
   monster: Monster;
