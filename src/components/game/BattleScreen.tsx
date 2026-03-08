@@ -294,6 +294,13 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
     const newMonsterHp = Math.max(0, monsterHp - damage);
     setMonsterHp(newMonsterHp);
 
+    // VFX for player attacking monster
+    setPlayerSlash(prev => prev + 1);
+    setImpactMonster(prev => prev + 1);
+    addDamageNumber(damage, 'dealt');
+    if (rating === 'perfect') setFlashGold(prev => prev + 1);
+    else if (rating === 'good') setFlashGreen(prev => prev + 1);
+
     if (newMonsterHp <= 0) {
       setTimeout(() => setPhase('victory'), 1500);
     } else {
