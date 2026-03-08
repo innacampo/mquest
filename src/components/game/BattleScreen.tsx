@@ -741,7 +741,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         {/* ============ RESULT (after combo) ============ */}
         {phase === 'result' && (
           <motion.div key="result" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center min-h-[300px] space-y-6">
+            className="flex flex-col items-center justify-center min-h-[300px] space-y-6 relative">
+            <ComboSparks rating={comboRating} />
             {comboRating && (
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}
                 className="text-center space-y-2">
