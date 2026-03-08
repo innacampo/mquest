@@ -353,9 +353,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               {/* Player HP */}
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">
-                    {state.character?.background === 'caregiver' ? '🩺' : state.character?.background === 'scholar' ? '📚' : state.character?.background === 'advocate' ? '⚖️' : '🧭'}
-                  </span>
+                  <img src={playerSprite} alt="Player" className="w-6 h-6 object-contain rounded-full border border-secondary/40" />
                   <span className="font-display text-xs">{state.character?.name || 'Lyra'}</span>
                 </div>
                 <div className="h-2.5 rounded-full bg-muted overflow-hidden">
