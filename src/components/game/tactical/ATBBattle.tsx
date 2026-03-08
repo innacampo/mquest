@@ -5,9 +5,90 @@ import {
   Monster, Question, questions, getSpecialtyDamageMultiplier, getXpMultiplier,
 } from '@/lib/gameData';
 import { battleBackgrounds, monsterSprites, playerSprite } from '@/lib/battleAssets';
-import { Swords, ArrowLeft, Heart, Timer, FlaskConical, Shield, Zap } from 'lucide-react';
+import { Swords, ArrowLeft, Heart, Timer, FlaskConical, Shield, Zap, EyeOff, Shuffle, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DamageNumber, ScreenFlash, VictoryFireworks, KnockoutShatter, ImpactBurst, SlashEffect } from '../BattleEffects';
+
+// ---- MONSTER MECHANIC DEFINITIONS ----
+type MonsterMechanic = {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ReactNode;
+  // Which part of battle it affects
+  effect: 'hide_monster_hp' | 'hide_player_hp' | 'scramble_answers' | 'blur_question' |
+          'shorter_timer' | 'shrink_text' | 'fade_answers' | 'freeze_answer' |
+          'screen_fog' | 'combo_decay' | 'multi';
+};
+
+const MONSTER_MECHANICS: Record<string, MonsterMechanic> = {
+  'shame-dragon': {
+    id: 'shame-dragon', name: 'Veil of Shame',
+    description: 'Monster HP bar is hidden — fight blind!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'hide_monster_hp',
+  },
+  'confusion-cyclone': {
+    id: 'confusion-cyclone', name: 'Whirlwind Scramble',
+    description: 'Answer options are randomly shuffled each time!',
+    icon: <Shuffle className="h-3.5 w-3.5" />,
+    effect: 'scramble_answers',
+  },
+  'silence-specter': {
+    id: 'silence-specter', name: 'Spectral Silence',
+    description: 'Questions are blurred — read carefully!',
+    icon: <VolumeX className="h-3.5 w-3.5" />,
+    effect: 'blur_question',
+  },
+  'dismissal-wraith': {
+    id: 'dismissal-wraith', name: 'Dismissive Haste',
+    description: 'Timer reduced to 10 seconds!',
+    icon: <Timer className="h-3.5 w-3.5" />,
+    effect: 'shorter_timer',
+  },
+  'minimizer': {
+    id: 'minimizer', name: 'Minimizing Gaze',
+    description: 'Answer text shrinks over time — act fast!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'shrink_text',
+  },
+  'shame-tide': {
+    id: 'shame-tide', name: 'Tidal Shame',
+    description: 'Your HP bar is hidden — trust your instincts!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'hide_player_hp',
+  },
+  'brittle-giant': {
+    id: 'brittle-giant', name: 'Crumbling Choices',
+    description: 'Wrong answers fade away... but so might the right one!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'fade_answers',
+  },
+  'cold-certainty': {
+    id: 'cold-certainty', name: 'Frozen Deceit',
+    description: 'One wrong answer glows like the correct one!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'freeze_answer',
+  },
+  'fog-of-shame': {
+    id: 'fog-of-shame', name: 'Creeping Fog',
+    description: 'Screen fills with fog as the timer runs down!',
+    icon: <EyeOff className="h-3.5 w-3.5" />,
+    effect: 'screen_fog',
+  },
+  'heartbreak-myth': {
+    id: 'heartbreak-myth', name: 'Heartbreak',
+    description: 'Combo decays each turn — keep the streak alive!',
+    icon: <Heart className="h-3.5 w-3.5" />,
+    effect: 'combo_decay',
+  },
+  'grand-silencer': {
+    id: 'grand-silencer', name: 'Grand Silence',
+    description: 'Blurred questions AND scrambled answers!',
+    icon: <VolumeX className="h-3.5 w-3.5" />,
+    effect: 'multi',
+  },
+};
 
 interface ATBBattleProps {
   monster: Monster;
@@ -18,18 +99,18 @@ interface ATBBattleProps {
 
 type BattlePhase =
   | 'intro'
-  | 'active'       // ATB gauges filling
-  | 'player_menu'  // Player gauge full, choose action
-  | 'quiz'         // Answering question
-  | 'player_attack' // Player attack animation
-  | 'monster_attack' // Monster attack animation
+  | 'active'
+  | 'player_menu'
+  | 'quiz'
+  | 'player_attack'
+  | 'monster_attack'
   | 'victory'
   | 'knockout';
 
 const PLAYER_MAX_HP = 100;
 const PLAYER_BASE_DAMAGE = 28;
 const MONSTER_BASE_DAMAGE = 15;
-const PLAYER_ATB_SPEED = 1.8;  // gauge units per tick
+const PLAYER_ATB_SPEED = 1.8;
 const MONSTER_ATB_SPEED = 1.2;
 const ATB_MAX = 100;
 const ATB_TICK_MS = 50;
@@ -38,6 +119,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
   const { state, addXp, defeatMonster, unlockCompendiumEntry, updateEstraBond, addInventory } = useGame();
   const damageMultiplier = getSpecialtyDamageMultiplier(state.character, monster.biome);
   const xpMultiplier = getXpMultiplier(state.character);
+  const mechanic = MONSTER_MECHANICS[monster.id] || null;
 
   const [phase, setPhase] = useState<BattlePhase>('intro');
   const [playerHp, setPlayerHp] = useState(PLAYER_MAX_HP);
@@ -49,12 +131,18 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
   // Quiz
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [scrambledOptions, setScrambledOptions] = useState<{ text: string; originalIndex: number }[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15);
   const [timerActive, setTimerActive] = useState(false);
   const [usedQuestionIds, setUsedQuestionIds] = useState<Set<string>>(new Set());
+  const [blurAmount, setBlurAmount] = useState(0);
+  const [shrinkScale, setShrinkScale] = useState(1);
+  const [fadedAnswers, setFadedAnswers] = useState<Set<number>>(new Set());
+  const [frozenDeceitIndex, setFrozenDeceitIndex] = useState<number | null>(null);
+  const [fogOpacity, setFogOpacity] = useState(0);
 
   // VFX triggers
   const [flashRed, setFlashRed] = useState(0);
@@ -74,6 +162,18 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
   const biomeQuestions = useMemo(() => questions.filter(q => q.monster === monster.id), [monster.id]);
   const atbRunning = useRef(false);
+
+  // Helper: does this monster use scrambled answers?
+  const shouldScramble = mechanic?.effect === 'scramble_answers' || mechanic?.effect === 'multi';
+  const shouldBlur = mechanic?.effect === 'blur_question' || mechanic?.effect === 'multi';
+  const shouldShortenTimer = mechanic?.effect === 'shorter_timer';
+  const shouldShrink = mechanic?.effect === 'shrink_text';
+  const shouldFadeAnswers = mechanic?.effect === 'fade_answers';
+  const shouldFreezeAnswer = mechanic?.effect === 'freeze_answer';
+  const shouldFog = mechanic?.effect === 'screen_fog';
+  const shouldDecayCombo = mechanic?.effect === 'combo_decay';
+  const hideMonsterHp = mechanic?.effect === 'hide_monster_hp';
+  const hidePlayerHp = mechanic?.effect === 'hide_player_hp';
 
   const addDmgNumber = (value: number, type: 'dealt' | 'taken' | 'heal', x = '50%') => {
     const id = `${Date.now()}-${Math.random()}`;
@@ -137,6 +237,8 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
     setMonsterAtb(30); // Monster gets a head start
   };
 
+  const getDefaultTimer = () => shouldShortenTimer ? 10 : 15;
+
   const openQuiz = useCallback(() => {
     const available = biomeQuestions.filter(q => !usedQuestionIds.has(q.id));
     const q = available.length > 0
@@ -146,20 +248,91 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
     setSelectedAnswer(null);
     setShowResult(false);
     setIsCorrect(false);
-    setTimeLeft(15);
+    setTimeLeft(getDefaultTimer());
     setTimerActive(true);
     setUsedQuestionIds(prev => new Set([...prev, q.id]));
-    setPhase('quiz');
-  }, [biomeQuestions, usedQuestionIds]);
+    setBlurAmount(shouldBlur ? 8 : 0);
+    setShrinkScale(1);
+    setFadedAnswers(new Set());
+    setFogOpacity(0);
+    setFrozenDeceitIndex(null);
 
-  const handleQuizAnswer = (index: number) => {
+    // Scramble answers if mechanic applies
+    const opts = q.options.map((text, i) => ({ text, originalIndex: i }));
+    if (shouldScramble) {
+      for (let i = opts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [opts[i], opts[j]] = [opts[j], opts[i]];
+      }
+    }
+    setScrambledOptions(opts);
+
+    // Frozen deceit: pick a random wrong answer to glow green
+    if (shouldFreezeAnswer) {
+      const wrongIndices = opts
+        .map((o, i) => ({ i, orig: o.originalIndex }))
+        .filter(o => o.orig !== q.correctAnswer);
+      if (wrongIndices.length > 0) {
+        setFrozenDeceitIndex(wrongIndices[Math.floor(Math.random() * wrongIndices.length)].i);
+      }
+    }
+
+    // Combo decay mechanic
+    if (shouldDecayCombo) {
+      setCombo(prev => Math.max(0, prev - 1));
+    }
+
+    setPhase('quiz');
+  }, [biomeQuestions, usedQuestionIds, shouldScramble, shouldBlur, shouldShortenTimer, shouldFreezeAnswer, shouldDecayCombo]);
+
+  // Mechanic effects during quiz (blur fades, text shrinks, fog grows, answers fade)
+  useEffect(() => {
+    if (phase !== 'quiz' || !timerActive) return;
+    const interval = setInterval(() => {
+      // Blur gradually clears (reward patience)
+      if (shouldBlur) {
+        setBlurAmount(prev => Math.max(0, prev - 0.6));
+      }
+      // Shrink text over time
+      if (shouldShrink) {
+        setShrinkScale(prev => Math.max(0.55, prev - 0.03));
+      }
+      // Fog grows
+      if (shouldFog) {
+        setFogOpacity(prev => Math.min(0.7, prev + 0.04));
+      }
+      // Fade random answers
+      if (shouldFadeAnswers && currentQuestion) {
+        setFadedAnswers(prev => {
+          if (prev.size >= scrambledOptions.length - 1) return prev;
+          const available = scrambledOptions
+            .map((_, i) => i)
+            .filter(i => !prev.has(i));
+          if (available.length > 0 && Math.random() < 0.15) {
+            const next = new Set(prev);
+            next.add(available[Math.floor(Math.random() * available.length)]);
+            return next;
+          }
+          return prev;
+        });
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  }, [phase, timerActive, shouldBlur, shouldShrink, shouldFog, shouldFadeAnswers, currentQuestion, scrambledOptions]);
+
+  const handleQuizAnswer = (scrambledIndex: number) => {
     if (showResult || !currentQuestion) return;
     setTimerActive(false);
-    setSelectedAnswer(index);
+    setBlurAmount(0);
+    setFogOpacity(0);
+
+    // Map scrambled index back to original
+    const originalIndex = scrambledIndex === -1 ? -1 : scrambledOptions[scrambledIndex]?.originalIndex ?? -1;
+    setSelectedAnswer(scrambledIndex);
     setShowResult(true);
     setTotalQuestions(prev => prev + 1);
 
-    const correct = index === currentQuestion.correctAnswer;
+    const correct = originalIndex === currentQuestion.correctAnswer;
     setIsCorrect(correct);
 
     if (correct) {
@@ -168,7 +341,6 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
       setTimeout(() => executePlayerAttack(), 1000);
     } else {
       setCombo(0);
-      // Wrong = skip turn, monster gets ATB boost
       setTimeout(() => {
         setPlayerAtb(0);
         setMonsterAtb(prev => Math.min(ATB_MAX, prev + 30));
@@ -327,6 +499,13 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               <h2 className="font-display text-2xl text-foreground">{monster.name}</h2>
               <p className="text-sm text-destructive italic max-w-md mx-auto">"{monster.myth}"</p>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">{monster.mechanicDescription}</p>
+              {mechanic && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-xs font-display mx-auto">
+                  {mechanic.icon}
+                  <span className="font-bold">{mechanic.name}:</span> {mechanic.description}
+                </motion.div>
+              )}
               <motion.p className="text-xs text-secondary mt-2"
                 animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
                 ⚡ Active Time Battle — React fast, answer smart!
@@ -356,11 +535,21 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   <img src={playerSprite} alt="Player" className="w-6 h-6 object-contain rounded-full border border-secondary/40" />
                   <span className="font-display text-xs">{state.character?.name || 'Lyra'}</span>
                 </div>
-                <div className="h-2.5 rounded-full bg-muted overflow-hidden">
-                  <motion.div className={`h-full rounded-full ${playerHpColor}`}
-                    animate={{ width: `${playerHpPercent}%` }} transition={{ duration: 0.5 }} />
-                </div>
-                <p className="text-[10px] text-muted-foreground">{playerHp}/{PLAYER_MAX_HP} HP</p>
+                {hidePlayerHp ? (
+                  <div className="h-2.5 rounded-full bg-muted overflow-hidden relative">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-[8px] text-muted-foreground italic">Hidden by {monster.name}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+                      <motion.div className={`h-full rounded-full ${playerHpColor}`}
+                        animate={{ width: `${playerHpPercent}%` }} transition={{ duration: 0.5 }} />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">{playerHp}/{PLAYER_MAX_HP} HP</p>
+                  </>
+                )}
               </div>
 
               {/* Combo indicator */}
@@ -372,6 +561,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                     {combo}x
                   </motion.span>
                   <span className="text-[9px] text-primary/70">COMBO</span>
+                  {shouldDecayCombo && <span className="text-[8px] text-destructive/60">decaying</span>}
                 </motion.div>
               )}
 
@@ -381,11 +571,24 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   <span className="font-display text-xs">{monster.name}</span>
                   <img src={monsterSprites[monster.id]} alt={monster.name} className="w-6 h-6 object-contain rounded-full border border-destructive/40" />
                 </div>
-                <div className="h-2.5 rounded-full bg-muted overflow-hidden">
-                  <motion.div className="h-full rounded-full bg-destructive"
-                    animate={{ width: `${monsterHpPercent}%` }} transition={{ duration: 0.5 }} />
-                </div>
-                <p className="text-[10px] text-muted-foreground">{monsterHp}/{monster.hp} HP</p>
+                {hideMonsterHp ? (
+                  <div className="h-2.5 rounded-full bg-muted overflow-hidden relative">
+                    <motion.div className="h-full rounded-full bg-destructive/30"
+                      animate={{ width: ['30%', '70%', '45%', '60%', '30%'] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-[8px] text-destructive/70 font-display">???</span>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+                      <motion.div className="h-full rounded-full bg-destructive"
+                        animate={{ width: `${monsterHpPercent}%` }} transition={{ duration: 0.5 }} />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">{monsterHp}/{monster.hp} HP</p>
+                  </>
+                )}
               </div>
             </div>
 
@@ -569,21 +772,38 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
         {/* ====== QUIZ PHASE ====== */}
         {phase === 'quiz' && currentQuestion && (
           <motion.div key="quiz" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-            className="space-y-4">
+            className="space-y-4 relative">
+
+            {/* Fog overlay for fog-of-shame mechanic */}
+            {shouldFog && fogOpacity > 0 && (
+              <div className="absolute inset-0 z-20 pointer-events-none rounded-xl"
+                style={{
+                  background: `radial-gradient(ellipse at center, transparent 20%, hsl(var(--muted)) ${Math.round(fogOpacity * 100)}%)`,
+                  opacity: fogOpacity,
+                }} />
+            )}
+
             <div className="flex items-center justify-between">
               <h3 className="font-display text-sm text-secondary flex items-center gap-2">
                 <Zap className="h-4 w-4" /> Knowledge Strike — Answer to Attack!
               </h3>
-              <motion.div
-                className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${
-                  timeLeft <= 5 ? 'bg-destructive/20 text-destructive' : 'bg-muted text-muted-foreground'
-                }`}
-                animate={timeLeft <= 5 ? { scale: [1, 1.05, 1] } : {}}
-                transition={{ duration: 0.5, repeat: Infinity }}
-              >
-                <Timer className="h-3 w-3" />
-                <span className="text-sm font-mono">{timeLeft}s</span>
-              </motion.div>
+              <div className="flex items-center gap-2">
+                {mechanic && (
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-[10px] font-display">
+                    {mechanic.icon} {mechanic.name}
+                  </span>
+                )}
+                <motion.div
+                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${
+                    timeLeft <= 5 ? 'bg-destructive/20 text-destructive' : 'bg-muted text-muted-foreground'
+                  }`}
+                  animate={timeLeft <= 5 ? { scale: [1, 1.05, 1] } : {}}
+                  transition={{ duration: 0.5, repeat: Infinity }}
+                >
+                  <Timer className="h-3 w-3" />
+                  <span className="text-sm font-mono">{timeLeft}s</span>
+                </motion.div>
+              </div>
             </div>
 
             {combo > 0 && (
@@ -594,24 +814,47 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
             )}
 
             <div className="rounded-xl bg-card/60 border border-border p-5 space-y-4">
-              <p className="text-foreground text-sm leading-relaxed">{currentQuestion.text}</p>
+              {/* Question text with optional blur */}
+              <p className="text-foreground text-sm leading-relaxed transition-all duration-300"
+                style={{ filter: blurAmount > 0 ? `blur(${blurAmount}px)` : 'none' }}>
+                {currentQuestion.text}
+              </p>
+              {blurAmount > 0 && !showResult && (
+                <p className="text-[10px] text-destructive/60 italic">Spectral Silence — question is clearing...</p>
+              )}
+
+              {/* Answer options using scrambled order */}
               <div className="grid grid-cols-1 gap-2">
-                {currentQuestion.options.map((option, i) => {
+                {scrambledOptions.map((opt, i) => {
+                  const origIdx = opt.originalIndex;
                   let style = 'border-border hover:border-secondary/60 hover:bg-secondary/5';
+
+                  // Frozen deceit: make a wrong answer look green-ish before reveal
+                  if (!showResult && frozenDeceitIndex === i) {
+                    style = 'border-secondary/50 bg-secondary/5';
+                  }
+
                   if (showResult) {
-                    if (i === currentQuestion.correctAnswer) style = 'border-glow-green bg-glow-green/10';
+                    if (origIdx === currentQuestion.correctAnswer) style = 'border-glow-green bg-glow-green/10';
                     else if (i === selectedAnswer && !isCorrect) style = 'border-destructive bg-destructive/10';
                     else style = 'border-border opacity-40';
                   }
+
+                  // Fade mechanic
+                  const isFaded = fadedAnswers.has(i) && !showResult;
+
                   return (
                     <motion.button key={i}
-                      onClick={() => handleQuizAnswer(i)} disabled={showResult}
-                      className={`text-left rounded-lg border-2 px-4 py-2.5 text-sm transition-colors ${style}`}
-                      whileHover={!showResult ? { scale: 1.01, x: 4 } : {}}
-                      whileTap={!showResult ? { scale: 0.98 } : {}}
+                      onClick={() => handleQuizAnswer(i)} disabled={showResult || isFaded}
+                      className={`text-left rounded-lg border-2 px-4 py-2.5 text-sm transition-all ${style} ${isFaded ? 'opacity-20 pointer-events-none' : ''}`}
+                      style={{
+                        fontSize: shouldShrink ? `${Math.max(0.65, shrinkScale) * 0.875}rem` : undefined,
+                      }}
+                      whileHover={!showResult && !isFaded ? { scale: 1.01, x: 4 } : {}}
+                      whileTap={!showResult && !isFaded ? { scale: 0.98 } : {}}
                     >
                       <span className="text-muted-foreground mr-2 font-mono text-xs">{String.fromCharCode(65 + i)}</span>
-                      {option}
+                      {opt.text}
                     </motion.button>
                   );
                 })}
