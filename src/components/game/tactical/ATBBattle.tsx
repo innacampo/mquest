@@ -23,10 +23,10 @@ type MonsterMechanic = {
 
 const MONSTER_MECHANICS: Record<string, MonsterMechanic> = {
   'shame-dragon': {
-    id: 'shame-dragon', name: 'Veil of Shame',
-    description: 'Monster HP bar is hidden — fight blind!',
+    id: 'shame-dragon', name: 'Phantom Pain',
+    description: 'Spawns fake damage numbers to confuse you!',
     icon: <EyeOff className="h-3.5 w-3.5" />,
-    effect: 'hide_monster_hp',
+    effect: 'fake_damage',
   },
   'confusion-cyclone': {
     id: 'confusion-cyclone', name: 'Whirlwind Scramble',
