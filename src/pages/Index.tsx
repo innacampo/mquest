@@ -5,12 +5,11 @@ import { BiomeId, getWorldState } from '@/lib/gameData';
 import PlayerHUD from '@/components/game/PlayerHUD';
 import WorldMap from '@/components/game/WorldMap';
 import BiomeExplore from '@/components/game/BiomeExplore';
-import CompendiumView from '@/components/game/CompendiumView';
-import CraftingStation from '@/components/game/CraftingStation';
-import { BookOpen, Map, RotateCcw, FlaskConical } from 'lucide-react';
+import HearthVillage from '@/components/game/HearthVillage';
+import { Map, RotateCcw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-type GameView = 'map' | 'biome' | 'compendium' | 'crafting';
+type GameView = 'map' | 'biome' | 'village';
 
 const GameScreen = () => {
   const { state, resetGame, enterBiome, leaveBiome } = useGame();
@@ -26,10 +25,8 @@ const GameScreen = () => {
   const handleExitBiome = () => {
     leaveBiome();
     setActiveBiome(null);
-    setView('map');
+    setView('village');
   };
-
-  const worldState = getWorldState(state.estraGlow);
 
   return (
     <div className="min-h-screen bg-gradient-mystical">
@@ -72,23 +69,16 @@ const GameScreen = () => {
             <Button
               variant={view === 'map' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => { setView('map'); handleExitBiome(); }}
+              onClick={() => { setView('map'); setActiveBiome(null); leaveBiome(); }}
             >
-              <Map className="h-4 w-4 mr-1" /> Map
+              <Map className="h-4 w-4 mr-1" /> Realm
             </Button>
             <Button
-              variant={view === 'compendium' ? 'default' : 'outline'}
+              variant={view === 'village' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setView('compendium')}
+              onClick={() => { setView('village'); setActiveBiome(null); leaveBiome(); }}
             >
-              <BookOpen className="h-4 w-4 mr-1" /> Compendium
-            </Button>
-            <Button
-              variant={view === 'crafting' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setView('crafting')}
-            >
-              <FlaskConical className="h-4 w-4 mr-1" /> Craft
+              <Home className="h-4 w-4 mr-1" /> Village
             </Button>
             <Button variant="ghost" size="sm" onClick={resetGame} title="Reset Game">
               <RotateCcw className="h-4 w-4" />
@@ -111,14 +101,9 @@ const GameScreen = () => {
               <BiomeExplore biomeId={activeBiome} onExit={handleExitBiome} />
             </motion.div>
           )}
-          {view === 'compendium' && (
-            <motion.div key="compendium" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <CompendiumView onClose={() => setView('map')} />
-            </motion.div>
-          )}
-          {view === 'crafting' && (
-            <motion.div key="crafting" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <CraftingStation onClose={() => setView('map')} />
+          {view === 'village' && (
+            <motion.div key="village" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <HearthVillage onGoToMap={() => setView('map')} />
             </motion.div>
           )}
         </AnimatePresence>
