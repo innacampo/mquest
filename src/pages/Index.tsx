@@ -16,10 +16,19 @@ import { Button } from '@/components/ui/button';
 type GameView = 'title' | 'character' | 'map' | 'biome' | 'village';
 
 const GameScreen = () => {
-  const { state, resetGame, enterBiome, leaveBiome, setCharacter } = useGame();
-  const [view, setView] = useState<GameView>(() => state.character ? 'map' : 'title');
+  const { state, resetGame, enterBiome, leaveBiome, setCharacter, isLoading } = useGame();
+  const [view, setView] = useState<GameView>('title');
+  const [viewInitialized, setViewInitialized] = useState(false);
   const [activeBiome, setActiveBiome] = useState<BiomeId | null>(null);
   const audio = useAudio();
+
+  // Set initial view once loading completes
+  useEffect(() => {
+    if (!isLoading && !viewInitialized) {
+      setView(state.character ? 'map' : 'title');
+      setViewInitialized(true);
+    }
+  }, [isLoading, viewInitialized, state.character]);
 
   // Switch ambient audio based on view
   useEffect(() => {
@@ -42,6 +51,16 @@ const GameScreen = () => {
     setView('village');
     audio.playVictory();
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-mystical flex flex-col items-center justify-center gap-4">
+        <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }}
+          className="text-5xl">✨</motion.div>
+        <p className="font-display text-lg text-primary text-glow-amber">Loading your quest...</p>
+      </div>
+    );
+  }
 
   if (view === 'title') {
     return <TitleScreen onStart={() => { setView(state.character ? 'map' : 'character'); audio.playChime(); }} />;

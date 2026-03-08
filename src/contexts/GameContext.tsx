@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { GameState, createInitialGameState, getLevelFromXp, BiomeId, biomes, CharacterProfile, getStartingBonuses } from '@/lib/gameData';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
+import { GameState, createInitialGameState, getLevelFromXp, BiomeId, CharacterProfile, getStartingBonuses } from '@/lib/gameData';
+import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 
 interface GameContextType {
   state: GameState;
@@ -14,6 +16,7 @@ interface GameContextType {
   enterBiome: (biomeId: BiomeId) => void;
   leaveBiome: () => void;
   setCharacter: (profile: CharacterProfile) => void;
+  isLoading: boolean;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -25,14 +28,110 @@ export const useGame = () => {
 };
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, setState] = useState<GameState>(() => {
-    const saved = localStorage.getItem('menopause-quest-save');
-    return saved ? JSON.parse(saved) : createInitialGameState();
-  });
+  const [state, setState] = useState<GameState>(createInitialGameState());
+  const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Debounced save to DB
+  const saveToDb = useCallback((newState: GameState, uid: string) => {
+    // Also keep localStorage as fallback
+    localStorage.setItem('menopause-quest-save', JSON.stringify(newState));
+
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(async () => {
+      await supabase
+        .from('game_saves')
+        .upsert({
+          user_id: uid,
+          game_state: newState as unknown as Json,
+        }, { onConflict: 'user_id' });
+    }, 500);
+  }, []);
+
+  // Auth + load
+  useEffect(() => {
+    let mounted = true;
+
+    const initAuth = async () => {
+      // Check existing session
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session?.user) {
+        if (mounted) {
+          setUserId(session.user.id);
+          await loadGameState(session.user.id);
+        }
+      } else {
+        // Sign in anonymously
+        const { data, error } = await supabase.auth.signInAnonymously();
+        if (data?.user && mounted) {
+          setUserId(data.user.id);
+          // Create initial save
+          const initial = createInitialGameState();
+          // Check localStorage for existing progress to migrate
+          const localSave = localStorage.getItem('menopause-quest-save');
+          const gameState = localSave ? JSON.parse(localSave) : initial;
+          if (mounted) setState(gameState);
+          await supabase.from('game_saves').upsert({
+            user_id: data.user.id,
+            game_state: gameState as unknown as Json,
+          }, { onConflict: 'user_id' });
+          if (mounted) setIsLoading(false);
+        } else {
+          // Fallback to localStorage if auth fails
+          const localSave = localStorage.getItem('menopause-quest-save');
+          if (localSave && mounted) setState(JSON.parse(localSave));
+          if (mounted) setIsLoading(false);
+        }
+      }
+    };
+
+    const loadGameState = async (uid: string) => {
+      const { data } = await supabase
+        .from('game_saves')
+        .select('game_state')
+        .eq('user_id', uid)
+        .maybeSingle();
+
+      if (data?.game_state && mounted) {
+        setState(data.game_state as unknown as GameState);
+      } else {
+        // No save in DB — check localStorage for migration, else fresh state
+        const localSave = localStorage.getItem('menopause-quest-save');
+        const gameState = localSave ? JSON.parse(localSave) : createInitialGameState();
+        if (mounted) setState(gameState);
+        // Persist to DB
+        await supabase.from('game_saves').upsert({
+          user_id: uid,
+          game_state: gameState as unknown as Json,
+        }, { onConflict: 'user_id' });
+      }
+      if (mounted) setIsLoading(false);
+    };
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user && mounted) {
+        setUserId(session.user.id);
+      }
+    });
+
+    initAuth();
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const save = useCallback((newState: GameState) => {
-    localStorage.setItem('menopause-quest-save', JSON.stringify(newState));
-  }, []);
+    if (userId) {
+      saveToDb(newState, userId);
+    } else {
+      localStorage.setItem('menopause-quest-save', JSON.stringify(newState));
+    }
+  }, [userId, saveToDb]);
 
   const addXp = useCallback((amount: number) => {
     setState(prev => {
@@ -64,9 +163,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setState(prev => {
       if (prev.biomesCleared.includes(biomeId)) return prev;
       const newCleared = [...prev.biomesCleared, biomeId];
-      // Unlock next biome
-      const biomeOrder: BiomeId[] = ['fever-peaks', 'fog-marshes', 'mood-tides', 'crystal-caverns', 'heartland', 'bloom-garden'];
-      const idx = biomeOrder.indexOf(biomeId);
       const newGlow = Math.min(1, (newCleared.length / 5));
       const next = {
         ...prev,
@@ -135,11 +231,17 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   }, [save]);
 
-  const resetGame = useCallback(() => {
+  const resetGame = useCallback(async () => {
     const fresh = createInitialGameState();
     localStorage.removeItem('menopause-quest-save');
     setState(fresh);
-  }, []);
+    if (userId) {
+      await supabase.from('game_saves').upsert({
+        user_id: userId,
+        game_state: fresh as unknown as Json,
+      }, { onConflict: 'user_id' });
+    }
+  }, [userId]);
 
   const setCharacter = useCallback((profile: CharacterProfile) => {
     setState(prev => {
@@ -162,6 +264,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <GameContext.Provider value={{
       state, addXp, defeatMonster, clearBiome, unlockCompendiumEntry,
       addInventory, updateEstraGlow, updateEstraBond, resetGame, enterBiome, leaveBiome, setCharacter,
+      isLoading,
     }}>
       {children}
     </GameContext.Provider>
