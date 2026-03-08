@@ -463,7 +463,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               >
                 <img src={monsterSprites[monster.id]} alt={monster.name}
                   className="h-48 w-auto object-contain drop-shadow-[0_0_16px_hsl(0_60%_40%/0.5)]"
-                  style={{ transform: 'scaleX(-1)' }}
+                  style={{}}
                 />
               </motion.div>
 
