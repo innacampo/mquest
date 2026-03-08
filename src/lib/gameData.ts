@@ -687,7 +687,7 @@ export const initialMilestones: CompendiumMilestone[] = [
   { id: 'ms-2', title: 'Knowledge Seeker', description: 'Unlock 10 compendium entries', requiredCount: 10, reward: { type: 'item', item: 'knowledgeScrolls', amount: 3 }, claimed: false },
   { id: 'ms-3', title: 'Monster Scholar', description: 'Unlock 15 compendium entries', requiredCount: 15, reward: { type: 'item', item: 'remedyPotionBasic', amount: 2 }, claimed: false },
   { id: 'ms-4', title: 'Myth Breaker', description: 'Unlock 25 compendium entries', requiredCount: 25, reward: { type: 'xp', amount: 500 }, claimed: false },
-  { id: 'ms-5', title: 'Grand Archivist', description: 'Unlock all compendium entries', requiredCount: 34, reward: { type: 'item', item: 'compendiumSeal', amount: 3 }, claimed: false },
+  { id: 'ms-5', title: 'Grand Archivist', description: 'Unlock all compendium entries', requiredCount: 37, reward: { type: 'item', item: 'compendiumSeal', amount: 3 }, claimed: false },
 ];
 
 // ============ NPCs ============
