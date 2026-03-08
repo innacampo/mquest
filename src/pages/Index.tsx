@@ -10,7 +10,7 @@ import CraftingStation from '@/components/game/CraftingStation';
 import { BookOpen, Map, RotateCcw, FlaskConical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-type GameView = 'map' | 'biome' | 'compendium';
+type GameView = 'map' | 'biome' | 'compendium' | 'crafting';
 
 const GameScreen = () => {
   const { state, resetGame, enterBiome, leaveBiome } = useGame();
