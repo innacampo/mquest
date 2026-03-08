@@ -112,6 +112,15 @@ const CraftingStation: React.FC<CraftingStationProps> = ({ onClose }) => {
       updateEstraBond(1);
     }
 
+    // Special: Compendium Seal unlocks a hidden entry immediately
+    if (recipe.id === 'compendium-seal') {
+      const sealEntry = state.compendium.find(e => e.sealOnly && !e.unlocked);
+      if (sealEntry) {
+        unlockCompendiumEntry(sealEntry.id);
+        addInventory('compendiumSeal', -1); // consume the seal
+      }
+    }
+
     setCraftedId(recipe.id);
     setTimeout(() => setCraftedId(null), 2000);
   };
