@@ -65,6 +65,10 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
   const [lastDamageTaken, setLastDamageTaken] = useState(0);
   const [comboRating, setComboRating] = useState<'miss' | 'light' | 'good' | 'perfect' | null>(null);
 
+  // Portrait states
+  const [monsterPortraitState, setMonsterPortraitState] = useState<PortraitState>('idle');
+  const [playerPortraitState, setPlayerPortraitState] = useState<PortraitState>('idle');
+
   // Question state
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
