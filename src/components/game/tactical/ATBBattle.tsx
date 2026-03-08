@@ -535,37 +535,18 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   <img src={playerSprite} alt="Player" className="w-6 h-6 object-contain rounded-full border border-secondary/40" />
                   <span className="font-display text-xs">{state.character?.name || 'Lyra'}</span>
                 </div>
-                {hidePlayerHp ? (
-                  <div className="relative">
-                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
-                      <motion.div className={`h-full rounded-full ${playerHpColor}`}
-                        animate={{ width: `${playerHpPercent}%` }} transition={{ duration: 0.5 }} />
-                    </div>
-                    {/* Cracked mirror overlay */}
-                    <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 200 10" preserveAspectRatio="none">
-                      <line x1="30" y1="0" x2="45" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.8" opacity="0.5" />
-                      <line x1="45" y1="10" x2="55" y2="2" stroke="hsl(var(--foreground))" strokeWidth="0.6" opacity="0.4" />
-                      <line x1="80" y1="0" x2="70" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.8" opacity="0.5" />
-                      <line x1="70" y1="10" x2="90" y2="3" stroke="hsl(var(--foreground))" strokeWidth="0.5" opacity="0.3" />
-                      <line x1="120" y1="0" x2="130" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.7" opacity="0.45" />
-                      <line x1="130" y1="10" x2="115" y2="4" stroke="hsl(var(--foreground))" strokeWidth="0.5" opacity="0.3" />
-                      <line x1="160" y1="0" x2="155" y2="10" stroke="hsl(var(--foreground))" strokeWidth="0.6" opacity="0.4" />
-                    </svg>
-                    <motion.div className="absolute inset-0 rounded-full"
-                      style={{ background: 'linear-gradient(135deg, transparent 40%, hsl(var(--foreground) / 0.08) 50%, transparent 60%)' }}
-                      animate={{ opacity: [0.3, 0.7, 0.3] }}
-                      transition={{ duration: 2, repeat: Infinity }} />
-                    <p className="text-[10px] text-muted-foreground/50 italic">⚠ cracked</p>
+                <>
+                  <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+                    <motion.div className={`h-full rounded-full ${playerHpColor}`}
+                      animate={{ width: `${playerHpPercent}%` }} transition={{ duration: 0.5 }} />
                   </div>
-                ) : (
-                  <>
-                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
-                      <motion.div className={`h-full rounded-full ${playerHpColor}`}
-                        animate={{ width: `${playerHpPercent}%` }} transition={{ duration: 0.5 }} />
-                    </div>
+                  <div className="flex items-center gap-1">
                     <p className="text-[10px] text-muted-foreground">{playerHp}/{PLAYER_MAX_HP} HP</p>
-                  </>
-                )}
+                    {shouldDrainPotions && (
+                      <span className="text-[9px] text-destructive/70 italic">🌊 draining</span>
+                    )}
+                  </div>
+                </>
               </div>
 
               {/* Combo indicator */}
