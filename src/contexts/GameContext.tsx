@@ -19,12 +19,26 @@ interface GameContextType {
   isLoading: boolean;
 }
 
-const GameContext = createContext<GameContextType | null>(null);
+const defaultContext: GameContextType = {
+  state: createInitialGameState(),
+  addXp: () => {},
+  defeatMonster: () => {},
+  clearBiome: () => {},
+  unlockCompendiumEntry: () => {},
+  addInventory: () => {},
+  updateEstraGlow: () => {},
+  updateEstraBond: () => {},
+  resetGame: () => {},
+  enterBiome: () => {},
+  leaveBiome: () => {},
+  setCharacter: () => {},
+  isLoading: true,
+};
+
+const GameContext = createContext<GameContextType>(defaultContext);
 
 export const useGame = () => {
-  const ctx = useContext(GameContext);
-  if (!ctx) throw new Error('useGame must be used within GameProvider');
-  return ctx;
+  return useContext(GameContext);
 };
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
