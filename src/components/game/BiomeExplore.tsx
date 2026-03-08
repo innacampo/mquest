@@ -26,6 +26,10 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
   const biomeNpc = npcs.find(n => n.biome === biomeId);
   const allMonstersDefeated = biomeMonsters.every(m => state.monstersDefeated.includes(m.id));
 
+  // Derive visited state from global game state — persists across biome exits
+  const shrineVisited = justVisitedShrine || state.compendium.some(e => e.type === 'fact' && e.biome === biomeId && e.unlocked);
+  const npcTalkedTo = justTalkedNpc || (biomeNpc ? (state.npcsMet || []).includes(biomeNpc.name) : false);
+
   const handleMonsterSelect = (monsterId: string) => {
     setSelectedMonster(monsterId);
     setCurrentView('battle');
