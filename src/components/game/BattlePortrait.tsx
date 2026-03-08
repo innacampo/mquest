@@ -237,7 +237,7 @@ const BattlePortrait: React.FC<BattlePortraitProps> = ({
           className={`font-display text-[10px] mt-1 tracking-wide ${
             currentState === 'defeated' ? 'text-muted-foreground line-through' : 'text-foreground/70'
           }`}
-          animate={currentState === 'hit' ? { color: ['hsl(0 70% 60%)', 'hsl(40 30% 70%)'] } : {}}
+          animate={currentState === 'hit' ? { color: 'hsl(0 70% 60%)' } : undefined}
           transition={{ duration: 0.5 }}
         >
           {name}
