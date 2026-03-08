@@ -9,6 +9,7 @@ import HearthVillage from '@/components/game/HearthVillage';
 import AudioControls from '@/components/game/AudioControls';
 import TitleScreen from '@/components/game/TitleScreen';
 import FeedbackButton from '@/components/game/FeedbackButton';
+import GameRules from '@/components/game/GameRules';
 import CharacterCreation from '@/components/game/CharacterCreation';
 import EndingScreen from '@/components/game/EndingScreen';
 import { useAudio } from '@/hooks/useAudio';
@@ -157,6 +158,7 @@ const GameScreen = () => {
             >
               <Home className="h-4 w-4 mr-1" /> Village
             </Button>
+            <GameRules />
             <Button variant="ghost" size="sm" onClick={resetGame} title="Reset Game">
               <RotateCcw className="h-4 w-4" />
             </Button>
