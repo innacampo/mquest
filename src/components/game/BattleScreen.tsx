@@ -9,6 +9,7 @@ import {
   DamageNumber, ScreenFlash, ImpactBurst, EnergyAura,
   SlashEffect, VictoryFireworks, KnockoutShatter, ComboSparks
 } from './BattleEffects';
+import BattlePortrait, { PlayerBattlePortrait, PortraitState } from './BattlePortrait';
 
 interface BattleScreenProps {
   monster: Monster;
