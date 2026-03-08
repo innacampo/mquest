@@ -424,6 +424,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
         setPlayerHp(prev => Math.min(PLAYER_MAX_HP, prev + 60));
         setFlashGreen(prev => prev + 1);
         addDamageNumber(60, 'heal');
+        setPlayerPortraitState('heal');
         break;
       case 'clarityElixir':
         setActiveEffect('none');
