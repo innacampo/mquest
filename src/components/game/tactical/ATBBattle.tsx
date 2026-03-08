@@ -754,11 +754,39 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                     className="bg-primary text-primary-foreground font-display gap-1.5">
                     <Zap className="h-3.5 w-3.5" /> Attack
                   </Button>
-                  <Button variant="outline" size="sm" onClick={usePotion}
-                    disabled={state.inventory.remedyPotionBasic <= 0}
-                    className="gap-1.5">
-                    <FlaskConical className="h-3.5 w-3.5" /> Potion ({state.inventory.remedyPotionBasic})
-                  </Button>
+                  <div className="relative">
+                    <Button variant="outline" size="sm" onClick={() => setPotionMenu(prev => !prev)}
+                      disabled={totalPotions <= 0}
+                      className="gap-1.5">
+                      <FlaskConical className="h-3.5 w-3.5" /> Items ({totalPotions})
+                    </Button>
+                    {potionMenu && (
+                      <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+                        className="absolute bottom-full mb-1 left-0 w-52 bg-card border border-border rounded-lg shadow-xl p-2 space-y-1 z-50">
+                        {state.inventory.remedyPotionBasic > 0 && (
+                          <button onClick={() => usePotion('basic')}
+                            className="w-full text-left text-xs px-2 py-1.5 rounded hover:bg-primary/10 flex items-center justify-between">
+                            <span>🧪 Remedy (Basic) <span className="text-muted-foreground">+30 HP</span></span>
+                            <span className="text-muted-foreground">×{state.inventory.remedyPotionBasic}</span>
+                          </button>
+                        )}
+                        {state.inventory.remedyPotionEnhanced > 0 && (
+                          <button onClick={() => usePotion('enhanced')}
+                            className="w-full text-left text-xs px-2 py-1.5 rounded hover:bg-primary/10 flex items-center justify-between">
+                            <span>✨ Remedy (Enhanced) <span className="text-muted-foreground">+60 HP</span></span>
+                            <span className="text-muted-foreground">×{state.inventory.remedyPotionEnhanced}</span>
+                          </button>
+                        )}
+                        {state.inventory.clarityElixir > 0 && (
+                          <button onClick={() => usePotion('clarity')}
+                            className="w-full text-left text-xs px-2 py-1.5 rounded hover:bg-primary/10 flex items-center justify-between">
+                            <span>💧 Clarity Elixir <span className="text-muted-foreground">-50 ATB</span></span>
+                            <span className="text-muted-foreground">×{state.inventory.clarityElixir}</span>
+                          </button>
+                        )}
+                      </motion.div>
+                    )}
+                  </div>
                   <Button variant="outline" size="sm" onClick={defend} className="gap-1.5">
                     <Shield className="h-3.5 w-3.5" /> Defend
                   </Button>
