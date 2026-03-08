@@ -637,19 +637,52 @@ export const questions: Question[] = [
 
 // ============ COMPENDIUM ============
 export const initialCompendium: CompendiumEntry[] = [
+  // Facts (unlocked at shrines)
   { id: 'fact-1', type: 'fact', title: 'What is Menopause?', content: 'Menopause is the permanent cessation of menstruation, confirmed after 12 consecutive months without a period. It marks the end of reproductive years but not the end of vitality.', biome: 'fever-peaks', unlocked: false },
   { id: 'fact-2', type: 'fact', title: 'The Hypothalamus & Hot Flashes', content: 'The hypothalamus acts as the body\'s thermostat. When estrogen declines, it becomes confused and triggers hot flashes as a false alarm response.', biome: 'fever-peaks', unlocked: false },
   { id: 'fact-3', type: 'fact', title: 'Brain Fog is Real', content: 'Cognitive changes during perimenopause are hormone-mediated and typically temporary. The brain adapts to new hormone levels over time.', biome: 'fog-marshes', unlocked: false },
   { id: 'fact-4', type: 'fact', title: 'Emotions & Hormones', content: 'Mood changes are neurological responses to hormonal shifts, not character flaws. Serotonin and norepinephrine are directly affected by estrogen levels.', biome: 'mood-tides', unlocked: false },
   { id: 'fact-5', type: 'fact', title: 'Bone Health Matters', content: 'After menopause, bone density loss accelerates. Weight-bearing exercise, calcium, and Vitamin D are essential preventive measures.', biome: 'crystal-caverns', unlocked: false },
   { id: 'fact-6', type: 'fact', title: 'Heart Health After Menopause', content: 'Estrogen had protective effects on the cardiovascular system. After menopause, heart disease risk rises significantly.', biome: 'heartland', unlocked: false },
-  // Myth cards
-  { id: 'myth-1', type: 'myth', title: 'The Shame Dragon\'s Lie', content: 'MYTH: Menopause makes you old and irrelevant. TRUTH: Menopause is a biological transition, not an ending.', biome: 'fever-peaks', unlocked: false },
-  { id: 'myth-2', type: 'myth', title: 'The Dismissal Wraith\'s Lie', content: 'MYTH: Hot flashes are just stress. TRUTH: Hot flashes are a direct physiological result of hypothalamic changes.', biome: 'fever-peaks', unlocked: false },
-  { id: 'myth-3', type: 'myth', title: 'The Silence Specter\'s Lie', content: 'MYTH: Push through it alone. TRUTH: Support, community, and medical care are tools of strength.', biome: 'fog-marshes', unlocked: false },
-  { id: 'myth-4', type: 'myth', title: 'The Confusion Cyclone\'s Lie', content: 'MYTH: Brain fog is just aging. TRUTH: Cognitive changes are hormone-mediated and often temporary.', biome: 'fog-marshes', unlocked: false },
-  { id: 'myth-5', type: 'myth', title: 'The Shame Tide\'s Lie', content: 'MYTH: Mood swings make you irrational. TRUTH: Mood changes are neurological, not emotional weakness.', biome: 'mood-tides', unlocked: false },
-  { id: 'myth-6', type: 'myth', title: 'The Brittle Giant\'s Lie', content: 'MYTH: Bone loss is inevitable. TRUTH: Exercise, nutrition, and medication can significantly reduce bone loss.', biome: 'crystal-caverns', unlocked: false },
+  // Myth cards (unlocked on monster defeat)
+  { id: 'myth-1', type: 'myth', title: 'The Shame Dragon\'s Lie', content: 'MYTH: Menopause makes you old and irrelevant. TRUTH: Menopause is a biological transition, not an ending.', biome: 'fever-peaks', monsterId: 'shame-dragon', unlocked: false },
+  { id: 'myth-2', type: 'myth', title: 'The Dismissal Wraith\'s Lie', content: 'MYTH: Hot flashes are just stress. TRUTH: Hot flashes are a direct physiological result of hypothalamic changes.', biome: 'fever-peaks', monsterId: 'dismissal-wraith', unlocked: false },
+  { id: 'myth-3', type: 'myth', title: 'The Silence Specter\'s Lie', content: 'MYTH: Push through it alone. TRUTH: Support, community, and medical care are tools of strength.', biome: 'fog-marshes', monsterId: 'silence-specter', unlocked: false },
+  { id: 'myth-4', type: 'myth', title: 'The Confusion Cyclone\'s Lie', content: 'MYTH: Brain fog is just aging. TRUTH: Cognitive changes are hormone-mediated and often temporary.', biome: 'fog-marshes', monsterId: 'confusion-cyclone', unlocked: false },
+  { id: 'myth-5', type: 'myth', title: 'The Shame Tide\'s Lie', content: 'MYTH: Mood swings make you irrational. TRUTH: Mood changes are neurological, not emotional weakness.', biome: 'mood-tides', monsterId: 'shame-tide', unlocked: false },
+  { id: 'myth-6', type: 'myth', title: 'The Minimizer\'s Lie', content: 'MYTH: Everyone goes through it, stop making it a big deal. TRUTH: Menopause symptoms affect daily life and deserve proper care.', biome: 'mood-tides', monsterId: 'minimizer', unlocked: false },
+  { id: 'myth-7', type: 'myth', title: 'The Brittle Giant\'s Lie', content: 'MYTH: Bone loss is inevitable. TRUTH: Exercise, nutrition, and medication can significantly reduce bone loss.', biome: 'crystal-caverns', monsterId: 'brittle-giant', unlocked: false },
+  { id: 'myth-8', type: 'myth', title: 'The Cold Certainty\'s Lie', content: 'MYTH: HRT is dangerous — never take it. TRUTH: Modern HRT is safe for most healthy women under 60.', biome: 'crystal-caverns', monsterId: 'cold-certainty', unlocked: false },
+  { id: 'myth-9', type: 'myth', title: 'The Fog of Shame\'s Lie', content: 'MYTH: Don\'t talk about menopause in public. TRUTH: Open conversation saves lives and breaks stigma.', biome: 'heartland', monsterId: 'fog-of-shame', unlocked: false },
+  { id: 'myth-10', type: 'myth', title: 'The Heartbreak Myth\'s Lie', content: 'MYTH: Heart disease is a man\'s problem. TRUTH: It\'s the leading cause of death in postmenopausal women.', biome: 'heartland', monsterId: 'heartbreak-myth', unlocked: false },
+  { id: 'myth-11', type: 'myth', title: 'The Grand Silencer\'s Lie', content: 'MYTH: Menopause must be suffered in silence. TRUTH: Knowledge is power. Speaking up changes everything.', biome: 'bloom-garden', monsterId: 'grand-silencer', unlocked: false },
+  // Bestiary entries (unlocked on monster defeat)
+  { id: 'best-1', type: 'bestiary', title: 'The Shame Dragon', content: 'A fearsome dragon born from internalised shame. Its Veil of Shame hides the truth of battle — your HP bar cracks and distorts. Weakness: factual knowledge about what menopause actually is.', biome: 'fever-peaks', monsterId: 'shame-dragon', unlocked: false },
+  { id: 'best-2', type: 'bestiary', title: 'The Dismissal Wraith', content: 'A spectral entity that feeds on dismissed symptoms. Its Dismissive Haste shortens your time to respond. Weakness: acknowledging hot flashes as real medical events.', biome: 'fever-peaks', monsterId: 'dismissal-wraith', unlocked: false },
+  { id: 'best-3', type: 'bestiary', title: 'The Silence Specter', content: 'A ghost that thrives in unspoken suffering. Its Spectral Silence blurs your questions. Weakness: breaking the silence by seeking support.', biome: 'fog-marshes', monsterId: 'silence-specter', unlocked: false },
+  { id: 'best-4', type: 'bestiary', title: 'The Confusion Cyclone', content: 'A swirling vortex of misinformation. Its Whirlwind Scramble rearranges your answers. Weakness: clear, evidence-based understanding of cognitive changes.', biome: 'fog-marshes', monsterId: 'confusion-cyclone', unlocked: false },
+  { id: 'best-5', type: 'bestiary', title: 'The Shame Tide', content: 'A relentless wave of emotional suppression. Its Tidal Shame cracks your own HP bar. Weakness: understanding that mood changes are biological, not personal failure.', biome: 'mood-tides', monsterId: 'shame-tide', unlocked: false },
+  { id: 'best-6', type: 'bestiary', title: 'The Minimizer', content: 'A creature that shrinks everything — your words, your pain, your reality. Its Minimizing Gaze makes answers shrink before your eyes. Weakness: refusing to minimize real symptoms.', biome: 'mood-tides', monsterId: 'minimizer', unlocked: false },
+  { id: 'best-7', type: 'bestiary', title: 'The Brittle Giant', content: 'A towering colossus with crumbling bones. Its Crumbling Choices make answers fade away. Weakness: knowledge about bone health and prevention.', biome: 'crystal-caverns', monsterId: 'brittle-giant', unlocked: false },
+  { id: 'best-8', type: 'bestiary', title: 'The Cold Certainty', content: 'An icy figure speaking absolute falsehoods with perfect confidence. Its Frozen Deceit makes wrong answers glow like correct ones. Weakness: nuanced understanding of HRT.', biome: 'crystal-caverns', monsterId: 'cold-certainty', unlocked: false },
+  { id: 'best-9', type: 'bestiary', title: 'The Fog of Shame', content: 'A creeping mist that obscures everything in taboo. Its Creeping Fog fills the screen as time runs out. Weakness: open, honest conversation about menopause.', biome: 'heartland', monsterId: 'fog-of-shame', unlocked: false },
+  { id: 'best-10', type: 'bestiary', title: 'The Heartbreak Myth', content: 'A throbbing entity of cardiovascular misinformation. Its Heartbreak ability decays your combo. Weakness: knowing that heart disease is the #1 killer of postmenopausal women.', biome: 'heartland', monsterId: 'heartbreak-myth', unlocked: false },
+  { id: 'best-11', type: 'bestiary', title: 'The Grand Silencer', content: 'The final boss — the embodiment of all systemic silence. Combines multiple mechanics. Weakness: the accumulated knowledge from every biome.', biome: 'bloom-garden', monsterId: 'grand-silencer', unlocked: false },
+  // NPC bios (unlocked by talking to NPCs)
+  { id: 'bio-elena', type: 'bio', title: 'Elena — The Early Discoverer', content: 'Elena, 48, from Fever Peaks. She spent years being told her symptoms were "just stress." Learning the truth gave her the words to advocate for herself.', biome: 'fever-peaks', npcName: 'Elena', unlocked: false },
+  { id: 'bio-mira', type: 'bio', title: 'Dr. Mira — The Scholar', content: 'Dr. Mira runs the Hearth Village study. A former researcher who now dedicates her life to making menopause knowledge accessible to all.', npcName: 'Dr. Mira', unlocked: false },
+  { id: 'bio-yuki', type: 'bio', title: 'Yuki — The Word-Finder', content: 'Yuki, 52, from Fog Marshes. She feared she was losing herself to brain fog. Understanding the science gave her back her identity.', biome: 'fog-marshes', npcName: 'Yuki', unlocked: false },
+  { id: 'bio-priya', type: 'bio', title: 'Priya — The Early Warrior', content: 'Priya, 38, from Mood Tides. She thought she was "too young" for perimenopause. Learning the truth erased her shame.', biome: 'mood-tides', npcName: 'Priya', unlocked: false },
+  { id: 'bio-saoirse', type: 'bio', title: 'Saoirse — The Bone Guardian', content: 'Saoirse, 45, from Crystal Caverns. Family history of osteoporosis drove her fear. Now armed with prevention knowledge, she feels in control.', biome: 'crystal-caverns', npcName: 'Saoirse', unlocked: false },
+  { id: 'bio-rosa', type: 'bio', title: 'Rosa — The Heart Advocate', content: 'Rosa, 55, from Heartland. A cardiac event shocked her into action. Now she champions heart health awareness for menopausal women.', biome: 'heartland', npcName: 'Rosa', unlocked: false },
+];
+
+export const initialMilestones: CompendiumMilestone[] = [
+  { id: 'ms-1', title: 'First Discovery', description: 'Unlock 3 compendium entries', requiredCount: 3, reward: { type: 'item', item: 'hormoneCrystals', amount: 5 }, claimed: false },
+  { id: 'ms-2', title: 'Knowledge Seeker', description: 'Unlock 10 compendium entries', requiredCount: 10, reward: { type: 'item', item: 'knowledgeScrolls', amount: 3 }, claimed: false },
+  { id: 'ms-3', title: 'Monster Scholar', description: 'Unlock 15 compendium entries', requiredCount: 15, reward: { type: 'item', item: 'remedyPotionBasic', amount: 2 }, claimed: false },
+  { id: 'ms-4', title: 'Myth Breaker', description: 'Unlock 25 compendium entries', requiredCount: 25, reward: { type: 'xp', amount: 500 }, claimed: false },
+  { id: 'ms-5', title: 'Grand Archivist', description: 'Unlock all compendium entries', requiredCount: 34, reward: { type: 'item', item: 'compendiumSeal', amount: 3 }, claimed: false },
 ];
 
 // ============ NPCs ============
@@ -671,7 +704,9 @@ export const createInitialGameState = (): GameState => ({
   currentBiome: null,
   biomesCleared: [],
   compendium: initialCompendium.map(e => ({ ...e })),
+  compendiumMilestones: initialMilestones.map(m => ({ ...m })),
   monstersDefeated: [],
+  npcsMet: [],
   inventory: {
     hormoneCrystals: 0,
     wellnessHerbs: 0,
