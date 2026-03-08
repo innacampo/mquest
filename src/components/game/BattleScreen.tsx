@@ -937,8 +937,10 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
           <motion.div key="victory" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center justify-center min-h-[400px] space-y-6 relative">
             <VictoryFireworks />
-            <motion.div initial={{ rotate: 0 }} animate={{ rotate: [0, -10, 10, -5, 5, 0] }}
-              transition={{ duration: 0.6 }} className="text-7xl opacity-30">{monster.emoji}</motion.div>
+            <div className="flex items-center gap-8">
+              <BattlePortrait emoji={monster.emoji} name={monster.name} state="defeated" variant="monster" size="md" />
+              <PlayerBattlePortrait name={state.character?.name || 'Lyra'} background={state.character?.background} state="victory" size="md" />
+            </div>
             <h2 className="font-display text-2xl text-glow-green text-glow-teal">Myth Defeated!</h2>
             <div className="text-center space-y-2">
               <p className="text-sm text-foreground/70 italic">"{monster.myth}"</p>
