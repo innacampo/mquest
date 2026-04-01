@@ -22,6 +22,7 @@ type GameView = 'title' | 'character' | 'map' | 'biome' | 'village' | 'ending';
 
 const GameScreen = () => {
   const { state, resetGame, enterBiome, leaveBiome, setCharacter, isLoading } = useGame();
+  const { t } = useLanguage();
   const [view, setView] = useState<GameView>('title');
   const [viewInitialized, setViewInitialized] = useState(false);
   const [activeBiome, setActiveBiome] = useState<BiomeId | null>(null);
