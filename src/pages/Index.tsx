@@ -14,6 +14,7 @@ import LanguageToggle from '@/components/game/LanguageToggle';
 import CharacterCreation from '@/components/game/CharacterCreation';
 import EndingScreen from '@/components/game/EndingScreen';
 import { useAudio } from '@/hooks/useAudio';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Map, RotateCcw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
