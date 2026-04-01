@@ -153,7 +153,7 @@ const GameScreen = () => {
               size="sm"
               onClick={() => { setView('map'); setActiveBiome(null); leaveBiome(); }}
             >
-              <Map className="h-4 w-4 mr-1" /> Realm
+              <Map className="h-4 w-4 mr-1" /> {t('header.realm')}
             </Button>
             <Button
               variant={view === 'village' ? 'default' : 'outline'}
