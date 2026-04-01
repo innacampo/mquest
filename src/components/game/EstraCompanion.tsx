@@ -1,11 +1,16 @@
 import { motion } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
 import { getWorldState } from '@/lib/gameData';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { worldStateTranslations } from '@/lib/gameDataTranslations';
 
 const EstraCompanion = () => {
   const { state } = useGame();
+  const { lang } = useLanguage();
   const worldState = getWorldState(state.estraGlow);
   const glowIntensity = 0.3 + state.estraGlow * 0.7;
+
+  const displayState = lang === 'es' ? (worldStateTranslations[worldState] || worldState) : worldState;
 
   return (
     <motion.div
@@ -30,7 +35,7 @@ const EstraCompanion = () => {
       </div>
       <div className="text-xs">
         <p className="font-display text-estra">Estra</p>
-        <p className="text-muted-foreground">{worldState}</p>
+        <p className="text-muted-foreground">{displayState}</p>
       </div>
     </motion.div>
   );

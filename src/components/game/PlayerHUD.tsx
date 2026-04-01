@@ -3,9 +3,11 @@ import { xpForLevel } from '@/lib/gameData';
 import { playerSprite } from '@/lib/battleAssets';
 import EstraCompanion from './EstraCompanion';
 import { BookOpen, Shield } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const PlayerHUD = () => {
   const { state } = useGame();
+  const { t } = useLanguage();
   const xpNeeded = xpForLevel(state.level + 1);
   const xpCurrent = state.xp - xpForLevel(state.level);
   const xpRange = xpNeeded - xpForLevel(state.level);
@@ -29,7 +31,7 @@ const PlayerHUD = () => {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-primary" />
-            <span className="font-display text-sm text-primary">{state.character?.name || 'Lyra'} — Level {state.level}</span>
+            <span className="font-display text-sm text-primary">{state.character?.name || 'Lyra'} — {t('hud.level')} {state.level}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="h-1.5 w-24 rounded-full bg-muted overflow-hidden">
@@ -45,47 +47,47 @@ const PlayerHUD = () => {
 
       {/* Stats */}
       <div className="flex items-center gap-3 text-xs flex-wrap">
-        <div className="flex items-center gap-1" title="Estra Bond">
+        <div className="flex items-center gap-1" title={t('hud.estra_bond')}>
           <span>❤️</span>
           <span>{state.estraBond}/5</span>
         </div>
-        <div className="flex items-center gap-1" title="Hormone Crystals">
+        <div className="flex items-center gap-1" title={t('hud.hormone_crystals')}>
           <span>💎</span>
           <span>{state.inventory.hormoneCrystals}</span>
         </div>
-        <div className="flex items-center gap-1" title="Wellness Herbs">
+        <div className="flex items-center gap-1" title={t('hud.wellness_herbs')}>
           <span>🌿</span>
           <span>{state.inventory.wellnessHerbs}</span>
         </div>
-        <div className="flex items-center gap-1" title="Knowledge Scrolls">
+        <div className="flex items-center gap-1" title={t('hud.knowledge_scrolls')}>
           <span>📜</span>
           <span>{state.inventory.knowledgeScrolls}</span>
         </div>
         {state.inventory.remedyPotionBasic > 0 && (
-          <div className="flex items-center gap-1" title="Remedy Potions (Basic)">
+          <div className="flex items-center gap-1" title={t('hud.remedy_basic')}>
             <span>🧪</span>
             <span>{state.inventory.remedyPotionBasic}</span>
           </div>
         )}
         {state.inventory.remedyPotionEnhanced > 0 && (
-          <div className="flex items-center gap-1" title="Remedy Potions (Enhanced)">
+          <div className="flex items-center gap-1" title={t('hud.remedy_enhanced')}>
             <span>✨</span>
             <span>{state.inventory.remedyPotionEnhanced}</span>
           </div>
         )}
         {state.inventory.clarityElixir > 0 && (
-          <div className="flex items-center gap-1" title="Clarity Elixirs">
+          <div className="flex items-center gap-1" title={t('hud.clarity_elixir')}>
             <span>💧</span>
             <span>{state.inventory.clarityElixir}</span>
           </div>
         )}
         {state.inventory.estraBoost > 0 && (
-          <div className="flex items-center gap-1" title="Estra Boosts">
+          <div className="flex items-center gap-1" title={t('hud.estra_boost')}>
             <span>🌟</span>
             <span>{state.inventory.estraBoost}</span>
           </div>
         )}
-        <div className="flex items-center gap-1" title="Compendium">
+        <div className="flex items-center gap-1" title={t('hud.compendium')}>
           <BookOpen className="h-3.5 w-3.5 text-glow-teal" />
           <span>{state.compendium.filter(e => e.unlocked).length}/{state.compendium.length}</span>
         </div>

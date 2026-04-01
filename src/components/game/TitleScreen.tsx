@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { titleBackground } from '@/lib/battleAssets';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageToggle from './LanguageToggle';
 
 interface TitleScreenProps {
   onStart: () => void;
@@ -9,6 +11,7 @@ interface TitleScreenProps {
 
 const TitleScreen = ({ onStart }: TitleScreenProps) => {
   const [exiting, setExiting] = useState(false);
+  const { t } = useLanguage();
 
   const handleStart = () => {
     setExiting(true);
@@ -21,6 +24,11 @@ const TitleScreen = ({ onStart }: TitleScreenProps) => {
       animate={exiting ? { opacity: 0, scale: 1.1 } : {}}
       transition={{ duration: 1.2, ease: 'easeInOut' }}
     >
+      {/* Language toggle on title screen */}
+      <div className="absolute top-4 right-4 z-20">
+        <LanguageToggle />
+      </div>
+
       {/* Background image */}
       <img
         src={titleBackground}
@@ -133,7 +141,7 @@ const TitleScreen = ({ onStart }: TitleScreenProps) => {
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5, duration: 1 }}
           >
-            ESTRA
+            {t('title.estra')}
           </motion.p>
         </motion.div>
 
@@ -164,10 +172,10 @@ const TitleScreen = ({ onStart }: TitleScreenProps) => {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.6, duration: 1 }}
         >
-          A narrative RPG where knowledge is power.
+          {t('title.subtitle')}
           <br />
           <span style={{ color: 'hsl(35 70% 60%)' }}>
-            Guide Lyra through the Inner Realm and restore the light.
+            {t('title.subtitle2')}
           </span>
         </motion.p>
 
@@ -188,7 +196,7 @@ const TitleScreen = ({ onStart }: TitleScreenProps) => {
         >
           <span className="relative z-10 flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
-            Begin Your Journey
+            {t('title.start')}
           </span>
           <motion.div
             className="absolute inset-0 z-0"
