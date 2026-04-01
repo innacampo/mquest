@@ -10,9 +10,11 @@ import AudioControls from '@/components/game/AudioControls';
 import TitleScreen from '@/components/game/TitleScreen';
 import FeedbackButton from '@/components/game/FeedbackButton';
 import GameRules from '@/components/game/GameRules';
+import LanguageToggle from '@/components/game/LanguageToggle';
 import CharacterCreation from '@/components/game/CharacterCreation';
 import EndingScreen from '@/components/game/EndingScreen';
 import { useAudio } from '@/hooks/useAudio';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Map, RotateCcw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -20,6 +22,7 @@ type GameView = 'title' | 'character' | 'map' | 'biome' | 'village' | 'ending';
 
 const GameScreen = () => {
   const { state, resetGame, enterBiome, leaveBiome, setCharacter, isLoading } = useGame();
+  const { t } = useLanguage();
   const [view, setView] = useState<GameView>('title');
   const [viewInitialized, setViewInitialized] = useState(false);
   const [activeBiome, setActiveBiome] = useState<BiomeId | null>(null);
@@ -70,7 +73,7 @@ const GameScreen = () => {
       <div className="min-h-screen bg-gradient-mystical flex flex-col items-center justify-center gap-4">
         <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }}
           className="text-5xl">✨</motion.div>
-        <p className="font-display text-lg text-primary text-glow-amber">Loading your quest...</p>
+        <p className="font-display text-lg text-primary text-glow-amber">{t('loading')}</p>
       </div>
     );
   }
@@ -126,13 +129,14 @@ const GameScreen = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-display text-3xl text-primary text-glow-amber">
-              The M-QUEST
+              {t('header.title')}
             </h1>
             <p className="text-xs text-muted-foreground">
-              A Narrative RPG where Knowledge is Power
+              {t('header.subtitle')}
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <LanguageToggle />
             <AudioControls
               muted={audio.muted}
               masterVolume={audio.masterVolume}
@@ -149,14 +153,14 @@ const GameScreen = () => {
               size="sm"
               onClick={() => { setView('map'); setActiveBiome(null); leaveBiome(); }}
             >
-              <Map className="h-4 w-4 mr-1" /> Realm
+              <Map className="h-4 w-4 mr-1" /> {t('header.realm')}
             </Button>
             <Button
               variant={view === 'village' ? 'default' : 'outline'}
               size="sm"
               onClick={() => { setView('village'); setActiveBiome(null); leaveBiome(); }}
             >
-              <Home className="h-4 w-4 mr-1" /> Village
+              <Home className="h-4 w-4 mr-1" /> {t('header.village')}
             </Button>
             <GameRules />
             <Button variant="ghost" size="sm" onClick={resetGame} title="Reset Game">
