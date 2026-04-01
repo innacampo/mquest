@@ -73,7 +73,7 @@ const GameScreen = () => {
       <div className="min-h-screen bg-gradient-mystical flex flex-col items-center justify-center gap-4">
         <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }}
           className="text-5xl">✨</motion.div>
-        <p className="font-display text-lg text-primary text-glow-amber">Loading your quest...</p>
+        <p className="font-display text-lg text-primary text-glow-amber">{t('loading')}</p>
       </div>
     );
   }
