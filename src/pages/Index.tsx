@@ -134,6 +134,7 @@ const GameScreen = () => {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <LanguageToggle />
             <AudioControls
               muted={audio.muted}
               masterVolume={audio.masterVolume}
