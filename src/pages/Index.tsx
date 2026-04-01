@@ -129,10 +129,10 @@ const GameScreen = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-display text-3xl text-primary text-glow-amber">
-              The M-QUEST
+              {t('header.title')}
             </h1>
             <p className="text-xs text-muted-foreground">
-              A Narrative RPG where Knowledge is Power
+              {t('header.subtitle')}
             </p>
           </div>
           <div className="flex items-center gap-2">
