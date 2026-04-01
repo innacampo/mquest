@@ -10,6 +10,7 @@ import AudioControls from '@/components/game/AudioControls';
 import TitleScreen from '@/components/game/TitleScreen';
 import FeedbackButton from '@/components/game/FeedbackButton';
 import GameRules from '@/components/game/GameRules';
+import LanguageToggle from '@/components/game/LanguageToggle';
 import CharacterCreation from '@/components/game/CharacterCreation';
 import EndingScreen from '@/components/game/EndingScreen';
 import { useAudio } from '@/hooks/useAudio';
