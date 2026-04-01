@@ -160,7 +160,7 @@ const GameScreen = () => {
               size="sm"
               onClick={() => { setView('village'); setActiveBiome(null); leaveBiome(); }}
             >
-              <Home className="h-4 w-4 mr-1" /> Village
+              <Home className="h-4 w-4 mr-1" /> {t('header.village')}
             </Button>
             <GameRules />
             <Button variant="ghost" size="sm" onClick={resetGame} title="Reset Game">
