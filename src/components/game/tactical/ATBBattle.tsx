@@ -909,7 +909,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                       whileTap={!showResult && !isFaded ? { scale: 0.98 } : {}}
                     >
                       <span className="text-muted-foreground mr-2 font-mono text-xs">{String.fromCharCode(65 + i)}</span>
-                      {opt.text}
+                      {lang === 'es' && questionTranslations[currentQuestion.id] ? questionTranslations[currentQuestion.id].options[opt.originalIndex] : opt.text}
                     </motion.button>
                   );
                 })}
