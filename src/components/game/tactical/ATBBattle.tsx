@@ -769,7 +769,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                     <Button variant="outline" size="sm" onClick={() => setPotionMenu(prev => !prev)}
                       disabled={totalPotions <= 0}
                       className="gap-1.5">
-                      <FlaskConical className="h-3.5 w-3.5" /> Items ({totalPotions})
+                      <FlaskConical className="h-3.5 w-3.5" /> {t('battle.items')} ({totalPotions})
                     </Button>
                     {potionMenu && (
                       <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
