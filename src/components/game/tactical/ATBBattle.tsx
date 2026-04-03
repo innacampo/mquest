@@ -763,7 +763,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                 >
                   <Button size="sm" onClick={openQuiz}
                     className="bg-primary text-primary-foreground font-display gap-1.5">
-                    <Zap className="h-3.5 w-3.5" /> Attack
+                    <Zap className="h-3.5 w-3.5" /> {t('battle.attack')}
                   </Button>
                   <div className="relative">
                     <Button variant="outline" size="sm" onClick={() => setPotionMenu(prev => !prev)}
