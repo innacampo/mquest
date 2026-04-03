@@ -582,7 +582,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   <div className="flex items-center gap-1">
                     <p className="text-[10px] text-muted-foreground">{playerHp}/{PLAYER_MAX_HP} HP</p>
                     {shouldDrainPotions && (
-                      <span className="text-[9px] text-destructive/70 italic">🌊 draining</span>
+                      <span className="text-[9px] text-destructive/70 italic">{t('battle.draining')}</span>
                     )}
                   </div>
                 </>
