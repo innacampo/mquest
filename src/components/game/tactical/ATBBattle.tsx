@@ -864,7 +864,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
             {combo > 0 && (
               <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
                 className="text-xs text-primary font-display">
-                🔥 {combo}x Combo — damage boosted by {Math.round(combo * 15)}%!
+                🔥 {combo}x {t('battle.combo_boosted')} {Math.round(combo * 15)}%!
               </motion.div>
             )}
 
