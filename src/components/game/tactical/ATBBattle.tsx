@@ -739,7 +739,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
               {/* Monster ATB */}
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-muted-foreground font-display w-14">Enemy</span>
+                <span className="text-[10px] text-muted-foreground font-display w-14">{t('battle.enemy')}</span>
                 <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                   <motion.div className="h-full rounded-full bg-destructive/60"
                     animate={{ width: `${monsterAtbPercent}%` }}
