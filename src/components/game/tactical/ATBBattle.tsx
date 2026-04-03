@@ -113,9 +113,18 @@ const ATB_TICK_MS = 50;
 
 const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, onKnockout }) => {
   const { state, addXp, defeatMonster, unlockCompendiumEntry, updateEstraBond, addInventory } = useGame();
+  const { lang, t } = useLanguage();
   const damageMultiplier = getSpecialtyDamageMultiplier(state.character, monster.biome);
   const xpMultiplier = getXpMultiplier(state.character);
   const mechanic = MONSTER_MECHANICS[monster.id] || null;
+
+  // Translation helpers
+  const mName = lang === 'es' && monsterTranslations[monster.id] ? monsterTranslations[monster.id].name : monster.name;
+  const mMyth = lang === 'es' && monsterTranslations[monster.id] ? monsterTranslations[monster.id].myth : monster.myth;
+  const mTruth = lang === 'es' && monsterTranslations[monster.id] ? monsterTranslations[monster.id].truth : monster.truth;
+  const mMechDesc = lang === 'es' && monsterTranslations[monster.id] ? monsterTranslations[monster.id].mechanicDescription : monster.mechanicDescription;
+  const mechName = mechanic && lang === 'es' && mechanicTranslations[monster.id] ? mechanicTranslations[monster.id].name : mechanic?.name;
+  const mechDesc = mechanic && lang === 'es' && mechanicTranslations[monster.id] ? mechanicTranslations[monster.id].description : mechanic?.description;
 
   const [phase, setPhase] = useState<BattlePhase>('intro');
   const [playerHp, setPlayerHp] = useState(PLAYER_MAX_HP);
