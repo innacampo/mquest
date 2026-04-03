@@ -777,7 +777,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                         {state.inventory.remedyPotionBasic > 0 && (
                           <button onClick={() => usePotion('basic')}
                             className="w-full text-left text-xs px-2 py-1.5 rounded hover:bg-primary/10 flex items-center justify-between">
-                            <span>🧪 Remedy (Basic) <span className="text-muted-foreground">+30 HP</span></span>
+                            <span>🧪 Remedy (Basic) <span className="text-muted-foreground">{t('potion.basic_hp')}</span></span>
                             <span className="text-muted-foreground">×{state.inventory.remedyPotionBasic}</span>
                           </button>
                         )}
