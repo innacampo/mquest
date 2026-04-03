@@ -535,26 +535,26 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                 animate={{ scale: 1, rotate: 0 }} 
                 transition={{ type: 'spring', bounce: 0.5 }}
               />
-              <h2 className="font-display text-2xl text-foreground">{monster.name}</h2>
-              <p className="text-sm text-destructive italic max-w-md mx-auto">"{monster.myth}"</p>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto">{monster.mechanicDescription}</p>
+              <h2 className="font-display text-2xl text-foreground">{mName}</h2>
+              <p className="text-sm text-destructive italic max-w-md mx-auto">"{mMyth}"</p>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">{mMechDesc}</p>
               {mechanic && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
                   className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-xs font-display mx-auto">
                   {mechanic.icon}
-                  <span className="font-bold">{mechanic.name}:</span> {mechanic.description}
+                  <span className="font-bold">{mechName}:</span> {mechDesc}
                 </motion.div>
               )}
               <motion.p className="text-xs text-secondary mt-2"
                 animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
-                ⚡ Active Time Battle — React fast, answer smart!
+                {t('battle.atb_hint')}
               </motion.p>
               <div className="flex gap-3 justify-center">
                 <Button onClick={startBattle} className="bg-primary text-primary-foreground font-display">
-                  <Swords className="h-4 w-4 mr-2" /> Begin Battle
+                  <Swords className="h-4 w-4 mr-2" /> {t('battle.begin')}
                 </Button>
                 <Button variant="outline" onClick={onRetreat}>
-                  <ArrowLeft className="h-4 w-4 mr-2" /> Retreat
+                  <ArrowLeft className="h-4 w-4 mr-2" /> {t('battle.retreat')}
                 </Button>
               </div>
             </div>
