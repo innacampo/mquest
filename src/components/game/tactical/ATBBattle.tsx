@@ -872,10 +872,10 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               {/* Question text with optional blur */}
               <p className="text-foreground text-sm leading-relaxed transition-all duration-300"
                 style={{ filter: blurAmount > 0 ? `blur(${blurAmount}px)` : 'none' }}>
-                {currentQuestion.text}
+                {lang === 'es' && questionTranslations[currentQuestion.id] ? questionTranslations[currentQuestion.id].text : currentQuestion.text}
               </p>
               {blurAmount > 0 && !showResult && (
-                <p className="text-[10px] text-destructive/60 italic">Spectral Silence — question is clearing...</p>
+                <p className="text-[10px] text-destructive/60 italic">{t('battle.spectral_clearing')}</p>
               )}
 
               {/* Answer options using scrambled order */}
