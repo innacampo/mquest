@@ -596,8 +596,8 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                     animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.6, repeat: Infinity }}>
                     {combo}x
                   </motion.span>
-                  <span className="text-[9px] text-primary/70">COMBO</span>
-                  {shouldDecayCombo && <span className="text-[8px] text-destructive/60">decaying</span>}
+                  <span className="text-[9px] text-primary/70">{t('battle.combo')}</span>
+                  {shouldDecayCombo && <span className="text-[8px] text-destructive/60">{t('battle.decaying')}</span>}
                 </motion.div>
               )}
 
