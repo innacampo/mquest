@@ -923,10 +923,10 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                     ? 'bg-glow-green/10 border border-glow-green/30 text-glow-green'
                     : 'bg-destructive/10 border border-destructive/30 text-destructive'
                 }`}>
-                <p>{isCorrect ? `✅ Correct! Striking for ${Math.round(PLAYER_BASE_DAMAGE * damageMultiplier * (1 + combo * 0.15))} damage!` : `❌ Wrong — ${monster.name} gains momentum!`}</p>
-                <p className="text-xs text-foreground/60">{currentQuestion.explanation}</p>
+                <p>{isCorrect ? `${t('battle.correct')} ${Math.round(PLAYER_BASE_DAMAGE * damageMultiplier * (1 + combo * 0.15))} ${t('battle.damage')}` : `${t('battle.wrong')} ${mName} ${t('battle.gains_momentum')}`}</p>
+                <p className="text-xs text-foreground/60">{lang === 'es' && questionTranslations[currentQuestion.id] ? questionTranslations[currentQuestion.id].explanation : currentQuestion.explanation}</p>
                 <Button size="sm" onClick={handleQuizContinue} className="w-full mt-1">
-                  Continue →
+                  {t('battle.continue')}
                 </Button>
               </motion.div>
             )}
