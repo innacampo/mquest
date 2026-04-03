@@ -840,12 +840,12 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
             <div className="flex items-center justify-between">
               <h3 className="font-display text-sm text-secondary flex items-center gap-2">
-                <Zap className="h-4 w-4" /> Knowledge Strike — Answer to Attack!
+                <Zap className="h-4 w-4" /> {t('battle.knowledge_strike')}
               </h3>
               <div className="flex items-center gap-2">
                 {mechanic && (
                   <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-[10px] font-display">
-                    {mechanic.icon} {mechanic.name}
+                    {mechanic.icon} {mechName}
                   </span>
                 )}
                 <motion.div
