@@ -604,7 +604,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               {/* Monster HP */}
               <div className="flex-1 space-y-1 text-right">
                 <div className="flex items-center gap-2 justify-end">
-                  <span className="font-display text-xs">{monster.name}</span>
+                  <span className="font-display text-xs">{mName}</span>
                   <img src={monsterSprites[monster.id]} alt={monster.name} className="w-6 h-6 object-contain rounded-full border border-destructive/40" />
                 </div>
                 <>
