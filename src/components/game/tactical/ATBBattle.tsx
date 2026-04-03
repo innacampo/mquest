@@ -938,21 +938,21 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
           <motion.div key="victory" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center justify-center py-10 space-y-5 relative">
             <VictoryFireworks />
-            <motion.img src={monsterSprites[monster.id]} alt={monster.name}
+            <motion.img src={monsterSprites[monster.id]} alt={mName}
               className="h-24 w-24 object-contain opacity-30 grayscale"
               animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 0.6 }}
             />
-            <h2 className="font-display text-2xl text-glow-green">Myth Defeated!</h2>
+            <h2 className="font-display text-2xl text-glow-green">{t('battle.victory')}</h2>
             <div className="text-center space-y-1">
-              <p className="text-sm text-foreground/70 italic">"{monster.myth}"</p>
-              <p className="text-sm text-glow-green font-medium">{monster.truth}</p>
+              <p className="text-sm text-foreground/70 italic">"{mMyth}"</p>
+              <p className="text-sm text-glow-green font-medium">{mTruth}</p>
             </div>
             <div className="text-center space-y-1 text-xs text-muted-foreground">
-              <p>Accuracy: {totalCorrect}/{totalQuestions} • Max Combo: {combo}x</p>
-              <p>Remaining HP: {playerHp}/{PLAYER_MAX_HP}</p>
+              <p>{t('battle.accuracy')}: {totalCorrect}/{totalQuestions} • {t('battle.max_combo')}: {combo}x</p>
+              <p>{t('battle.remaining_hp')}: {playerHp}/{PLAYER_MAX_HP}</p>
             </div>
             <Button onClick={handleVictory} className="bg-primary text-primary-foreground font-display">
-              Claim Victory
+              {t('battle.claim_victory')}
             </Button>
           </motion.div>
         )}
