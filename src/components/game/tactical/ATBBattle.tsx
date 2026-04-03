@@ -791,7 +791,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                         {state.inventory.clarityElixir > 0 && (
                           <button onClick={() => usePotion('clarity')}
                             className="w-full text-left text-xs px-2 py-1.5 rounded hover:bg-primary/10 flex items-center justify-between">
-                            <span>💧 Clarity Elixir <span className="text-muted-foreground">-50 ATB</span></span>
+                            <span>💧 Clarity Elixir <span className="text-muted-foreground">{t('potion.clarity_atb')}</span></span>
                             <span className="text-muted-foreground">×{state.inventory.clarityElixir}</span>
                           </button>
                         )}
