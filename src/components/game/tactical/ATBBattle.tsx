@@ -1,9 +1,11 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Monster, Question, questions, getSpecialtyDamageMultiplier, getXpMultiplier,
 } from '@/lib/gameData';
+import { monsterTranslations, mechanicTranslations, questionTranslations } from '@/lib/gameDataTranslations';
 import { battleBackgrounds, monsterSprites, playerSprite } from '@/lib/battleAssets';
 import { Swords, ArrowLeft, Heart, Timer, FlaskConical, Shield, Zap, EyeOff, Shuffle, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
