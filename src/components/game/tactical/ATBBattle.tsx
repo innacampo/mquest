@@ -810,7 +810,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               {(phase === 'active') && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                   className="text-center text-xs text-muted-foreground italic">
-                  {defending ? '🛡 Defending... waiting for gauge...' : 'Gauges filling...'}
+                  {defending ? t('battle.defending') : t('battle.gauges_filling')}
                 </motion.div>
               )}
 
