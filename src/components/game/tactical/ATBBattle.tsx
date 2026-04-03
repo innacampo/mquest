@@ -817,7 +817,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               {(phase === 'player_attack' || phase === 'monster_attack') && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                   className="text-center text-xs text-muted-foreground italic">
-                  {phase === 'player_attack' ? '⚔ Striking!' : `${monster.name} attacks!`}
+                  {phase === 'player_attack' ? t('battle.striking') : `${mName} ${t('battle.attacks')}`}
                 </motion.div>
               )}
             </AnimatePresence>
