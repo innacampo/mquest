@@ -1,9 +1,11 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Monster, Question, questions, getSpecialtyDamageMultiplier, getXpMultiplier,
 } from '@/lib/gameData';
+import { monsterTranslations, mechanicTranslations, questionTranslations } from '@/lib/gameDataTranslations';
 import { battleBackgrounds, monsterSprites, playerSprite } from '@/lib/battleAssets';
 import { Swords, ArrowLeft, Heart, Timer, FlaskConical, Shield, Zap, EyeOff, Shuffle, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -111,9 +113,18 @@ const ATB_TICK_MS = 50;
 
 const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, onKnockout }) => {
   const { state, addXp, defeatMonster, unlockCompendiumEntry, updateEstraBond, addInventory } = useGame();
+  const { lang, t } = useLanguage();
   const damageMultiplier = getSpecialtyDamageMultiplier(state.character, monster.biome);
   const xpMultiplier = getXpMultiplier(state.character);
   const mechanic = MONSTER_MECHANICS[monster.id] || null;
+
+  // Translation helpers
+  const mName = lang === 'es' && monsterTranslations[monster.id] ? monsterTranslations[monster.id].name : monster.name;
+  const mMyth = lang === 'es' && monsterTranslations[monster.id] ? monsterTranslations[monster.id].myth : monster.myth;
+  const mTruth = lang === 'es' && monsterTranslations[monster.id] ? monsterTranslations[monster.id].truth : monster.truth;
+  const mMechDesc = lang === 'es' && monsterTranslations[monster.id] ? monsterTranslations[monster.id].mechanicDescription : monster.mechanicDescription;
+  const mechName = mechanic && lang === 'es' && mechanicTranslations[monster.id] ? mechanicTranslations[monster.id].name : mechanic?.name;
+  const mechDesc = mechanic && lang === 'es' && mechanicTranslations[monster.id] ? mechanicTranslations[monster.id].description : mechanic?.description;
 
   const [phase, setPhase] = useState<BattlePhase>('intro');
   const [playerHp, setPlayerHp] = useState(PLAYER_MAX_HP);
@@ -524,26 +535,26 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                 animate={{ scale: 1, rotate: 0 }} 
                 transition={{ type: 'spring', bounce: 0.5 }}
               />
-              <h2 className="font-display text-2xl text-foreground">{monster.name}</h2>
-              <p className="text-sm text-destructive italic max-w-md mx-auto">"{monster.myth}"</p>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto">{monster.mechanicDescription}</p>
+              <h2 className="font-display text-2xl text-foreground">{mName}</h2>
+              <p className="text-sm text-destructive italic max-w-md mx-auto">"{mMyth}"</p>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">{mMechDesc}</p>
               {mechanic && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
                   className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-xs font-display mx-auto">
                   {mechanic.icon}
-                  <span className="font-bold">{mechanic.name}:</span> {mechanic.description}
+                  <span className="font-bold">{mechName}:</span> {mechDesc}
                 </motion.div>
               )}
               <motion.p className="text-xs text-secondary mt-2"
                 animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
-                ⚡ Active Time Battle — React fast, answer smart!
+                {t('battle.atb_hint')}
               </motion.p>
               <div className="flex gap-3 justify-center">
                 <Button onClick={startBattle} className="bg-primary text-primary-foreground font-display">
-                  <Swords className="h-4 w-4 mr-2" /> Begin Battle
+                  <Swords className="h-4 w-4 mr-2" /> {t('battle.begin')}
                 </Button>
                 <Button variant="outline" onClick={onRetreat}>
-                  <ArrowLeft className="h-4 w-4 mr-2" /> Retreat
+                  <ArrowLeft className="h-4 w-4 mr-2" /> {t('battle.retreat')}
                 </Button>
               </div>
             </div>
@@ -571,7 +582,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   <div className="flex items-center gap-1">
                     <p className="text-[10px] text-muted-foreground">{playerHp}/{PLAYER_MAX_HP} HP</p>
                     {shouldDrainPotions && (
-                      <span className="text-[9px] text-destructive/70 italic">🌊 draining</span>
+                      <span className="text-[9px] text-destructive/70 italic">{t('battle.draining')}</span>
                     )}
                   </div>
                 </>
@@ -585,16 +596,16 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                     animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.6, repeat: Infinity }}>
                     {combo}x
                   </motion.span>
-                  <span className="text-[9px] text-primary/70">COMBO</span>
-                  {shouldDecayCombo && <span className="text-[8px] text-destructive/60">decaying</span>}
+                  <span className="text-[9px] text-primary/70">{t('battle.combo')}</span>
+                  {shouldDecayCombo && <span className="text-[8px] text-destructive/60">{t('battle.decaying')}</span>}
                 </motion.div>
               )}
 
               {/* Monster HP */}
               <div className="flex-1 space-y-1 text-right">
                 <div className="flex items-center gap-2 justify-end">
-                  <span className="font-display text-xs">{monster.name}</span>
-                  <img src={monsterSprites[monster.id]} alt={monster.name} className="w-6 h-6 object-contain rounded-full border border-destructive/40" />
+                  <span className="font-display text-xs">{mName}</span>
+                  <img src={monsterSprites[monster.id]} alt={mName} className="w-6 h-6 object-contain rounded-full border border-destructive/40" />
                 </div>
                 <>
                   <div className="h-2.5 rounded-full bg-muted overflow-hidden">
@@ -701,7 +712,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
             <div className="space-y-2">
               {/* Player ATB */}
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-muted-foreground font-display w-14">ATB</span>
+                <span className="text-[10px] text-muted-foreground font-display w-14">{t('battle.atb')}</span>
                 <div className="flex-1 h-3 rounded-full bg-muted overflow-hidden relative">
                   <motion.div
                     className="h-full rounded-full"
@@ -728,7 +739,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
               {/* Monster ATB */}
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-muted-foreground font-display w-14">Enemy</span>
+                <span className="text-[10px] text-muted-foreground font-display w-14">{t('battle.enemy')}</span>
                 <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                   <motion.div className="h-full rounded-full bg-destructive/60"
                     animate={{ width: `${monsterAtbPercent}%` }}
@@ -752,13 +763,13 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                 >
                   <Button size="sm" onClick={openQuiz}
                     className="bg-primary text-primary-foreground font-display gap-1.5">
-                    <Zap className="h-3.5 w-3.5" /> Attack
+                    <Zap className="h-3.5 w-3.5" /> {t('battle.attack')}
                   </Button>
                   <div className="relative">
                     <Button variant="outline" size="sm" onClick={() => setPotionMenu(prev => !prev)}
                       disabled={totalPotions <= 0}
                       className="gap-1.5">
-                      <FlaskConical className="h-3.5 w-3.5" /> Items ({totalPotions})
+                      <FlaskConical className="h-3.5 w-3.5" /> {t('battle.items')} ({totalPotions})
                     </Button>
                     {potionMenu && (
                       <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
@@ -766,21 +777,21 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                         {state.inventory.remedyPotionBasic > 0 && (
                           <button onClick={() => usePotion('basic')}
                             className="w-full text-left text-xs px-2 py-1.5 rounded hover:bg-primary/10 flex items-center justify-between">
-                            <span>🧪 Remedy (Basic) <span className="text-muted-foreground">+30 HP</span></span>
+                            <span>🧪 Remedy (Basic) <span className="text-muted-foreground">{t('potion.basic_hp')}</span></span>
                             <span className="text-muted-foreground">×{state.inventory.remedyPotionBasic}</span>
                           </button>
                         )}
                         {state.inventory.remedyPotionEnhanced > 0 && (
                           <button onClick={() => usePotion('enhanced')}
                             className="w-full text-left text-xs px-2 py-1.5 rounded hover:bg-primary/10 flex items-center justify-between">
-                            <span>✨ Remedy (Enhanced) <span className="text-muted-foreground">+60 HP</span></span>
+                            <span>✨ Remedy (Enhanced) <span className="text-muted-foreground">{t('potion.enhanced_hp')}</span></span>
                             <span className="text-muted-foreground">×{state.inventory.remedyPotionEnhanced}</span>
                           </button>
                         )}
                         {state.inventory.clarityElixir > 0 && (
                           <button onClick={() => usePotion('clarity')}
                             className="w-full text-left text-xs px-2 py-1.5 rounded hover:bg-primary/10 flex items-center justify-between">
-                            <span>💧 Clarity Elixir <span className="text-muted-foreground">-50 ATB</span></span>
+                            <span>💧 Clarity Elixir <span className="text-muted-foreground">{t('potion.clarity_atb')}</span></span>
                             <span className="text-muted-foreground">×{state.inventory.clarityElixir}</span>
                           </button>
                         )}
@@ -788,10 +799,10 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                     )}
                   </div>
                   <Button variant="outline" size="sm" onClick={defend} className="gap-1.5">
-                    <Shield className="h-3.5 w-3.5" /> Defend
+                    <Shield className="h-3.5 w-3.5" /> {t('battle.defend')}
                   </Button>
                   <Button variant="ghost" size="sm" onClick={onRetreat} className="text-xs">
-                    Retreat
+                    {t('battle.retreat')}
                   </Button>
                 </motion.div>
               )}
@@ -799,14 +810,14 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               {(phase === 'active') && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                   className="text-center text-xs text-muted-foreground italic">
-                  {defending ? '🛡 Defending... waiting for gauge...' : 'Gauges filling...'}
+                  {defending ? t('battle.defending') : t('battle.gauges_filling')}
                 </motion.div>
               )}
 
               {(phase === 'player_attack' || phase === 'monster_attack') && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                   className="text-center text-xs text-muted-foreground italic">
-                  {phase === 'player_attack' ? '⚔ Striking!' : `${monster.name} attacks!`}
+                  {phase === 'player_attack' ? t('battle.striking') : `${mName} ${t('battle.attacks')}`}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -829,12 +840,12 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
             <div className="flex items-center justify-between">
               <h3 className="font-display text-sm text-secondary flex items-center gap-2">
-                <Zap className="h-4 w-4" /> Knowledge Strike — Answer to Attack!
+                <Zap className="h-4 w-4" /> {t('battle.knowledge_strike')}
               </h3>
               <div className="flex items-center gap-2">
                 {mechanic && (
                   <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-[10px] font-display">
-                    {mechanic.icon} {mechanic.name}
+                    {mechanic.icon} {mechName}
                   </span>
                 )}
                 <motion.div
@@ -853,7 +864,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
             {combo > 0 && (
               <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
                 className="text-xs text-primary font-display">
-                🔥 {combo}x Combo — damage boosted by {Math.round(combo * 15)}%!
+                🔥 {combo}x {t('battle.combo_boosted')} {Math.round(combo * 15)}%!
               </motion.div>
             )}
 
@@ -861,10 +872,10 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               {/* Question text with optional blur */}
               <p className="text-foreground text-sm leading-relaxed transition-all duration-300"
                 style={{ filter: blurAmount > 0 ? `blur(${blurAmount}px)` : 'none' }}>
-                {currentQuestion.text}
+                {lang === 'es' && questionTranslations[currentQuestion.id] ? questionTranslations[currentQuestion.id].text : currentQuestion.text}
               </p>
               {blurAmount > 0 && !showResult && (
-                <p className="text-[10px] text-destructive/60 italic">Spectral Silence — question is clearing...</p>
+                <p className="text-[10px] text-destructive/60 italic">{t('battle.spectral_clearing')}</p>
               )}
 
               {/* Answer options using scrambled order */}
@@ -898,7 +909,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                       whileTap={!showResult && !isFaded ? { scale: 0.98 } : {}}
                     >
                       <span className="text-muted-foreground mr-2 font-mono text-xs">{String.fromCharCode(65 + i)}</span>
-                      {opt.text}
+                      {lang === 'es' && questionTranslations[currentQuestion.id] ? questionTranslations[currentQuestion.id].options[opt.originalIndex] : opt.text}
                     </motion.button>
                   );
                 })}
@@ -912,10 +923,10 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                     ? 'bg-glow-green/10 border border-glow-green/30 text-glow-green'
                     : 'bg-destructive/10 border border-destructive/30 text-destructive'
                 }`}>
-                <p>{isCorrect ? `✅ Correct! Striking for ${Math.round(PLAYER_BASE_DAMAGE * damageMultiplier * (1 + combo * 0.15))} damage!` : `❌ Wrong — ${monster.name} gains momentum!`}</p>
-                <p className="text-xs text-foreground/60">{currentQuestion.explanation}</p>
+                <p>{isCorrect ? `${t('battle.correct')} ${Math.round(PLAYER_BASE_DAMAGE * damageMultiplier * (1 + combo * 0.15))} ${t('battle.damage')}` : `${t('battle.wrong')} ${mName} ${t('battle.gains_momentum')}`}</p>
+                <p className="text-xs text-foreground/60">{lang === 'es' && questionTranslations[currentQuestion.id] ? questionTranslations[currentQuestion.id].explanation : currentQuestion.explanation}</p>
                 <Button size="sm" onClick={handleQuizContinue} className="w-full mt-1">
-                  Continue →
+                  {t('battle.continue')}
                 </Button>
               </motion.div>
             )}
@@ -927,21 +938,21 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
           <motion.div key="victory" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center justify-center py-10 space-y-5 relative">
             <VictoryFireworks />
-            <motion.img src={monsterSprites[monster.id]} alt={monster.name}
+            <motion.img src={monsterSprites[monster.id]} alt={mName}
               className="h-24 w-24 object-contain opacity-30 grayscale"
               animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 0.6 }}
             />
-            <h2 className="font-display text-2xl text-glow-green">Myth Defeated!</h2>
+            <h2 className="font-display text-2xl text-glow-green">{t('battle.victory')}</h2>
             <div className="text-center space-y-1">
-              <p className="text-sm text-foreground/70 italic">"{monster.myth}"</p>
-              <p className="text-sm text-glow-green font-medium">{monster.truth}</p>
+              <p className="text-sm text-foreground/70 italic">"{mMyth}"</p>
+              <p className="text-sm text-glow-green font-medium">{mTruth}</p>
             </div>
             <div className="text-center space-y-1 text-xs text-muted-foreground">
-              <p>Accuracy: {totalCorrect}/{totalQuestions} • Max Combo: {combo}x</p>
-              <p>Remaining HP: {playerHp}/{PLAYER_MAX_HP}</p>
+              <p>{t('battle.accuracy')}: {totalCorrect}/{totalQuestions} • {t('battle.max_combo')}: {combo}x</p>
+              <p>{t('battle.remaining_hp')}: {playerHp}/{PLAYER_MAX_HP}</p>
             </div>
             <Button onClick={handleVictory} className="bg-primary text-primary-foreground font-display">
-              Claim Victory
+              {t('battle.claim_victory')}
             </Button>
           </motion.div>
         )}
@@ -956,13 +967,13 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               animate={{ opacity: [1, 0.3] }}
               transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
             />
-            <h2 className="font-display text-2xl text-destructive">Knocked Out!</h2>
+            <h2 className="font-display text-2xl text-destructive">{t('battle.knockout')}</h2>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
-              {monster.name} was too powerful. Retreat and return stronger.
+              {mName} {t('battle.too_powerful')}
             </p>
             <Button onClick={() => { addXp(Math.round(totalCorrect * 20 * xpMultiplier)); onKnockout(); }}
               variant="outline" className="font-display">
-              Retreat to Village
+              {t('battle.retreat_village')}
             </Button>
           </motion.div>
         )}

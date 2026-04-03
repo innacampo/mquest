@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const FeedbackButton: React.FC = () => {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
@@ -23,9 +25,9 @@ const FeedbackButton: React.FC = () => {
     setSending(false);
 
     if (error) {
-      toast.error('Could not send feedback.', { position: 'bottom-left' });
+      toast.error(t('feedback.error'), { position: 'bottom-left' });
     } else {
-      toast.success('💜 Thank you! Your feedback has been saved.', { position: 'bottom-left' });
+      toast.success(t('feedback.success'), { position: 'bottom-left' });
       setMessage('');
       setOpen(false);
     }
@@ -42,7 +44,7 @@ const FeedbackButton: React.FC = () => {
             className="mb-2 w-72 bg-card/95 backdrop-blur-md border border-border rounded-xl p-4 shadow-lg"
           >
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-display text-foreground">Send Feedback</p>
+              <p className="text-sm font-display text-foreground">{t('feedback.title')}</p>
               <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
                 <X className="h-4 w-4" />
               </button>
@@ -50,7 +52,7 @@ const FeedbackButton: React.FC = () => {
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value.slice(0, 2000))}
-              placeholder="Bug, idea, or thought…"
+              placeholder={t('feedback.placeholder')}
               className="text-sm min-h-[80px] bg-background/50 border-border/50 resize-none"
             />
             <div className="flex justify-between items-center mt-2">
@@ -61,7 +63,7 @@ const FeedbackButton: React.FC = () => {
                 disabled={!message.trim() || sending}
                 className="gap-1"
               >
-                <Send className="h-3 w-3" /> {sending ? 'Sending…' : 'Send'}
+                <Send className="h-3 w-3" /> {sending ? t('feedback.sending') : t('feedback.send')}
               </Button>
             </div>
           </motion.div>

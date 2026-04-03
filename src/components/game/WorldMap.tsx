@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { biomes, BiomeId } from '@/lib/gameData';
+import { biomeTranslations } from '@/lib/gameDataTranslations';
 import { Lock, CheckCircle } from 'lucide-react';
 
 import worldMapBg from '@/assets/world-map-bg.jpg';
@@ -56,6 +58,16 @@ const pathConnections: [BiomeId, BiomeId][] = [
 
 const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
   const { state } = useGame();
+  const { lang, t } = useLanguage();
+
+  const getBiomeName = (biome: typeof biomes[0]) => {
+    if (lang === 'es' && biomeTranslations[biome.id]) return biomeTranslations[biome.id].name;
+    return biome.name;
+  };
+  const getBiomeSystem = (biome: typeof biomes[0]) => {
+    if (lang === 'es' && biomeTranslations[biome.id]) return biomeTranslations[biome.id].bodySystem;
+    return biome.bodySystem;
+  };
 
   const isBiomeUnlocked = (biomeId: BiomeId) => {
     const order: BiomeId[] = ['fever-peaks', 'fog-marshes', 'mood-tides', 'crystal-caverns', 'heartland', 'bloom-garden'];
@@ -73,13 +85,13 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
   return (
     <div className="space-y-4">
       <div className="text-center space-y-2">
-        <h2 className="font-display text-2xl text-primary text-glow-amber">The Inner Realm</h2>
+        <h2 className="font-display text-2xl text-primary text-glow-amber">{t('map.title')}</h2>
         <p className="text-sm text-muted-foreground">
-          Explore the mystical world within — each region maps to a biological system
+          {t('map.subtitle')}
         </p>
         <div className="mx-auto max-w-xs space-y-1">
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>World Restoration</span>
+            <span>{t('map.restoration')}</span>
             <span>{Math.round(state.estraGlow * 100)}%</span>
           </div>
           <div className="h-2 rounded-full bg-muted overflow-hidden">
@@ -99,7 +111,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
         {/* Background */}
         <img
           src={worldMapBg}
-          alt="The Inner Realm Map"
+          alt={t('map.title')}
           className="absolute inset-0 w-full h-full object-cover"
           style={{
             filter: `saturate(${0.3 + state.estraGlow * 0.7}) brightness(${0.5 + state.estraGlow * 0.3})`,
@@ -144,7 +156,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
             const lit = isPathLit(from, to);
             const bothCleared = isCleared(from) && isCleared(to);
 
-            // Convert percentage positions to viewBox coords (1000x562)
             const x1 = (fromPos.x + 4) * 10;
             const y1 = (fromPos.y + 4) * 5.62;
             const x2 = (toPos.x + 4) * 10;
@@ -157,13 +168,11 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
             const cy = my - dx * 0.18;
 
             const pathD = `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
-            const pathId = `trail-${i}`;
             const dur1 = `${2.5 + i * 0.4}s`;
             const dur2 = `${3 + i * 0.4}s`;
 
             return (
               <g key={i}>
-                {/* Base dim dotted path */}
                 <path
                   d={pathD}
                   fill="none"
@@ -175,7 +184,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
 
                 {lit && (
                   <>
-                    {/* Wide soft glow */}
                     <path
                       d={pathD}
                       fill="none"
@@ -193,9 +201,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
                       />
                     </path>
 
-                    {/* Main visible glowing trail */}
                     <path
-                      id={pathId}
                       d={pathD}
                       fill="none"
                       stroke="hsl(45, 100%, 70%)"
@@ -212,7 +218,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
                       />
                     </path>
 
-                    {/* Flowing energy orb 1 */}
                     <circle
                       r={bothCleared ? 5 : 3.5}
                       fill="hsl(45, 100%, 85%)"
@@ -224,7 +229,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
                       <animate attributeName="r" values={bothCleared ? '3;5;3' : '2;3.5;2'} dur={dur2} repeatCount="indefinite" />
                     </circle>
 
-                    {/* Flowing energy orb 2 (offset timing) */}
                     <circle
                       r={bothCleared ? 3.5 : 2.5}
                       fill="hsl(40, 100%, 90%)"
@@ -235,7 +239,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
                       <animate attributeName="opacity" values="0;0.7;0.7;0" dur={dur2} repeatCount="indefinite" begin={`-${parseFloat(dur2) / 2}s`} />
                     </circle>
 
-                    {/* Tiny trailing spark 3 */}
                     <circle
                       r={1.5}
                       fill="hsl(50, 100%, 95%)"
@@ -259,6 +262,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
           const cleared = isCleared(biome.id);
           const pos = biomePositions[biome.id];
           const glowColor = biomeGlowColors[biome.id];
+          const biomeName = getBiomeName(biome);
+          const biomeSystem = getBiomeSystem(biome);
 
           return (
             <motion.button
@@ -274,9 +279,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
                 top: `${pos.y}%`,
                 zIndex: 2,
               }}
-              title={`${biome.name} — ${biome.bodySystem}`}
+              title={`${biomeName} — ${biomeSystem}`}
             >
-              {/* Glow ring */}
               {(unlocked && !cleared) && (
                 <motion.div
                   className="absolute -inset-2 rounded-full"
@@ -288,7 +292,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
                 />
               )}
 
-              {/* Biome image node */}
               <div
                 className={`relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 transition-all duration-300 ${
                   cleared
@@ -305,10 +308,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
               >
                 <img
                   src={biomeImages[biome.id]}
-                  alt={biome.name}
+                  alt={biomeName}
                   className="w-full h-full object-cover"
                 />
-                {/* Overlay for locked/cleared */}
                 {!unlocked && (
                   <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
                     <Lock className="h-5 w-5 text-muted-foreground" />
@@ -321,15 +323,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
                 )}
               </div>
 
-              {/* Label */}
               <div className={`absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-center transition-all ${
                 unlocked ? 'opacity-100' : 'opacity-40'
               }`}>
                 <p className="font-display text-[10px] md:text-xs text-foreground drop-shadow-lg leading-tight">
-                  {biome.name}
+                  {biomeName}
                 </p>
                 {unlocked && !cleared && (
-                  <p className="text-[8px] md:text-[10px] text-primary font-medium">Explore →</p>
+                  <p className="text-[8px] md:text-[10px] text-primary font-medium">{t('map.explore')}</p>
                 )}
               </div>
             </motion.button>

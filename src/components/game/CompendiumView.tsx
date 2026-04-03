@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { biomes, monsters } from '@/lib/gameData';
+import { biomeTranslations, compendiumTranslations } from '@/lib/gameDataTranslations';
 import { monsterSprites, npcPortraits } from '@/lib/battleAssets';
 import { BookOpen, Star, X, Skull, Users, Trophy, Search, Gift, Check, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,6 +16,7 @@ type Tab = 'facts' | 'myths' | 'bestiary' | 'bios' | 'milestones';
 
 const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
   const { state, claimMilestone } = useGame();
+  const { lang, t } = useLanguage();
   const [activeTab, setActiveTab] = useState<Tab>('bestiary');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBiome, setSelectedBiome] = useState<string | null>(null);
@@ -21,6 +24,19 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
   const unlockedCount = state.compendium.filter(e => e.unlocked).length;
   const totalCount = state.compendium.length;
   const percent = Math.round((unlockedCount / totalCount) * 100);
+
+  const getEntryTitle = (entry: any) => {
+    if (lang === 'es' && compendiumTranslations[entry.id]) return compendiumTranslations[entry.id].title;
+    return entry.title;
+  };
+  const getEntryContent = (entry: any) => {
+    if (lang === 'es' && compendiumTranslations[entry.id]) return compendiumTranslations[entry.id].content;
+    return entry.content;
+  };
+  const getBiomeName = (biomeId: string) => {
+    if (lang === 'es' && biomeTranslations[biomeId]) return biomeTranslations[biomeId].name;
+    return biomes.find(b => b.id === biomeId)?.name || biomeId;
+  };
 
   const filteredEntries = useMemo(() => {
     const typeMap: Record<Tab, string> = {
@@ -32,16 +48,18 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
       .filter(e => {
         if (!searchQuery) return true;
         const q = searchQuery.toLowerCase();
-        return e.title.toLowerCase().includes(q) || (e.unlocked && e.content.toLowerCase().includes(q));
+        const title = getEntryTitle(e);
+        const content = e.unlocked ? getEntryContent(e) : '';
+        return title.toLowerCase().includes(q) || content.toLowerCase().includes(q);
       });
-  }, [state.compendium, activeTab, selectedBiome, searchQuery]);
+  }, [state.compendium, activeTab, selectedBiome, searchQuery, lang]);
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode; count: number }[] = [
-    { id: 'bestiary', label: 'Bestiary', icon: <Skull className="h-3.5 w-3.5" />, count: state.compendium.filter(e => e.type === 'bestiary').length },
-    { id: 'facts', label: 'Facts', icon: <Star className="h-3.5 w-3.5" />, count: state.compendium.filter(e => e.type === 'fact').length },
-    { id: 'myths', label: 'Myths', icon: <BookOpen className="h-3.5 w-3.5" />, count: state.compendium.filter(e => e.type === 'myth').length },
-    { id: 'bios', label: 'NPCs', icon: <Users className="h-3.5 w-3.5" />, count: state.compendium.filter(e => e.type === 'bio').length },
-    { id: 'milestones', label: 'Milestones', icon: <Trophy className="h-3.5 w-3.5" />, count: state.compendiumMilestones?.length || 0 },
+    { id: 'bestiary', label: t('comp.bestiary'), icon: <Skull className="h-3.5 w-3.5" />, count: state.compendium.filter(e => e.type === 'bestiary').length },
+    { id: 'facts', label: t('comp.facts'), icon: <Star className="h-3.5 w-3.5" />, count: state.compendium.filter(e => e.type === 'fact').length },
+    { id: 'myths', label: t('comp.myths'), icon: <BookOpen className="h-3.5 w-3.5" />, count: state.compendium.filter(e => e.type === 'myth').length },
+    { id: 'bios', label: t('comp.npcs'), icon: <Users className="h-3.5 w-3.5" />, count: state.compendium.filter(e => e.type === 'bio').length },
+    { id: 'milestones', label: t('comp.milestones'), icon: <Trophy className="h-3.5 w-3.5" />, count: state.compendiumMilestones?.length || 0 },
   ];
 
   const getMonsterForEntry = (monsterId?: string) => monsterId ? monsters.find(m => m.id === monsterId) : null;
@@ -52,11 +70,10 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-4"
     >
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <BookOpen className="h-6 w-6 text-secondary" />
-          <h2 className="font-display text-2xl text-foreground">Compendium</h2>
+          <h2 className="font-display text-2xl text-foreground">{t('comp.title')}</h2>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground font-mono">{unlockedCount}/{totalCount}</span>
@@ -66,7 +83,6 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
         </div>
       </div>
 
-      {/* Progress bar */}
       <div className="space-y-1">
         <div className="h-3 rounded-full bg-muted overflow-hidden relative">
           <motion.div
@@ -76,12 +92,11 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
             transition={{ duration: 0.8, ease: 'easeOut' }}
           />
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-[9px] font-mono text-foreground/70">{percent}% Complete</span>
+            <span className="text-[9px] font-mono text-foreground/70">{percent}% {t('comp.complete')}</span>
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-1.5 overflow-x-auto pb-1">
         {tabs.map(tab => {
           const tabUnlocked = tab.id === 'milestones'
@@ -105,14 +120,13 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
         })}
       </div>
 
-      {/* Search + Biome filter (not for milestones) */}
       {activeTab !== 'milestones' && (
         <div className="flex gap-2 items-center">
           <div className="flex-1 relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search entries..."
+              placeholder={t('comp.search')}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-muted border border-border text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-secondary/50"
@@ -122,13 +136,13 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
             <button
               onClick={() => setSelectedBiome(null)}
               className={`px-2 py-1 rounded text-[10px] ${!selectedBiome ? 'bg-secondary/20 text-secondary' : 'bg-muted text-muted-foreground'}`}
-            >All</button>
+            >{t('comp.all')}</button>
             {biomes.filter(b => b.id !== 'bloom-garden').map(b => (
               <button
                 key={b.id}
                 onClick={() => setSelectedBiome(b.id)}
                 className={`px-2 py-1 rounded text-[10px] whitespace-nowrap ${selectedBiome === b.id ? 'bg-secondary/20 text-secondary' : 'bg-muted text-muted-foreground'}`}
-                title={b.name}
+                title={getBiomeName(b.id)}
               >
                 {b.emoji}
               </button>
@@ -137,7 +151,6 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
         </div>
       )}
 
-      {/* Content */}
       <AnimatePresence mode="wait">
         {activeTab === 'milestones' ? (
           <motion.div key="milestones" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -163,19 +176,19 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
                     {canClaim && (
                       <Button size="sm" onClick={() => claimMilestone(ms.id)}
                         className="bg-primary text-primary-foreground font-display gap-1 text-xs h-7">
-                        <Gift className="h-3 w-3" /> Claim
+                        <Gift className="h-3 w-3" /> {t('comp.claim')}
                       </Button>
                     )}
-                    {ms.claimed && <span className="text-[10px] text-primary font-display">Claimed ✓</span>}
+                    {ms.claimed && <span className="text-[10px] text-primary font-display">{t('comp.claimed')}</span>}
                   </div>
                   <p className="text-xs text-muted-foreground">{ms.description}</p>
                   <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                     <div className="h-full rounded-full bg-secondary transition-all" style={{ width: `${progressPct}%` }} />
                   </div>
                   <div className="flex justify-between text-[10px] text-muted-foreground">
-                    <span>{Math.min(unlockedCount, ms.requiredCount)}/{ms.requiredCount} entries</span>
+                    <span>{Math.min(unlockedCount, ms.requiredCount)}/{ms.requiredCount} {t('comp.entries')}</span>
                     <span className="text-primary/70">
-                      Reward: {ms.reward.type === 'xp' ? `${ms.reward.amount} XP` : `${ms.reward.amount}× ${ms.reward.item.replace(/([A-Z])/g, ' $1').trim()}`}
+                      {t('comp.reward')}: {ms.reward.type === 'xp' ? `${ms.reward.amount} XP` : `${ms.reward.amount}× ${ms.reward.item.replace(/([A-Z])/g, ' $1').trim()}`}
                     </span>
                   </div>
                 </motion.div>
@@ -207,10 +220,9 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
                   }`}
                 >
                   <div className="flex gap-3">
-                    {/* Image/Icon */}
                     {entry.unlocked && imageUrl ? (
                       <div className="flex-shrink-0">
-                        <img src={imageUrl} alt={entry.title}
+                        <img src={imageUrl} alt={getEntryTitle(entry)}
                           className={`w-12 h-12 object-contain rounded-lg ${entry.type === 'bestiary' ? 'drop-shadow-[0_0_8px_hsl(0_60%_40%/0.4)]' : ''}`} />
                       </div>
                     ) : !entry.unlocked ? (
@@ -221,19 +233,19 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
 
                     <div className="flex-1 min-w-0">
                       <h4 className="font-display text-sm text-foreground truncate">
-                        {entry.unlocked ? entry.title : '???'}
+                        {entry.unlocked ? getEntryTitle(entry) : '???'}
                       </h4>
                       {entry.unlocked && entry.biome && (
                         <span className="text-[10px] text-muted-foreground">
-                          {biomes.find(b => b.id === entry.biome)?.name || entry.biome}
+                          {getBiomeName(entry.biome)}
                         </span>
                       )}
                       <p className="text-xs text-foreground/60 mt-1 line-clamp-3">
-                        {entry.unlocked ? entry.content : (
-                          entry.type === 'bestiary' ? 'Defeat this monster to unlock its bestiary entry.'
-                          : entry.type === 'myth' ? 'Defeat the monster to reveal the truth.'
-                          : entry.type === 'bio' ? 'Talk to this NPC to learn their story.'
-                          : 'Explore the Inner Realm to unlock this entry.'
+                        {entry.unlocked ? getEntryContent(entry) : (
+                          entry.type === 'bestiary' ? t('comp.defeat_unlock')
+                          : entry.type === 'myth' ? t('comp.myth_unlock')
+                          : entry.type === 'bio' ? t('comp.bio_unlock')
+                          : t('comp.explore_unlock')
                         )}
                       </p>
                       {entry.unlocked && monster && entry.type === 'bestiary' && (
@@ -251,7 +263,7 @@ const CompendiumView: React.FC<CompendiumViewProps> = ({ onClose }) => {
             })}
             {filteredEntries.length === 0 && (
               <div className="col-span-2 text-center py-8 text-muted-foreground text-sm">
-                No entries found{searchQuery ? ` for "${searchQuery}"` : ''}.
+                {t('comp.no_entries')}{searchQuery ? ` ${t('comp.for')} "${searchQuery}"` : ''}.
               </div>
             )}
           </motion.div>
