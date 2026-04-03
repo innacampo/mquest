@@ -712,7 +712,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
             <div className="space-y-2">
               {/* Player ATB */}
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-muted-foreground font-display w-14">ATB</span>
+                <span className="text-[10px] text-muted-foreground font-display w-14">{t('battle.atb')}</span>
                 <div className="flex-1 h-3 rounded-full bg-muted overflow-hidden relative">
                   <motion.div
                     className="h-full rounded-full"
