@@ -799,10 +799,10 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                     )}
                   </div>
                   <Button variant="outline" size="sm" onClick={defend} className="gap-1.5">
-                    <Shield className="h-3.5 w-3.5" /> Defend
+                    <Shield className="h-3.5 w-3.5" /> {t('battle.defend')}
                   </Button>
                   <Button variant="ghost" size="sm" onClick={onRetreat} className="text-xs">
-                    Retreat
+                    {t('battle.retreat')}
                   </Button>
                 </motion.div>
               )}
