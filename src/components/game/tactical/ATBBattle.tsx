@@ -967,13 +967,13 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               animate={{ opacity: [1, 0.3] }}
               transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
             />
-            <h2 className="font-display text-2xl text-destructive">Knocked Out!</h2>
+            <h2 className="font-display text-2xl text-destructive">{t('battle.knockout')}</h2>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
-              {monster.name} was too powerful. Retreat and return stronger.
+              {mName} {t('battle.too_powerful')}
             </p>
             <Button onClick={() => { addXp(Math.round(totalCorrect * 20 * xpMultiplier)); onKnockout(); }}
               variant="outline" className="font-display">
-              Retreat to Village
+              {t('battle.retreat_village')}
             </Button>
           </motion.div>
         )}
