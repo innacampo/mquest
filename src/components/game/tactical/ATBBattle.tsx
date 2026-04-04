@@ -530,7 +530,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
               <motion.img 
                 src={monsterSprites[monster.id]} 
                 alt={monster.name}
-                className="mx-auto h-40 w-40 object-contain drop-shadow-[0_0_20px_hsl(0_70%_50%/0.5)]"
+                className="mx-auto h-28 w-28 sm:h-40 sm:w-40 object-contain drop-shadow-[0_0_20px_hsl(0_70%_50%/0.5)]"
                 initial={{ scale: 0, rotate: -10 }} 
                 animate={{ scale: 1, rotate: 0 }} 
                 transition={{ type: 'spring', bounce: 0.5 }}
