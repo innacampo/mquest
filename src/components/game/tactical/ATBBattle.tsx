@@ -526,7 +526,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
             <img src={battleBackgrounds[monster.biome]} alt="" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
             
-            <div className="relative z-10 text-center space-y-4 py-10 px-6">
+            <div className="relative z-10 text-center space-y-3 sm:space-y-4 py-6 sm:py-10 px-4 sm:px-6">
               <motion.img 
                 src={monsterSprites[monster.id]} 
                 alt={monster.name}
