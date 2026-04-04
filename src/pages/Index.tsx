@@ -26,6 +26,7 @@ const GameScreen = () => {
   const [view, setView] = useState<GameView>('title');
   const [viewInitialized, setViewInitialized] = useState(false);
   const [activeBiome, setActiveBiome] = useState<BiomeId | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const audio = useAudio();
 
   // Set initial view once loading completes
@@ -55,8 +56,6 @@ const GameScreen = () => {
     leaveBiome();
     const exitedBiome = activeBiome;
     setActiveBiome(null);
-    // Check if all 6 biomes are cleared → trigger ending
-    // Include the current biome since state may not have updated yet
     const ALL_BIOMES: BiomeId[] = ['fever-peaks', 'fog-marshes', 'mood-tides', 'crystal-caverns', 'heartland', 'bloom-garden'];
     const clearedSet = new Set([...state.biomesCleared, ...(exitedBiome ? [exitedBiome] : [])]);
     const allCleared = ALL_BIOMES.every(b => clearedSet.has(b));
@@ -97,8 +96,6 @@ const GameScreen = () => {
       />
     );
   }
-
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-mystical">
