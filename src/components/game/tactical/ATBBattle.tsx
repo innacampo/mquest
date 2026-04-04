@@ -621,7 +621,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
             {/* Battle Stage */}
             <div className="relative w-full rounded-xl overflow-hidden border border-border"
-              style={{ height: 300 }}>
+              style={{ height: 'clamp(220px, 40vw, 300px)' }}>
               {/* Battle background */}
               <img src={battleBackgrounds[monster.biome]} alt="" 
                 className="absolute inset-0 w-full h-full object-cover" />
