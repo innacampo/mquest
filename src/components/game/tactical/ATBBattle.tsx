@@ -521,23 +521,23 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
         {/* ====== INTRO ====== */}
         {phase === 'intro' && (
           <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="relative rounded-xl overflow-hidden" style={{ minHeight: 400 }}>
+            className="relative rounded-xl overflow-hidden" style={{ minHeight: 320 }}>
             {/* Background */}
             <img src={battleBackgrounds[monster.biome]} alt="" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
             
-            <div className="relative z-10 text-center space-y-4 py-10 px-6">
+            <div className="relative z-10 text-center space-y-3 sm:space-y-4 py-6 sm:py-10 px-4 sm:px-6">
               <motion.img 
                 src={monsterSprites[monster.id]} 
                 alt={monster.name}
-                className="mx-auto h-40 w-40 object-contain drop-shadow-[0_0_20px_hsl(0_70%_50%/0.5)]"
+                className="mx-auto h-28 w-28 sm:h-40 sm:w-40 object-contain drop-shadow-[0_0_20px_hsl(0_70%_50%/0.5)]"
                 initial={{ scale: 0, rotate: -10 }} 
                 animate={{ scale: 1, rotate: 0 }} 
                 transition={{ type: 'spring', bounce: 0.5 }}
               />
-              <h2 className="font-display text-2xl text-foreground">{mName}</h2>
-              <p className="text-sm text-destructive italic max-w-md mx-auto">"{mMyth}"</p>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto">{mMechDesc}</p>
+              <h2 className="font-display text-xl sm:text-2xl text-foreground">{mName}</h2>
+              <p className="text-xs sm:text-sm text-destructive italic max-w-md mx-auto">"{mMyth}"</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground max-w-sm mx-auto">{mMechDesc}</p>
               {mechanic && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
                   className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-xs font-display mx-auto">
@@ -549,7 +549,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                 animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
                 {t('battle.atb_hint')}
               </motion.p>
-              <div className="flex gap-3 justify-center">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
                 <Button onClick={startBattle} className="bg-primary text-primary-foreground font-display">
                   <Swords className="h-4 w-4 mr-2" /> {t('battle.begin')}
                 </Button>
@@ -621,7 +621,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
 
             {/* Battle Stage */}
             <div className="relative w-full rounded-xl overflow-hidden border border-border"
-              style={{ height: 300 }}>
+              style={{ height: 'clamp(220px, 40vw, 300px)' }}>
               {/* Battle background */}
               <img src={battleBackgrounds[monster.biome]} alt="" 
                 className="absolute inset-0 w-full h-full object-cover" />
@@ -668,7 +668,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   />
                 )}
                 <img src={playerSprite} alt="Player" 
-                  className="h-44 w-auto object-contain drop-shadow-[0_0_12px_hsl(180_50%_40%/0.4)]"
+                  className="h-28 sm:h-44 w-auto object-contain drop-shadow-[0_0_12px_hsl(180_50%_40%/0.4)]"
                   style={{ transform: 'scaleX(1)' }}
                 />
               </motion.div>
@@ -692,7 +692,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                 }
               >
                 <img src={monsterSprites[monster.id]} alt={monster.name}
-                  className="h-48 w-auto object-contain drop-shadow-[0_0_16px_hsl(0_60%_40%/0.5)]"
+                  className="h-32 sm:h-48 w-auto object-contain drop-shadow-[0_0_16px_hsl(0_60%_40%/0.5)]"
                   style={{}}
                 />
               </motion.div>
@@ -759,7 +759,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 15 }}
-                  className="flex items-center gap-2 justify-center"
+                  className="flex flex-wrap items-center gap-2 justify-center"
                 >
                   <Button size="sm" onClick={openQuiz}
                     className="bg-primary text-primary-foreground font-display gap-1.5">

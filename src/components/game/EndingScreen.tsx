@@ -64,14 +64,14 @@ const EndingScreen: React.FC<EndingScreenProps> = ({ onRestart }) => {
         ))}
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 text-center">
         <AnimatePresence mode="wait">
           {(phase === 'title' || phase === 'stats' || phase === 'message' || phase === 'credits') && (
             <motion.div key="title-block" className="absolute top-[12%]"
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: phase === 'title' ? 1 : 0.6, y: 0, scale: phase === 'title' ? 1 : 0.85 }}
               transition={{ duration: 1.5, ease: 'easeOut' }}>
-              <motion.div className="text-6xl md:text-8xl mb-4" animate={{ rotate: [0, 5, -5, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}>🌸</motion.div>
-              <h1 className="font-display text-4xl md:text-6xl text-primary text-glow-amber mb-3">{t('ending.bloom')}</h1>
+              <motion.div className="text-4xl sm:text-6xl md:text-8xl mb-4" animate={{ rotate: [0, 5, -5, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}>🌸</motion.div>
+              <h1 className="font-display text-2xl sm:text-4xl md:text-6xl text-primary text-glow-amber mb-3">{t('ending.bloom')}</h1>
               <motion.p className="text-lg md:text-xl text-foreground/80 max-w-md mx-auto leading-relaxed"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 1 }}>
                 {state.character?.name || 'Lyra'}{t('ending.restored')}
@@ -82,7 +82,7 @@ const EndingScreen: React.FC<EndingScreenProps> = ({ onRestart }) => {
           {(phase === 'stats' || phase === 'message' || phase === 'credits') && (
             <motion.div key="stats-block" className="absolute top-[42%] w-full max-w-lg px-4"
               initial={{ opacity: 0 }} animate={{ opacity: phase === 'stats' ? 1 : 0.7 }} transition={{ duration: 1 }}>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
                 {stats.map((stat, i) => (
                   <motion.div key={stat.label} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-3"
                     initial={{ opacity: 0, y: 20, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }}

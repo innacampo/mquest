@@ -15,7 +15,7 @@ import CharacterCreation from '@/components/game/CharacterCreation';
 import EndingScreen from '@/components/game/EndingScreen';
 import { useAudio } from '@/hooks/useAudio';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Map, RotateCcw, Home } from 'lucide-react';
+import { Map, RotateCcw, Home, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type GameView = 'title' | 'character' | 'map' | 'biome' | 'village' | 'ending';
@@ -26,6 +26,7 @@ const GameScreen = () => {
   const [view, setView] = useState<GameView>('title');
   const [viewInitialized, setViewInitialized] = useState(false);
   const [activeBiome, setActiveBiome] = useState<BiomeId | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const audio = useAudio();
 
   // Set initial view once loading completes
@@ -55,8 +56,6 @@ const GameScreen = () => {
     leaveBiome();
     const exitedBiome = activeBiome;
     setActiveBiome(null);
-    // Check if all 6 biomes are cleared → trigger ending
-    // Include the current biome since state may not have updated yet
     const ALL_BIOMES: BiomeId[] = ['fever-peaks', 'fog-marshes', 'mood-tides', 'crystal-caverns', 'heartland', 'bloom-garden'];
     const clearedSet = new Set([...state.biomesCleared, ...(exitedBiome ? [exitedBiome] : [])]);
     const allCleared = ALL_BIOMES.every(b => clearedSet.has(b));
@@ -124,18 +123,20 @@ const GameScreen = () => {
         ))}
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 py-6 space-y-5">
+      <div className="relative z-10 max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-5">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-display text-3xl text-primary text-glow-amber">
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <h1 className="font-display text-xl sm:text-3xl text-primary text-glow-amber truncate">
               {t('header.title')}
             </h1>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
               {t('header.subtitle')}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+
+          {/* Desktop controls */}
+          <div className="hidden md:flex items-center gap-2">
             <LanguageToggle />
             <AudioControls
               muted={audio.muted}
@@ -167,7 +168,64 @@ const GameScreen = () => {
               <RotateCcw className="h-4 w-4" />
             </Button>
           </div>
+
+          {/* Mobile controls */}
+          <div className="flex md:hidden items-center gap-1">
+            <Button
+              variant={view === 'map' ? 'default' : 'ghost'}
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={() => { setView('map'); setActiveBiome(null); leaveBiome(); }}
+            >
+              <Map className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={view === 'village' ? 'default' : 'ghost'}
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={() => { setView('village'); setActiveBiome(null); leaveBiome(); }}
+            >
+              <Home className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
+
+        {/* Mobile menu dropdown */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden rounded-lg bg-card/90 backdrop-blur-md border border-border p-3 flex flex-wrap items-center gap-2 overflow-hidden"
+            >
+              <LanguageToggle />
+              <AudioControls
+                muted={audio.muted}
+                masterVolume={audio.masterVolume}
+                musicVolume={audio.musicVolume}
+                sfxVolume={audio.sfxVolume}
+                toggleMute={audio.toggleMute}
+                setMasterVolume={audio.setMasterVolume}
+                setMusicVolume={audio.setMusicVolume}
+                setSfxVolume={audio.setSfxVolume}
+                playChime={audio.playChime}
+              />
+              <GameRules />
+              <Button variant="ghost" size="sm" onClick={resetGame} title="Reset Game">
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* HUD */}
         <PlayerHUD />

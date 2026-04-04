@@ -204,16 +204,16 @@ const BiomeExplore: React.FC<BiomeExploreProps> = ({ biomeId, onExit }) => {
               style={{ filter: 'brightness(0.7) saturate(1.1)' }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">{biome.emoji}</span>
+            <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <span className="text-2xl sm:text-3xl">{biome.emoji}</span>
                 <div>
-                  <h2 className="font-display text-xl text-foreground drop-shadow-lg">{getBiomeName()}</h2>
-                  <p className="text-xs text-muted-foreground drop-shadow">{getBiomeSystem()}</p>
+                  <h2 className="font-display text-base sm:text-xl text-foreground drop-shadow-lg">{getBiomeName()}</h2>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground drop-shadow">{getBiomeSystem()}</p>
                 </div>
               </div>
-              <Button variant="outline" size="sm" onClick={onExit} className="bg-background/60 backdrop-blur-sm">
-                <ArrowLeft className="h-4 w-4 mr-2" /> {t('biome.leave')}
+              <Button variant="outline" size="sm" onClick={onExit} className="bg-background/60 backdrop-blur-sm text-xs sm:text-sm">
+                <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" /> {t('biome.leave')}
               </Button>
             </div>
           </div>

@@ -107,7 +107,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
 
 
       {/* Map Canvas */}
-      <div className="relative w-full rounded-xl overflow-hidden border-2 border-border" style={{ aspectRatio: '16/9' }}>
+      <div className="relative w-full rounded-xl overflow-hidden border-2 border-border aspect-[4/3] md:aspect-video">
         {/* Background */}
         <img
           src={worldMapBg}
@@ -293,7 +293,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
               )}
 
               <div
-                className={`relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 transition-all duration-300 ${
+                className={`relative w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 transition-all duration-300 ${
                   cleared
                     ? 'border-glow-green/70'
                     : unlocked
