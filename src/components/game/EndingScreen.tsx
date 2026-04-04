@@ -70,8 +70,8 @@ const EndingScreen: React.FC<EndingScreenProps> = ({ onRestart }) => {
             <motion.div key="title-block" className="absolute top-[12%]"
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: phase === 'title' ? 1 : 0.6, y: 0, scale: phase === 'title' ? 1 : 0.85 }}
               transition={{ duration: 1.5, ease: 'easeOut' }}>
-              <motion.div className="text-6xl md:text-8xl mb-4" animate={{ rotate: [0, 5, -5, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}>🌸</motion.div>
-              <h1 className="font-display text-4xl md:text-6xl text-primary text-glow-amber mb-3">{t('ending.bloom')}</h1>
+              <motion.div className="text-4xl sm:text-6xl md:text-8xl mb-4" animate={{ rotate: [0, 5, -5, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}>🌸</motion.div>
+              <h1 className="font-display text-2xl sm:text-4xl md:text-6xl text-primary text-glow-amber mb-3">{t('ending.bloom')}</h1>
               <motion.p className="text-lg md:text-xl text-foreground/80 max-w-md mx-auto leading-relaxed"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 1 }}>
                 {state.character?.name || 'Lyra'}{t('ending.restored')}
