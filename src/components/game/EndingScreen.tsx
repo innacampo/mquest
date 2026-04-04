@@ -64,7 +64,7 @@ const EndingScreen: React.FC<EndingScreenProps> = ({ onRestart }) => {
         ))}
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 text-center">
         <AnimatePresence mode="wait">
           {(phase === 'title' || phase === 'stats' || phase === 'message' || phase === 'credits') && (
             <motion.div key="title-block" className="absolute top-[12%]"
