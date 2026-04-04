@@ -549,7 +549,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                 animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
                 {t('battle.atb_hint')}
               </motion.p>
-              <div className="flex gap-3 justify-center">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
                 <Button onClick={startBattle} className="bg-primary text-primary-foreground font-display">
                   <Swords className="h-4 w-4 mr-2" /> {t('battle.begin')}
                 </Button>
