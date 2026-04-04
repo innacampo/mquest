@@ -535,9 +535,9 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                 animate={{ scale: 1, rotate: 0 }} 
                 transition={{ type: 'spring', bounce: 0.5 }}
               />
-              <h2 className="font-display text-2xl text-foreground">{mName}</h2>
-              <p className="text-sm text-destructive italic max-w-md mx-auto">"{mMyth}"</p>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto">{mMechDesc}</p>
+              <h2 className="font-display text-xl sm:text-2xl text-foreground">{mName}</h2>
+              <p className="text-xs sm:text-sm text-destructive italic max-w-md mx-auto">"{mMyth}"</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground max-w-sm mx-auto">{mMechDesc}</p>
               {mechanic && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
                   className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-xs font-display mx-auto">
