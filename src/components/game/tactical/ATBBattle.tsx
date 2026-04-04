@@ -759,7 +759,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 15 }}
-                  className="flex items-center gap-2 justify-center"
+                  className="flex flex-wrap items-center gap-2 justify-center"
                 >
                   <Button size="sm" onClick={openQuiz}
                     className="bg-primary text-primary-foreground font-display gap-1.5">
