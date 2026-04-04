@@ -82,7 +82,7 @@ const EndingScreen: React.FC<EndingScreenProps> = ({ onRestart }) => {
           {(phase === 'stats' || phase === 'message' || phase === 'credits') && (
             <motion.div key="stats-block" className="absolute top-[42%] w-full max-w-lg px-4"
               initial={{ opacity: 0 }} animate={{ opacity: phase === 'stats' ? 1 : 0.7 }} transition={{ duration: 1 }}>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
                 {stats.map((stat, i) => (
                   <motion.div key={stat.label} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-3"
                     initial={{ opacity: 0, y: 20, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }}
