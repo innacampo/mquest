@@ -521,7 +521,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
         {/* ====== INTRO ====== */}
         {phase === 'intro' && (
           <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="relative rounded-xl overflow-hidden" style={{ minHeight: 400 }}>
+            className="relative rounded-xl overflow-hidden" style={{ minHeight: 320 }}>
             {/* Background */}
             <img src={battleBackgrounds[monster.biome]} alt="" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
