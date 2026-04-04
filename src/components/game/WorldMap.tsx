@@ -107,7 +107,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ onSelectBiome }) => {
 
 
       {/* Map Canvas */}
-      <div className="relative w-full rounded-xl overflow-hidden border-2 border-border" style={{ aspectRatio: '16/9' }}>
+      <div className="relative w-full rounded-xl overflow-hidden border-2 border-border" style={{ aspectRatio: 'var(--map-ratio, 4/3)' }}>
+        <style>{`@media (min-width: 768px) { :root { --map-ratio: 16/9; } }`}</style>
         {/* Background */}
         <img
           src={worldMapBg}
