@@ -13,6 +13,7 @@ interface TitleScreenProps {
 const TitleScreen = ({ onStart }: TitleScreenProps) => {
   const [exiting, setExiting] = useState(false);
   const { t } = useLanguage();
+  useEffect(() => { trackEvent('page_view', { page: 'title_screen' }); }, []);
 
   const handleStart = () => {
     setExiting(true);
