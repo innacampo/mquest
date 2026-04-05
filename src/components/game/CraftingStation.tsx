@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { trackEvent } from '@/lib/analytics';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
 import { useLanguage } from '@/contexts/LanguageContext';
