@@ -99,6 +99,7 @@ const CraftingStation: React.FC<CraftingStationProps> = ({ onClose }) => {
 
   const handleCraft = (recipe: Recipe) => {
     if (!canCraft(recipe)) return;
+    trackEvent('item_crafted', { recipeId: recipe.id, output: recipe.output });
     recipe.ingredients.forEach(ing => {
       addInventory(ing.item, -ing.amount);
     });
