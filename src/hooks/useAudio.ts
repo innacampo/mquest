@@ -21,6 +21,11 @@ class ProceduralAudioEngine {
   private currentScene: AudioScene = 'none';
   private isPlaying = false;
   private loopTimers: number[] = [];
+  // Store desired volumes so they apply when ctx is created
+  private _masterVol = 0.7;
+  private _musicVol = 0.6;
+  private _sfxVol = 0.8;
+  private _muted = false;
 
   private getCtx(): AudioContext {
     if (!this.ctx) {
@@ -31,6 +36,10 @@ class ProceduralAudioEngine {
       this.musicGain.connect(this.masterGain);
       this.sfxGain = this.ctx.createGain();
       this.sfxGain.connect(this.masterGain);
+      // Apply stored volumes immediately
+      this.masterGain.gain.value = this._muted ? 0 : this._masterVol;
+      this.musicGain.gain.value = this._musicVol;
+      this.sfxGain.gain.value = this._sfxVol;
     }
     if (this.ctx.state === 'suspended') {
       this.ctx.resume();
@@ -39,16 +48,22 @@ class ProceduralAudioEngine {
   }
 
   setMasterVolume(v: number) {
-    if (this.masterGain) this.masterGain.gain.setValueAtTime(v, this.ctx!.currentTime);
+    this._masterVol = v;
+    if (this.masterGain && this.ctx) this.masterGain.gain.setValueAtTime(v, this.ctx.currentTime);
   }
   setMusicVolume(v: number) {
-    if (this.musicGain) this.musicGain.gain.setValueAtTime(v, this.ctx!.currentTime);
+    this._musicVol = v;
+    if (this.musicGain && this.ctx) this.musicGain.gain.setValueAtTime(v, this.ctx.currentTime);
   }
   setSfxVolume(v: number) {
-    if (this.sfxGain) this.sfxGain.gain.setValueAtTime(v, this.ctx!.currentTime);
+    this._sfxVol = v;
+    if (this.sfxGain && this.ctx) this.sfxGain.gain.setValueAtTime(v, this.ctx.currentTime);
   }
   setMuted(m: boolean) {
-    this.setMasterVolume(m ? 0 : 1);
+    this._muted = m;
+    if (this.masterGain && this.ctx) {
+      this.masterGain.gain.setValueAtTime(m ? 0 : this._masterVol, this.ctx.currentTime);
+    }
   }
 
   stopAll() {
