@@ -294,7 +294,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       };
       save(next);
-      trackEvent('character_created', { role: profile.role, name: profile.name });
+      trackEvent('character_created', { background: profile.background, specialty: profile.specialty, name: profile.name });
       return next;
     });
   }, [save]);
