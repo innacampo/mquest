@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { trackEvent } from '@/lib/analytics';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -99,6 +100,7 @@ const CraftingStation: React.FC<CraftingStationProps> = ({ onClose }) => {
 
   const handleCraft = (recipe: Recipe) => {
     if (!canCraft(recipe)) return;
+    trackEvent('item_crafted', { recipeId: recipe.id, output: recipe.output });
     recipe.ingredients.forEach(ing => {
       addInventory(ing.item, -ing.amount);
     });

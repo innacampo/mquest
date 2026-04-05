@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect, use
 import { GameState, createInitialGameState, getLevelFromXp, BiomeId, CharacterProfile, getStartingBonuses } from '@/lib/gameData';
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
+import { trackEvent } from '@/lib/analytics';
 
 interface GameContextType {
   state: GameState;
@@ -164,6 +165,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const newLevel = getLevelFromXp(newXp);
       const next = { ...prev, xp: newXp, level: newLevel };
       save(next);
+      if (newLevel > prev.level) trackEvent('level_up', { newLevel, xp: newXp });
       return next;
     });
   }, [save]);
@@ -204,6 +206,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         currentBiome: null,
       };
       save(next);
+      trackEvent('biome_cleared', { biomeId, totalCleared: newCleared.length });
       return next;
     });
   }, [save]);
@@ -252,6 +255,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setState(prev => {
       const next = { ...prev, currentBiome: biomeId };
       save(next);
+      trackEvent('biome_entered', { biomeId });
       return next;
     });
   }, [save]);
@@ -268,6 +272,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const fresh = createInitialGameState();
     localStorage.removeItem('menopause-quest-save');
     setState(fresh);
+    trackEvent('game_reset');
     if (userId) {
       await supabase.from('game_saves').upsert({
         user_id: userId,
@@ -289,6 +294,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       };
       save(next);
+      trackEvent('character_created', { background: profile.background, specialty: profile.specialty, name: profile.name });
       return next;
     });
   }, [save]);
