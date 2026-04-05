@@ -10,12 +10,12 @@ export function trackEvent(
   // Fire and forget — don't block the UI
   supabase
     .from("user_events")
-    .insert({
+    .insert([{
       event_type: eventType,
-      event_data: eventData,
+      event_data: eventData as any,
       session_id: SESSION_ID,
       page: page ?? window.location.pathname,
-    })
+    }])
     .then(({ error }) => {
       if (error) console.warn("Analytics error:", error.message);
     });
