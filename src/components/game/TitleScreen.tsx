@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { trackEvent } from '@/lib/analytics';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { titleBackground } from '@/lib/battleAssets';
