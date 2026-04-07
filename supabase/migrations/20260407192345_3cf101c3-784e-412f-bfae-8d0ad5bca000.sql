@@ -1,0 +1,1 @@
+CREATE POLICY "Allow anon and authenticated to read events" ON public.user_events FOR SELECT TO anon, authenticated USING (true);
