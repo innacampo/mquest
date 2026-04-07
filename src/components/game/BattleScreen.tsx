@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
 import { Monster, Question, questions, getSpecialtyDamageMultiplier, getXpMultiplier } from '@/lib/gameData';
+import { trackEvent } from '@/lib/analytics';
 import { Swords, Timer, Zap, Heart, ArrowLeft, Sparkles, Shield, FlaskConical, BookOpen, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -419,6 +420,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ monster, onVictory, onRetre
   const useItem = (item: 'remedyPotionBasic' | 'remedyPotionEnhanced' | 'clarityElixir' | 'knowledgeScrolls') => {
     if (state.inventory[item] <= 0) return;
     addInventory(item, -1);
+    trackEvent('potion_used', { item, monster: monster.id, battleType: 'classic' });
 
     switch (item) {
       case 'remedyPotionBasic':
