@@ -7,6 +7,7 @@ import {
 } from '@/lib/gameData';
 import { monsterTranslations, mechanicTranslations, questionTranslations } from '@/lib/gameDataTranslations';
 import { battleBackgrounds, monsterSprites, playerSprite } from '@/lib/battleAssets';
+import { trackEvent } from '@/lib/analytics';
 import { Swords, ArrowLeft, Heart, Timer, FlaskConical, Shield, Zap, EyeOff, Shuffle, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DamageNumber, ScreenFlash, VictoryFireworks, KnockoutShatter, ImpactBurst, SlashEffect } from '../BattleEffects';
@@ -464,6 +465,7 @@ const ATBBattle: React.FC<ATBBattleProps> = ({ monster, onVictory, onRetreat, on
       setMonsterAtb(prev => Math.max(0, prev - 50));
       addDmgNumber(50, 'dealt', '72%');
     }
+    trackEvent('potion_used', { type, monster: monster.id, battleType: 'atb' });
     setPotionMenu(false);
     setPlayerAtb(0);
     setPhase('active');

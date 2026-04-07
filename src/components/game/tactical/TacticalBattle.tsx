@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { trackEvent } from '@/lib/analytics';
 import {
   Monster, Question, questions, getSpecialtyDamageMultiplier, getXpMultiplier,
 } from '@/lib/gameData';
@@ -298,6 +299,7 @@ const TacticalBattle: React.FC<TacticalBattleProps> = ({ monster, onVictory, onR
   const usePotion = () => {
     if (state.inventory.remedyPotionBasic <= 0) return;
     addInventory('remedyPotionBasic', -1);
+    trackEvent('potion_used', { type: 'basic', monster: monster.id, battleType: 'tactical' });
     setPlayerUnit(prev => ({ ...prev, hp: Math.min(prev.maxHp, prev.hp + 30) }));
     addDmgNumber(30, 'heal');
     // End turn after item

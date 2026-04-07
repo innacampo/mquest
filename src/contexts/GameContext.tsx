@@ -213,6 +213,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const unlockCompendiumEntry = useCallback((entryId: string) => {
     setState(prev => {
+      const entry = prev.compendium.find(e => e.id === entryId);
+      if (entry) trackEvent('compendium_unlock', { entryId, type: entry.type, biome: entry.biome });
       const next = {
         ...prev,
         compendium: prev.compendium.map(e =>
@@ -251,7 +253,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   }, [save]);
 
+  const biomeEnteredAtRef = useRef<number | null>(null);
+
   const enterBiome = useCallback((biomeId: BiomeId) => {
+    biomeEnteredAtRef.current = Date.now();
     setState(prev => {
       const next = { ...prev, currentBiome: biomeId };
       save(next);
@@ -262,6 +267,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const leaveBiome = useCallback(() => {
     setState(prev => {
+      if (prev.currentBiome && biomeEnteredAtRef.current) {
+        const timeSpentMs = Date.now() - biomeEnteredAtRef.current;
+        trackEvent('biome_time', { biomeId: prev.currentBiome, timeSpentMs, timeSpentSec: Math.round(timeSpentMs / 1000) });
+        biomeEnteredAtRef.current = null;
+      }
       const next = { ...prev, currentBiome: null };
       save(next);
       return next;
@@ -302,6 +312,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const meetNpc = useCallback((npcName: string) => {
     setState(prev => {
       if ((prev.npcsMet || []).includes(npcName)) return prev;
+      trackEvent('npc_met', { npcName });
       const updatedCompendium = prev.compendium.map(e =>
         (e.npcName === npcName && e.type === 'bio') ? { ...e, unlocked: true } : e
       );
