@@ -172,6 +172,15 @@ const GameScreen = () => {
           {/* Mobile controls */}
           <div className="flex md:hidden items-center gap-1">
             <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={audio.toggleMute}
+              title={audio.muted ? 'Unmute' : 'Mute'}
+            >
+              {audio.muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+            </Button>
+            <Button
               variant={view === 'map' ? 'default' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
