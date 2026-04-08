@@ -12,7 +12,7 @@ const LanguageToggle = () => {
       title={lang === 'en' ? 'Cambiar a Español' : 'Switch to English'}
       className="font-display text-xs px-2"
     >
-      {lang === 'en' ? '🇪🇸 ES' : '🇬🇧 EN'}
+      {lang === 'en' ? '🇬🇧 EN' : '🇪🇸 ES'}
     </Button>
   );
 };
