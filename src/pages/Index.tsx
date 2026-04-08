@@ -15,7 +15,7 @@ import CharacterCreation from '@/components/game/CharacterCreation';
 import EndingScreen from '@/components/game/EndingScreen';
 import { useAudio } from '@/hooks/useAudio';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Map, RotateCcw, Home, Menu, X } from 'lucide-react';
+import { Map, RotateCcw, Home, Menu, X, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type GameView = 'title' | 'character' | 'map' | 'biome' | 'village' | 'ending';
